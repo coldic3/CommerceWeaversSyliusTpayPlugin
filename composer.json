@@ -23,7 +23,6 @@
         "sylius/sylius": "<1.12"
     },
     "require-dev": {
-        "ext-readline": "*",
         "alphpaca/monocle-constraint": "^0.1",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^1.8.1",

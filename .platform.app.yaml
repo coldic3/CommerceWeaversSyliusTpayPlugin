@@ -1,5 +1,5 @@
 name: app
-type: php:8.2
+type: php:8.3
 build:
     flavor: none
 
@@ -11,28 +11,31 @@ variables:
 
 # The hooks that will be performed when the package is deployed.
 hooks:
-    build-js: |
+    build: |
         set -x -e
+        
+        curl -fs https://get.symfony.com/cloud/configurator | bash
+        
+        symfony-build
         
         cd tests/Application
 
         yarn install
         yarn build:prod
-    build: |
-        curl -fs https://get.symfony.com/cloud/configurator | bash
-        
-        symfony-build
     deploy: |
         set -x -e
         
-        rm -rf tests/Application/var/cache/*
+        cd tests/Application
+        
+        rm -rf var/cache/*
 
         symfony-deploy        
 
-        mkdir -p tests/Application/public/media/image
-        tests/Application/bin/console sylius:fixtures:load -n
-        tests/Application/bin/console assets:install --symlink --relative public
-        tests/Application/bin/console cache:warmup 
+        mkdir -p public/media/image
+        bin/console doctrine:migrations:migrate -n
+        bin/console sylius:fixtures:load -n
+        bin/console assets:install --symlink --relative public
+        bin/console cache:warmup 
 
 # The relationships of the application with services or other applications.
 # The left-hand side is the name of the relationship as it will be exposed
