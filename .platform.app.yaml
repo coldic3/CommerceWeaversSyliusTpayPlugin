@@ -11,17 +11,17 @@ variables:
 
 # The hooks that will be performed when the package is deployed.
 hooks:
-    build: |
+    build-js: |
         set -x -e
         
         cd tests/Application
 
-        curl -fs https://get.symfony.com/cloud/configurator | bash
-        
-        NODE_VERSION=18 symfony-build
-
         yarn install
         yarn build:prod
+    build: |
+        curl -fs https://get.symfony.com/cloud/configurator | bash
+        
+        symfony-build
     deploy: |
         set -x -e
         
