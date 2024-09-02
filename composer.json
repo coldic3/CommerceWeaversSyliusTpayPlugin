@@ -17,7 +17,8 @@
     },
     "require": {
         "php": "^8.0",
-        "sylius/core-bundle": "^1.12"
+        "sylius/core-bundle": "^1.12",
+        "tpay-com/tpay-openapi-php": "^1.8"
     },
     "conflict": {
         "sylius/sylius": "<1.12"
