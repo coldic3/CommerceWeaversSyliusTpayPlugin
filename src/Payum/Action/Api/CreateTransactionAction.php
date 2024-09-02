@@ -25,13 +25,14 @@ final class CreateTransactionAction extends BaseApiAwareAction
 
         $order = $model->getOrder();
         $customer = $order->getCustomer();
+        $billingAddress = $order->getBillingAddress();
 
         $response = $this->api->transactions()->createTransaction([
             'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
             'description' => sprintf('zamówienie #%s', $order->getNumber()), // TODO: Introduce translations
             'payer' => [
                 'email' => $customer->getEmail(),
-                'name' => $customer->getFullName(),
+                'name' => $billingAddress->getFullName(),
             ],
             'callbacks' => [
                 'payerUrls' => [

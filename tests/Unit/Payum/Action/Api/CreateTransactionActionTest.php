@@ -10,6 +10,7 @@ use Payum\Core\Request\Sync;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -55,10 +56,13 @@ final class CreateTransactionActionTest extends TestCase
     {
         $customer = $this->prophesize(CustomerInterface::class);
         $customer->getEmail()->willReturn('maks@skalski.com');
-        $customer->getFullName()->willReturn('Maksymilian Skalski');
+
+        $billingAddress = $this->prophesize(AddressInterface::class);
+        $billingAddress->getFullName()->willReturn('Maksymilian Skalski');
 
         $order = $this->prophesize(OrderInterface::class);
         $order->getCustomer()->willReturn($customer);
+        $order->getBillingAddress()->willReturn($billingAddress);
         $order->getNumber()->willReturn('00000001');
 
         $this->model->getAmount()->willReturn(1234);
