@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\FetchPaymentDetails;
 use Payum\Core\Action\ActionInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\GetStatusInterface;
-use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 final class GetStatusAction implements ActionInterface, GatewayAwareInterface
 {
@@ -25,17 +23,22 @@ final class GetStatusAction implements ActionInterface, GatewayAwareInterface
         $model = $request->getFirstModel();
         $paymentDetails = $model->getDetails();
 
-        $this->gateway->execute(
-            new FetchPaymentDetails($paymentDetails['tpay']['transaction_id'], $fetchedPaymentDetails = new ArrayObject()),
-        );
-
-        $paymentDetails['tpay']['status'] = $fetchedPaymentDetails->offsetGet('status');
-
-        $model->setDetails($paymentDetails);
-
         switch ($paymentDetails['tpay']['status']) {
             case 'correct':
+            case PaymentInterface::STATE_COMPLETED:
                 $request->markCaptured();
+                break;
+            case 'pending':
+            case PaymentInterface::STATE_PROCESSING:
+                $request->markPending();
+                break;
+            case 'refund':
+            case PaymentInterface::STATE_REFUNDED:
+                $request->markRefunded();
+                break;
+            case 'failed':
+            case PaymentInterface::STATE_FAILED:
+                $request->markFailed();
                 break;
         }
     }
