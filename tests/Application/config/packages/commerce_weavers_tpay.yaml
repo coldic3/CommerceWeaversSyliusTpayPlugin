@@ -1,3 +1,2 @@
 imports:
-    - { resource: "@CommerceWeaversSyliusTpayPlugin/config/config.php" }
     - { resource: "@CommerceWeaversSyliusTpayPlugin/config/packages.php" }
