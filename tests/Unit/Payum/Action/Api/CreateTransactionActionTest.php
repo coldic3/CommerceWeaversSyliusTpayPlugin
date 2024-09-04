@@ -6,19 +6,16 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use Payum\Core\Payum;
 use Payum\Core\Request\Sync;
-use Payum\Core\Security\GenericTokenFactory;
+use Payum\Core\Security\GenericTokenFactoryInterface;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
@@ -36,7 +33,7 @@ final class CreateTransactionActionTest extends TestCase
 
     private RouterInterface|ObjectProphecy $router;
 
-    private Payum|ObjectProphecy $payum;
+    private GenericTokenFactoryInterface|ObjectProphecy $tokenFactory;
 
     protected function setUp(): void
     {
@@ -44,7 +41,7 @@ final class CreateTransactionActionTest extends TestCase
         $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
         $this->router = $this->prophesize(RouterInterface::class);
-        $this->payum = $this->prophesize(Payum::class);
+        $this->tokenFactory = $this->prophesize(GenericTokenFactoryInterface::class);
 
         $this->request->getModel()->willReturn($this->model->reveal());
     }
@@ -67,6 +64,11 @@ final class CreateTransactionActionTest extends TestCase
 
     public function test_it_creates_transaction(): void
     {
+        $createTransactionToken = $this->prophesize(TokenInterface::class);
+        $createTransactionToken->getGatewayName()->willReturn('tpay');
+
+        $this->request->getToken()->willReturn($createTransactionToken);
+
         $customer = $this->prophesize(CustomerInterface::class);
         $customer->getEmail()->willReturn('maks@skalski.com');
 
@@ -79,13 +81,6 @@ final class CreateTransactionActionTest extends TestCase
         $order->getBillingAddress()->willReturn($billingAddress);
         $order->getNumber()->willReturn('00000001');
 
-        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $gatewayConfig->getGatewayName()->willReturn('tpay');
-
-        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
-
-        $this->model->getMethod()->willReturn($paymentMethod);
         $this->model->getAmount()->willReturn(1234);
         $this->model->getOrder()->willReturn($order);
         $this->model->getDetails()->willReturn([]);
@@ -96,15 +91,12 @@ final class CreateTransactionActionTest extends TestCase
             ],
         ])->shouldBeCalled();
 
-        $tokenFactory = $this->prophesize(GenericTokenFactory::class);
-        $tokenFactory->createToken(
+        $this->tokenFactory->createToken(
             'tpay',
             $this->model,
             'https://cw.org/notify',
         )->willReturn($token = $this->prophesize(TokenInterface::class));
         $token->getTargetUrl()->willReturn('https://cw.org/notify');
-
-        $this->payum->getTokenFactory()->willReturn($tokenFactory);
 
         $this->router
             ->generate('sylius_shop_order_thank_you', ['_locale' => 'en_US'], UrlGeneratorInterface::ABSOLUTE_URL)
@@ -144,9 +136,15 @@ final class CreateTransactionActionTest extends TestCase
 
     private function createTestSubject(): CreateTransactionAction
     {
-        $action = new CreateTransactionAction($this->router->reveal(), $this->payum->reveal());
+        $action = new CreateTransactionAction(
+            $this->router->reveal(),
+            'sylius_shop_order_thank_you',
+            'sylius_shop_order_thank_you',
+            'commerce_weavers_tpay_payment_notification',
+        );
 
         $action->setApi($this->api->reveal());
+        $action->setGenericTokenFactory($this->tokenFactory->reveal());
 
         return $action;
     }

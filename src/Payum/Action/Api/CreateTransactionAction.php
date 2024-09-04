@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use Payum\Core\Model\GatewayConfigInterface;
-use Payum\Core\Payum;
+use Payum\Core\Security\GenericTokenFactoryAwareInterface;
+use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
@@ -17,11 +16,15 @@ use Tpay\OpenApi\Api\TpayApi;
 /**
  * @property TpayApi $api
  */
-final class CreateTransactionAction extends BaseApiAwareAction
+final class CreateTransactionAction extends BaseApiAwareAction implements GenericTokenFactoryAwareInterface
 {
+    use GenericTokenFactoryAwareTrait;
+
     public function __construct (
         private RouterInterface $router,
-        private Payum $payum,
+        private string $successRoute,
+        private string $errorRoute,
+        private string $notifyRoute,
     ) {
         parent::__construct();
     }
@@ -40,8 +43,9 @@ final class CreateTransactionAction extends BaseApiAwareAction
         $customer = $order->getCustomer();
         $billingAddress = $order->getBillingAddress();
 
-        $notifyToken = $this->createNotifyToken($model, $localeCode);
+        $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
 
+        // TODO: extract the create transaction payload creating, so we can reuse it e.g. during the blik level 0 payment
         $response = $this->api->transactions()->createTransaction([
             'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
             'description' => sprintf('zamówienie #%s', $order->getNumber()), // TODO: Introduce translations
@@ -51,8 +55,8 @@ final class CreateTransactionAction extends BaseApiAwareAction
             ],
             'callbacks' => [
                 'payerUrls' => [
-                    'success' => $this->router->generate('sylius_shop_order_thank_you', ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
-                    'error' => $this->router->generate('sylius_shop_order_thank_you', ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'success' => $this->router->generate($this->successRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'error' => $this->router->generate($this->errorRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
                 ],
                 'notification' => [
                     'url' => $notifyToken->getTargetUrl(),
@@ -66,23 +70,12 @@ final class CreateTransactionAction extends BaseApiAwareAction
         $model->setDetails($details);
     }
 
-    private function createNotifyToken(PaymentInterface $payment, string $localeCode): TokenInterface
+    private function createNotifyToken(PaymentInterface $payment, TokenInterface $token, string $localeCode): TokenInterface
     {
-        /** @var PaymentMethodInterface $paymentMethod */
-        $paymentMethod = $payment->getMethod();
-
-        /** @var GatewayConfigInterface $gatewayConfig */
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-        $factory = $this->payum->getTokenFactory();
-
-        return $factory->createToken(
-            $gatewayConfig->getGatewayName(),
+        return $this->tokenFactory->createToken(
+            $token->getGatewayName(),
             $payment,
-            $this->router->generate(
-                'commerce_weavers_tpay_payment_notification',
-                ['_locale' => $localeCode],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            ),
+            $this->router->generate($this->notifyRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
         );
     }
 

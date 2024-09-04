@@ -26,7 +26,9 @@ return function(ContainerConfigurator $container): void {
     $services->set(CreateTransactionAction::class)
         ->args([
             service('router'),
-            service('payum'),
+            param('commerce_weavers_tpay.payum.create_transaction.success_route'),
+            param('commerce_weavers_tpay.payum.create_transaction.error_route'),
+            param('commerce_weavers_tpay.payum.create_transaction.notify_route'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_transaction'])
     ;
