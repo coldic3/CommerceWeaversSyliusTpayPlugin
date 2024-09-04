@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Reply\HttpRedirect;
@@ -12,7 +13,6 @@ use Payum\Core\Request\Capture;
 use Payum\Core\Request\Sync;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -27,11 +27,14 @@ final class CaptureActionTest extends TestCase
 
     private PaymentInterface|ObjectProphecy $model;
 
+    private CreateTransactionFactoryInterface|ObjectProphecy $createTransactionFactory;
+
     protected function setUp(): void
     {
         $this->gateway = $this->prophesize(GatewayInterface::class);
         $this->request = $this->prophesize(Capture::class);
         $this->model = $this->prophesize(PaymentInterface::class);
+        $this->createTransactionFactory = $this->prophesize(CreateTransactionFactoryInterface::class);
 
         $this->request->getModel()->willReturn($this->model->reveal());
     }
@@ -60,10 +63,8 @@ final class CaptureActionTest extends TestCase
         $token->getAfterUrl()->willReturn('http://foo.bar');
 
         $this->request->getToken()->willReturn($token);
-
-        $this->gateway->execute(Argument::that(function (CreateTransaction $createTransaction): bool {
-            return $createTransaction->getModel() === $this->model->reveal() && $createTransaction->getAfterUrl() === 'http://foo.bar';
-        }))->shouldBeCalled();
+        $this->createTransactionFactory->createNewWithModel($token)->willReturn($createTransaction = $this->prophesize(CreateTransaction::class));
+        $this->gateway->execute($createTransaction)->shouldBeCalled();
         $this->model->getDetails()->shouldBeCalled()->willReturn([
             'tpay' => [
                 'transaction_payment_url' => 'https://tpay.pay',
@@ -75,7 +76,7 @@ final class CaptureActionTest extends TestCase
 
     private function createTestSubject(): CaptureAction
     {
-        $action = new CaptureAction();
+        $action = new CaptureAction($this->createTransactionFactory->reveal());
 
         $action->setGateway($this->gateway->reveal());
 

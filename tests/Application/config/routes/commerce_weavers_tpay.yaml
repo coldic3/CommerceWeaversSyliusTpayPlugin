@@ -1,0 +1,2 @@
+commerce_weavers_tpay:
+    resource: "@CommerceWeaversSyliusTpayPlugin/config/routes.php"

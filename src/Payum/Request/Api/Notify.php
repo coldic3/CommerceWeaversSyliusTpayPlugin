@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api;
 
-use Payum\Core\Request\Generic;
+use ArrayAccess;
+use Payum\Core\Request\Notify as BaseNotify;
 
-class FetchPaymentDetails extends Generic
+class Notify extends BaseNotify
 {
     public function __construct (
-        private string $transactionId,
         mixed $model,
+        private \ArrayAccess $data,
     ) {
         parent::__construct($model);
     }
 
-    public function getTransactionId(): string
+    public function getData(): ArrayAccess
     {
-        return $this->transactionId;
+        return $this->data;
     }
 }
