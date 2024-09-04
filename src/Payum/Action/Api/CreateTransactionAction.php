@@ -45,7 +45,6 @@ final class CreateTransactionAction extends BaseApiAwareAction implements Generi
 
         $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
 
-        // TODO: extract the create transaction payload creating, so we can reuse it e.g. during the blik level 0 payment
         $response = $this->api->transactions()->createTransaction([
             'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
             'description' => sprintf('zamówienie #%s', $order->getNumber()), // TODO: Introduce translations

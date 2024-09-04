@@ -24,8 +24,6 @@ final class PaymentNotificationAction
 
     public function __invoke(Request $request): Response
     {
-        // TODO: Implement jws signature validation
-
         $token = $this->getHttpRequestVerifier()->verify($request);
         $gateway = $this->getGateway($token->getGatewayName());
 
