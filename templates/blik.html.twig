@@ -19,6 +19,7 @@
                     </div>
                     <p {{ sylius_test_html_attribute('payment-price') }}>{{ money.format(payment.amount, payment.currencyCode) }}</p>
 
+                    {{ form_row(form.others) }}
                     <label for="blik-token">
                         {{ 'commerce_weavers_sylius_tpay.payment.blik.token'|trans }}
                     </label>
