@@ -1,0 +1,22 @@
+name: Continuous Integration (PR)
+
+on:
+    pull_request:
+        paths-ignore:
+            - ".platform/**"
+            - "*.md"
+    push:
+        branches:
+            - main
+    workflow_dispatch: ~
+
+concurrency:
+    group: ci-${{ github.workflow }}-${{ github.ref }}-minimal
+    cancel-in-progress: true
+
+jobs:
+    ci:
+        name: CI
+        uses: ./.github/workflows/ci.yaml
+        with:
+            type: "pr"
