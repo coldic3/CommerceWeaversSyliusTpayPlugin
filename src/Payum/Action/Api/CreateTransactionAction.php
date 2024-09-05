@@ -12,6 +12,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
+use Webmozart\Assert\Assert;
 
 /**
  * @property TpayApi $api
@@ -37,16 +38,24 @@ final class CreateTransactionAction extends BaseApiAwareAction implements Generi
         /** @var PaymentInterface $model */
         $model = $request->getModel();
         $details = $model->getDetails();
+        $token = $request->getToken();
+        Assert::notNull($token);
 
         $order = $model->getOrder();
+        Assert::notNull($order);
         $localeCode = $order->getLocaleCode();
+        Assert::notNull($localeCode);
         $customer = $order->getCustomer();
+        Assert::notNull($customer);
         $billingAddress = $order->getBillingAddress();
+        Assert::notNull($billingAddress);
+        $amount = $model->getAmount();
+        Assert::notNull($amount);
 
-        $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
+        $notifyToken = $this->createNotifyToken($model, $token, $localeCode);
 
         $response = $this->api->transactions()->createTransaction([
-            'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
+            'amount' => number_format($amount / 100, 2, thousands_separator: ''),
             'description' => sprintf('zamówienie #%s', $order->getNumber()), // TODO: Introduce translations
             'payer' => [
                 'email' => $customer->getEmail(),

@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\GetStatusInterface;
+use Sylius\Bundle\PayumBundle\Request\GetStatus;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 final class GetStatusAction implements ActionInterface, GatewayAwareInterface
@@ -15,7 +15,7 @@ final class GetStatusAction implements ActionInterface, GatewayAwareInterface
     use GatewayAwareTrait;
 
     /**
-     * @param GetStatusInterface $request
+     * @param GetStatus $request
      */
     public function execute($request): void
     {
@@ -45,6 +45,6 @@ final class GetStatusAction implements ActionInterface, GatewayAwareInterface
 
     public function supports($request): bool
     {
-        return $request instanceof GetStatusInterface && $request->getFirstModel() instanceof PaymentInterface;
+        return $request instanceof GetStatus && $request->getFirstModel() instanceof PaymentInterface;
     }
 }

@@ -22,6 +22,7 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
         $model = $request->getModel();
         $details = $model->getDetails();
 
+        /** @var array{tr_status?: string} $notificationData */
         $notificationData = $request->getData();
         $status = $notificationData['tr_status'] ?? '';
 

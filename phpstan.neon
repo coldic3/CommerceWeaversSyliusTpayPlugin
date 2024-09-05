@@ -5,12 +5,11 @@ parameters:
     paths:
         - src
 
-    excludes_analyse:
-        # Makes PHPStan crash
+    excludePaths:
+        - 'src/CommerceWeaversSyliusTpayPlugin.php'
         - 'src/DependencyInjection/Configuration.php'
-
-        # Test dependencies
         - 'tests/Application/src/**.php'
 
     ignoreErrors:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
+        - '/Parameter \#1 \$request \([^)]+\) of method [^:]+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
