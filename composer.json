@@ -24,7 +24,6 @@
         "sylius/sylius": "<1.12"
     },
     "require-dev": {
-        "alphpaca/monocle-constraint": "^0.1",
         "phpspec/prophecy-phpunit": "^2.2",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^1.8.1",
@@ -38,6 +37,7 @@
         "symfony/browser-kit": "^5.4 || ^6.0",
         "symfony/debug-bundle": "^5.4 || ^6.0",
         "symfony/dotenv": "^5.4 || ^6.0",
+        "symfony/flex": "^2.4",
         "symfony/intl": "^5.4 || ^6.0",
         "symfony/monolog-bundle": "^3.10",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0"
@@ -45,9 +45,9 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "alphpaca/monocle-constraint": true,
             "dealerdirect/phpcodesniffer-composer-installer": false,
             "phpstan/extension-installer": true,
+            "symfony/flex": true,
             "symfony/runtime": true
         }
     },
@@ -55,10 +55,8 @@
         "branch-alias": {
             "dev-main": "1.0-dev"
         },
-        "monocle": {
-            "constraint": {
-                "symfony/symfony": "5.4.*"
-            }
+        "symfony": {
+            "require": "5.4.*"
         }
     },
     "scripts": {
