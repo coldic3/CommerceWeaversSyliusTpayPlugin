@@ -50,7 +50,7 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction
             ],
         ]);
 
-        // blik token could be removed here from $details
+        unset($details['blik']);
         $details['tpay']['transaction_id'] = $response['transactionId'];
 
         $model->setDetails($details);

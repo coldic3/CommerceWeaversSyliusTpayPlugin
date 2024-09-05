@@ -22,7 +22,6 @@ final class CompleteTypeExtension extends AbstractTypeExtension
             'label' => 'commerce_weavers_sylius_tpay.payment.blik.token',
             // TODO missing validation
             'property_path' => 'payments[0].details', // TODO looks awfull and what about other payments?
-//            'mapped' => false,
             'required' => false,
         ]);
     }
