@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class PaymentNotificationAction
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private NotifyFactoryInterface $notifyFactory,
     ) {

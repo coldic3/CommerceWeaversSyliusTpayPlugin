@@ -12,7 +12,7 @@ class Notify extends BaseNotify
     /**
      * @param ArrayAccess<array-key, mixed> $data
      */
-    public function __construct (
+    public function __construct(
         mixed $model,
         private \ArrayAccess $data,
     ) {

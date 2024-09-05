@@ -23,7 +23,7 @@ final class PreventSavingEmptyClientSecretListener
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
                     'mapped' => false,
-                ]
+                ],
             );
         }
     }

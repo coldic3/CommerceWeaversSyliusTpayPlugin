@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormEvents;
 
 final class TpayGatewayConfigurationType extends AbstractType
 {
-    public function __construct (
+    public function __construct(
         private PreventSavingEmptyClientSecretListener $preventSavingEmptyClientSecretListener,
     ) {
     }
@@ -37,7 +37,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 PasswordType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
-                ]
+                ],
             )
             ->add(
                 'production_mode',
@@ -45,7 +45,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.production_mode',
                     'value' => false,
-                ]
+                ],
             )
         ;
 

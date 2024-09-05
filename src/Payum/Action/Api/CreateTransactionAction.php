@@ -21,7 +21,7 @@ final class CreateTransactionAction extends BaseApiAwareAction implements Generi
 {
     use GenericTokenFactoryAwareTrait;
 
-    public function __construct (
+    public function __construct(
         private RouterInterface $router,
         private string $successRoute,
         private string $errorRoute,

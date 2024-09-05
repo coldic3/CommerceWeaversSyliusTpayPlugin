@@ -27,18 +27,22 @@ final class GetStatusAction implements ActionInterface, GatewayAwareInterface
             case 'correct':
             case PaymentInterface::STATE_COMPLETED:
                 $request->markCaptured();
+
                 break;
             case 'pending':
             case PaymentInterface::STATE_PROCESSING:
                 $request->markPending();
+
                 break;
             case 'refund':
             case PaymentInterface::STATE_REFUNDED:
                 $request->markRefunded();
+
                 break;
             case 'failed':
             case PaymentInterface::STATE_FAILED:
                 $request->markFailed();
+
                 break;
         }
     }
