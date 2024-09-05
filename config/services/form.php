@@ -26,5 +26,10 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(PreventSavingEmptyClientSecretListener::class);
 
-    $services->set(CompleteTypeExtension::class)->tag('form.type_extension');
+    $services->set(CompleteTypeExtension::class)
+        ->tag(
+            'form.type_extension',
+            ['extended_type' => CompleteType::class]
+        )
+    ;
 };

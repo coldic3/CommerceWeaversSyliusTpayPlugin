@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateBlik0Transaction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
@@ -17,11 +17,6 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
-    public function __construct(
-        private CreateTransactionFactoryInterface $createTransactionFactory,
-    ) {
-    }
-
     /**
      * @param Capture $request
      */
@@ -32,14 +27,14 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
 
         if ($this->transactionIsBlik($model)) {
             $this->gateway->execute(
-                new CreateBlik0Transaction($request->getToken()),
+                new CreateBlik0Transaction($request->getToken()->getAfterUrl(), $model),
             );
 
             return;
         }
 
         $this->gateway->execute(
-            $this->createTransactionFactory->createNewWithModel($request->getToken()),
+            new CreateTransaction($request->getToken()->getAfterUrl(), $model),
         );
 
         $paymentDetails = $model->getDetails();

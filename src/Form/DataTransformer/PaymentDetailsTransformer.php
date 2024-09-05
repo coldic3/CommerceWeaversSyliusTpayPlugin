@@ -18,6 +18,6 @@ class PaymentDetailsTransformer implements DataTransformerInterface
     }
     public function reverseTransform($value): array
     {
-        return $value ? ['blik' => $value] : [];
+        return ['blik' => $value];
     }
 }
