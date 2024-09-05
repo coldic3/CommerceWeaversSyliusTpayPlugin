@@ -1,26 +1,42 @@
 name: Continuous Integration
 
 on:
-    push: ~
-    pull_request: ~
-    release:
-        types: [created]
     workflow_dispatch: ~
+    workflow_call:
+        inputs:
+            type:
+                description: "Type of the build"
+                required: true
+                type: string
 
 jobs:
+    get-matrix:
+        runs-on: ubuntu-latest
+        name: "Get matrix"
+        outputs:
+            matrix: ${{ steps.matrix.outputs.prop }}
+        steps:
+            -   name: "Checkout"
+                uses: actions/checkout@v4
+
+            -
+                name: "Get matrix"
+                id: matrix
+                uses: notiz-dev/github-action-json-property@release
+                with:
+                    path: '.github/workflows/_matrix.json'
+                    prop_path: '${{ inputs.type }}.ci'
+
     tests:
+        needs: get-matrix
+        
         runs-on: ubuntu-latest
 
         name: "Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, MySQL ${{ matrix.mysql }}"
 
         strategy:
             fail-fast: false
-            matrix:
-                php: ["8.0", "8.1"]
-                symfony: ["5.4.*", "^6.0"]
-                sylius: ["^1.12"]
-                node: ["16.x"]
-                mysql: ["5.7", "8.0"]
+            matrix: ${{ fromJson(needs.get-matrix.outputs.matrix) }}
 
         env:
             APP_ENV: test
@@ -36,18 +52,21 @@ jobs:
                     build_type: "plugin"
                     cache_key: "${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('composer.json') }}-sylius-${{ matrix.sylius }}-symfony-${{ matrix.symfony }}"
                     cache_restore_key: "${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('composer.json') }}-sylius-${{ matrix.sylius }}-symfony-${{ matrix.symfony }}"
-                    e2e: "yes"
-                    e2e_js: "yes"
                     database_version: ${{ matrix.mysql }}
                     php_version: ${{ matrix.php }}
                     symfony_version: ${{ matrix.symfony }}
+                    sylius_version: ${{ matrix.sylius }}
+                    e2e_js: true
 
-            -
-                name: Upload logs
-                uses: actions/upload-artifact@v3
-                if: failure()
-                with:
-                    name: Logs
-                    path: |
-                        var/log/
-                    if-no-files-found: ignore
+            -   name: Check dependencies
+                continue-on-error: true
+                run: vendor/bin/composer-dependency-analyser
+
+            -   name: Static analysis
+                run: vendor/bin/phpstan
+
+            -   name: Check coding standard
+                run: vendor/bin/ecs check
+
+            -   name: Run tests
+                run: vendor/bin/phpunit

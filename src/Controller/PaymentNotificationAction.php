@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class PaymentNotificationAction
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private NotifyFactoryInterface $notifyFactory,
     ) {
@@ -34,7 +34,7 @@ final class PaymentNotificationAction
 
             return new Response('TRUE');
         } catch (HttpResponse $reply) {
-            return new Response($reply->getCode(), $reply->getStatusCode(), $reply->getHeaders());
+            return new Response((string) $reply->getCode(), $reply->getStatusCode(), $reply->getHeaders());
         } catch (ReplyInterface $reply) {
             throw new \LogicException('Unsupported reply', previous: $reply);
         }

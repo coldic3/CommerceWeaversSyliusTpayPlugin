@@ -9,13 +9,19 @@ use Payum\Core\Request\Notify as BaseNotify;
 
 class Notify extends BaseNotify
 {
-    public function __construct (
+    /**
+     * @param ArrayAccess<array-key, mixed> $data
+     */
+    public function __construct(
         mixed $model,
         private \ArrayAccess $data,
     ) {
         parent::__construct($model);
     }
 
+    /**
+     * @return ArrayAccess<array-key, mixed>
+     */
     public function getData(): ArrayAccess
     {
         return $this->data;

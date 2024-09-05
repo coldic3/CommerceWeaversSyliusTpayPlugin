@@ -5,8 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "CommerceWeavers\\SyliusTpayPlugin\\": "src/",
-            "Tests\\CommerceWeavers\\SyliusTpayPlugin\\Behat\\": "tests/Behat"
+            "CommerceWeavers\\SyliusTpayPlugin\\": "src/"
         }
     },
     "autoload-dev": {
@@ -18,13 +17,20 @@
     "require": {
         "php": "^8.0",
         "sylius/core-bundle": "^1.12",
-        "tpay-com/tpay-openapi-php": "^1.8"
+        "tpay-com/tpay-openapi-php": "^1.8",
+        "payum/core": "^1.7",
+        "sylius/resource-bundle": "^1.10",
+        "symfony/config": "5.4.* || ^6.0",
+        "symfony/dependency-injection": "5.4.* || ^6.0",
+        "symfony/form": "5.4.* || ^6.0",
+        "symfony/http-foundation": "5.4.* || ^6.0",
+        "symfony/http-kernel": "5.4.* || ^6.0",
+        "symfony/routing": "5.4.* || ^6.0"
     },
     "conflict": {
         "sylius/sylius": "<1.12"
     },
     "require-dev": {
-        "alphpaca/monocle-constraint": "^0.1",
         "phpspec/prophecy-phpunit": "^2.2",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^1.8.1",
@@ -33,11 +39,13 @@
         "phpstan/phpstan-webmozart-assert": "^1.2.0",
         "phpunit/phpunit": "^9.5",
         "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+        "shipmonk/composer-dependency-analyser": "^1.7",
         "sylius-labs/coding-standard": "^4.2",
         "sylius/sylius": "^1.12",
         "symfony/browser-kit": "^5.4 || ^6.0",
         "symfony/debug-bundle": "^5.4 || ^6.0",
         "symfony/dotenv": "^5.4 || ^6.0",
+        "symfony/flex": "^2.4",
         "symfony/intl": "^5.4 || ^6.0",
         "symfony/monolog-bundle": "^3.10",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0"
@@ -45,9 +53,9 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "alphpaca/monocle-constraint": true,
             "dealerdirect/phpcodesniffer-composer-installer": false,
             "phpstan/extension-installer": true,
+            "symfony/flex": true,
             "symfony/runtime": true
         }
     },
@@ -55,10 +63,8 @@
         "branch-alias": {
             "dev-main": "1.0-dev"
         },
-        "monocle": {
-            "constraint": {
-                "symfony/symfony": "5.4.*"
-            }
+        "symfony": {
+            "require": "5.4.*"
         }
     },
     "scripts": {

@@ -16,7 +16,7 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
-    public function __construct (
+    public function __construct(
         private CreateTransactionFactoryInterface $createTransactionFactory,
     ) {
     }

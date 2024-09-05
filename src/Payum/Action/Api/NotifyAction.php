@@ -22,10 +22,11 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
         $model = $request->getModel();
         $details = $model->getDetails();
 
+        /** @var array{tr_status?: string} $notificationData */
         $notificationData = $request->getData();
         $status = $notificationData['tr_status'] ?? '';
 
-        $details['tpay']['status'] = match(true) {
+        $details['tpay']['status'] = match (true) {
             str_contains($status, 'TRUE') => PaymentInterface::STATE_COMPLETED,
             str_contains($status, 'CHARGEBACK') => PaymentInterface::STATE_REFUNDED,
             default => PaymentInterface::STATE_FAILED,
