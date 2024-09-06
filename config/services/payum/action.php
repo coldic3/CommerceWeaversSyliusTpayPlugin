@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
 return function(ContainerConfigurator $container): void {
@@ -40,4 +41,7 @@ return function(ContainerConfigurator $container): void {
     $services->set(GetStatusAction::class)
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_status'])
     ;
+
+    $services->set(RefundAction::class)
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund']);
 };
