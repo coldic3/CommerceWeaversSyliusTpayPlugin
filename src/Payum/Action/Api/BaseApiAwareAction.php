@@ -10,6 +10,9 @@ use Payum\Core\ApiAwareTrait;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Utilities\Logger;
 
+/**
+ * @property TpayApi $api
+ */
 abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
 {
     use ApiAwareTrait;

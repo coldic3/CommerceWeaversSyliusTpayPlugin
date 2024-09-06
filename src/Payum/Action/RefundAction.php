@@ -8,11 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BaseApiAwareAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\RefundCannotBeMadeException;
 use Payum\Core\Request\Refund;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tpay\OpenApi\Api\TpayApi;
 
-/**
- * @property TpayApi $api
- */
 final class RefundAction extends BaseApiAwareAction
 {
     /**

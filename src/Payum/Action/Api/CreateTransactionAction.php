@@ -11,12 +11,8 @@ use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Webmozart\Assert\Assert;
 
-/**
- * @property TpayApi $api
- */
 final class CreateTransactionAction extends BaseApiAwareAction implements GenericTokenFactoryAwareInterface
 {
     use GenericTokenFactoryAwareTrait;
