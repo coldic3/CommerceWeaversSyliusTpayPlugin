@@ -20,6 +20,8 @@ setup:
 	@cd tests/Application && APP_ENV=test bin/console sylius:fixtures:load -n
 ecs:
 	@vendor/bin/ecs
+ecs.fix:
+	@vendor/bin/ecs --fix
 phpstan:
 	@vendor/bin/phpstan
 phpunit:

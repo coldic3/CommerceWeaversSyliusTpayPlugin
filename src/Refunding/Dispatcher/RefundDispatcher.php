@@ -12,7 +12,7 @@ use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class RefundDispatcher implements RefundDispatcherInterface
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
     ) {
     }
