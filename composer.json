@@ -16,16 +16,17 @@
     },
     "require": {
         "php": "^8.0",
-        "sylius/core-bundle": "^1.12",
-        "tpay-com/tpay-openapi-php": "^1.8",
+        "defuse/php-encryption": "^2.4",
         "payum/core": "^1.7",
+        "sylius/core-bundle": "^1.12",
         "sylius/resource-bundle": "^1.10",
         "symfony/config": "5.4.* || ^6.0",
         "symfony/dependency-injection": "5.4.* || ^6.0",
         "symfony/form": "5.4.* || ^6.0",
         "symfony/http-foundation": "5.4.* || ^6.0",
         "symfony/http-kernel": "5.4.* || ^6.0",
-        "symfony/routing": "5.4.* || ^6.0"
+        "symfony/routing": "5.4.* || ^6.0",
+        "tpay-com/tpay-openapi-php": "^1.8"
     },
     "conflict": {
         "sylius/sylius": "<1.12"
