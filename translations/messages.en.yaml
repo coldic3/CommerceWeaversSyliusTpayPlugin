@@ -5,6 +5,10 @@ commerce_weavers_sylius_tpay:
             client_id: 'Client ID'
             client_secret: 'Client secret'
             production_mode: 'Production mode'
+            type:
+                card: 'Card (on-site)'
+                label: 'Type'
+                redirect: 'Redirect to Tpay'
 
     payment:
         blik:

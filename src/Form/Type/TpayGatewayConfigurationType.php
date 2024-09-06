@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,6 +39,17 @@ final class TpayGatewayConfigurationType extends AbstractType
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
                 ],
+            )
+            ->add(
+                'type',
+                ChoiceType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.label',
+                    'choices' => [
+                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.redirect' => 'redirect',
+                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.card' => 'card',
+                    ],
+                ]
             )
             ->add(
                 'production_mode',

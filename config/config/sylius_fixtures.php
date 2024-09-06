@@ -19,6 +19,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'gatewayConfig' => [
                             'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                             'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                            'type' => 'redirect',
                             'production_mode' => false,
                         ],
                         'channels' => [
