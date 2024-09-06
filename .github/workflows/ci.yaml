@@ -32,7 +32,7 @@ jobs:
         
         runs-on: ubuntu-latest
 
-        name: "Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, MySQL ${{ matrix.mysql }}"
+        name: "Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, MySQL ${{ matrix.mysql }}, State Machine ${{ matrix.state_machine }}"
 
         strategy:
             fail-fast: false
@@ -41,6 +41,7 @@ jobs:
         env:
             APP_ENV: test
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
+            STATE_MACHINE_DEFAULT_ADAPTER: ${{ matrix.state_machine }}
 
         steps:
             -

@@ -13,3 +13,5 @@ parameters:
     ignoreErrors:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
         - '/Parameter \#1 \$request \([^)]+\) of method [^:]+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
+        - '/Parameter \$event of method CommerceWeavers\\SyliusTpayPlugin\\Refunding\\Workflow\\Listener\\DispatchRefundListener::__invoke\(\) has invalid type Symfony\\Component\\Workflow\\Event\\TransitionEvent\./'
+        - '/Call to method getSubject\(\) on an unknown class Symfony\\Component\\Workflow\\Event\\TransitionEvent\./'

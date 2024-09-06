@@ -6,13 +6,15 @@
           "php": "8.0",
           "sylius": "1.12.*",
           "symfony": "5.4.*",
-          "mysql": "8.0"
+          "mysql": "8.0",
+          "state_machine": "winzou_state_machine"
         },
         {
           "php": "8.3",
           "sylius": "1.13.*",
           "symfony": "6.4.*",
-          "mysql": "8.0"
+          "mysql": "8.0",
+          "state_machine": "symfony_workflow"
         }
       ]
     },
@@ -20,7 +22,14 @@
       "php": ["8.0", "8.3"],
       "sylius": ["1.12.*", "1.13.*"],
       "symfony": ["5.4.*", "6.4.*"],
-      "mysql": ["8.0"]
+      "mysql": ["8.0"],
+      "state_machine": ["winzou_state_machine", "symfony_workflow"],
+      "exclude": [
+        {
+          "sylius": "1.12.*",
+          "state_machine": "symfony_workflow"
+        }
+      ]
     }
   }
 }
