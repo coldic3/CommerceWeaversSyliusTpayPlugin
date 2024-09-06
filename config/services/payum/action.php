@@ -43,6 +43,12 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set(CreateBlik0TransactionAction::class)
+        ->args([
+            service('router'),
+            param('commerce_weavers_tpay.payum.create_transaction.success_route'),
+            param('commerce_weavers_tpay.payum.create_transaction.error_route'),
+            param('commerce_weavers_tpay.payum.create_transaction.notify_route'),
+        ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_blik0_transaction'])
     ;
 };

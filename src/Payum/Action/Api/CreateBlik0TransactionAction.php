@@ -6,14 +6,30 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateBlik0Transaction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use Payum\Core\Security\GenericTokenFactoryAwareInterface;
+use Payum\Core\Security\GenericTokenFactoryAwareTrait;
+use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
 
 /**
  * @property TpayApi $api
  */
-final class CreateBlik0TransactionAction extends BaseApiAwareAction
+final class CreateBlik0TransactionAction extends BaseApiAwareAction implements GenericTokenFactoryAwareInterface
 {
+    use GenericTokenFactoryAwareTrait;
+
+    public function __construct (
+        private RouterInterface $router,
+        private string $successRoute,
+        private string $errorRoute,
+        private string $notifyRoute,
+    ) {
+        parent::__construct();
+    }
+
     /**
      * @param CreateTransaction $request
      */
@@ -25,7 +41,9 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction
 
         $order = $model->getOrder();
         $customer = $order->getCustomer();
+        $localeCode = $order->getLocaleCode();
         $billingAddress = $order->getBillingAddress();
+        $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
 
         $blikToken = $model->getDetails()['blik'];
 
@@ -44,14 +62,18 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction
             ],
             'callbacks' => [
                 'payerUrls' => [
-                    'success' => $request->getAfterUrl(),
-                    'error' => $request->getAfterUrl(),
+                    'success' => $this->router->generate($this->successRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'error' => $this->router->generate($this->errorRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+                ],
+                'notification' => [
+                    'url' => $notifyToken->getTargetUrl(),
                 ],
             ],
         ]);
 
         // blik token could be removed here from $details
         $details['tpay']['transaction_id'] = $response['transactionId'];
+        $details['tpay']['status'] = $response['status'];
 
         $model->setDetails($details);
     }
@@ -59,5 +81,14 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction
     public function supports($request): bool
     {
         return $request instanceof CreateBlik0Transaction && $request->getModel() instanceof PaymentInterface;
+    }
+
+    private function createNotifyToken(PaymentInterface $payment, TokenInterface $token, string $localeCode): TokenInterface
+    {
+        return $this->tokenFactory->createToken(
+            $token->getGatewayName(),
+            $payment,
+            $this->router->generate($this->notifyRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+        );
     }
 }
