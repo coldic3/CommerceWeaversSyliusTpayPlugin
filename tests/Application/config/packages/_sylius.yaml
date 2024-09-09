@@ -22,4 +22,4 @@ sylius_order:
     resources:
         order:
             classes:
-                model: Tests\CommerceWeavers\SyliusTpayPlugin\Application\Entity\Order
+                model: App\Entity\Order
