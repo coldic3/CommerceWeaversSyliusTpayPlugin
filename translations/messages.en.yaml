@@ -9,6 +9,28 @@ commerce_weavers_sylius_tpay:
                 card: 'Card (on-site)'
                 label: 'Type'
                 redirect: 'Redirect to Tpay'
+    shop:
+        order_summary:
+            card:
+                cvv: 'CVC2/CVV2'
+                expiration_date:
+                    month:
+                        label: 'Month'
+                        january: 'January'
+                        february: 'February'
+                        march: 'March'
+                        april: 'April'
+                        may: 'May'
+                        june: 'June'
+                        july: 'July'
+                        august: 'August'
+                        september: 'September'
+                        october: 'October'
+                        november: 'November'
+                        december: 'December'
+                    year: Year
+                holder_name: 'Cardholder name'
+                number: 'Number'
 
     payment:
         blik:

@@ -6,11 +6,17 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCardType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayGatewayConfigurationType;
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayPaymentDetailsType;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set(CompleteTypeExtension::class)
+        ->tag('form.type_extension')
+    ;
 
     $services->set(TpayGatewayConfigurationType::class)
         ->args([
@@ -23,12 +29,9 @@ return function(ContainerConfigurator $container): void {
         ->tag('form.type')
     ;
 
-    $services->set(PreventSavingEmptyClientSecretListener::class);
+    $services->set(TpayCardType::class)->tag('form.type');
 
-    $services->set(CompleteTypeExtension::class)
-        ->tag(
-            'form.type_extension',
-            ['extended_type' => CompleteType::class]
-        )
-    ;
+    $services->set(TpayPaymentDetailsType::class)->tag('form.type');
+
+    $services->set(PreventSavingEmptyClientSecretListener::class);
 };

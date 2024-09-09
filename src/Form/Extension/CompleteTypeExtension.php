@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Extension;
 
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayPaymentDetailsType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\PaymentDetailsType;
 use Sylius\Bundle\CoreBundle\Form\Type\Checkout\CompleteType;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -13,6 +14,13 @@ final class CompleteTypeExtension extends AbstractTypeExtension
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add(
+            'tpay',
+            TpayPaymentDetailsType::class,
+            [
+                'property_path' => 'last_payment.details[tpay]'
+            ]
+        );
         $builder->add('others', PaymentDetailsType::class, [
             'label' => 'commerce_weavers_sylius_tpay.payment.blik.token',
 //          TODO some validation that works becuase this kind does not
