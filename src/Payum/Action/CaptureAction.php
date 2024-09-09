@@ -49,6 +49,8 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
 
     private function transactionIsBlik($model): bool
     {
-        return array_key_exists('blik', $model->getDetails());
+        return array_key_exists('tpay', $model->getDetails())
+            && array_key_exists('blik', $model->getDetails()['tpay'])
+        ;
     }
 }

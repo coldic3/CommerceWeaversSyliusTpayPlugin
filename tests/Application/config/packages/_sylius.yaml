@@ -17,3 +17,9 @@ sylius_shop:
 
 sylius_api:
     enabled: true
+
+sylius_order:
+    resources:
+        order:
+            classes:
+                model: Tests\CommerceWeavers\SyliusTpayPlugin\Application\Entity\Order

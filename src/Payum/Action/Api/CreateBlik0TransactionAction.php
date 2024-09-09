@@ -45,7 +45,7 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction implements G
         $billingAddress = $order->getBillingAddress();
         $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
 
-        $blikToken = $model->getDetails()['blik'];
+        $blikToken = $model->getDetails()['tpay']['blik'];
 
         $response = $this->api->transactions()->createTransaction([
             'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
@@ -71,7 +71,6 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction implements G
             ],
         ]);
 
-        // blik token could be removed here from $details
         $details['tpay']['transaction_id'] = $response['transactionId'];
         $details['tpay']['status'] = $response['status'];
 

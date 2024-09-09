@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
+namespace CommerceWeavers\SyliusTpayPlugin\Form\Extension;
 
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\PaymentDetailsType;
 use Sylius\Bundle\CoreBundle\Form\Type\Checkout\CompleteType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -21,8 +22,7 @@ final class CompleteTypeExtension extends AbstractTypeExtension
         $builder->add('others', PaymentDetailsType::class, [
             'label' => 'commerce_weavers_sylius_tpay.payment.blik.token',
             // TODO missing validation
-            'property_path' => 'payments[0].details', // TODO looks awfull and what about other payments?
-//            'mapped' => false,
+            'property_path' => 'last_new_payment.details["tpay"]',
             'required' => false,
         ]);
     }

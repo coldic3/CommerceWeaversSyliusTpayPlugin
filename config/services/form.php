@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
-use CommerceWeavers\SyliusTpayPlugin\Form\Type\CompleteTypeExtension;
+use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayGatewayConfigurationType;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
-use Sylius\Bundle\CoreBundle\Form\Type\Checkout\CompleteType;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
