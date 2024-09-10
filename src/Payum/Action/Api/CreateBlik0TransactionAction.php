@@ -13,6 +13,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
+use Webmozart\Assert\Assert;
 
 /**
  * @property TpayApi $api
@@ -21,7 +22,7 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction implements G
 {
     use GenericTokenFactoryAwareTrait;
 
-    public function __construct (
+    public function __construct(
         private RouterInterface $router,
         private string $successRoute,
         private string $errorRoute,
@@ -38,17 +39,25 @@ final class CreateBlik0TransactionAction extends BaseApiAwareAction implements G
         /** @var PaymentInterface $model */
         $model = $request->getModel();
         $details = $model->getDetails();
+        $token = $request->getToken();
+        Assert::notNull($token);
 
         $order = $model->getOrder();
+        Assert::notNull($order);
         $customer = $order->getCustomer();
+        Assert::notNull($customer);
         $localeCode = $order->getLocaleCode();
+        Assert::notNull($localeCode);
         $billingAddress = $order->getBillingAddress();
-        $notifyToken = $this->createNotifyToken($model, $request->getToken(), $localeCode);
+        Assert::notNull($billingAddress);
+        $notifyToken = $this->createNotifyToken($model, $token, $localeCode);
+        $amount = $model->getAmount();
+        Assert::notNull($amount);
 
         $blikToken = $model->getDetails()['tpay']['blik'];
 
         $response = $this->api->transactions()->createTransaction([
-            'amount' => number_format($model->getAmount() / 100, 2, thousands_separator: ''),
+            'amount' => number_format($amount / 100, 2, thousands_separator: ''),
             'description' => sprintf('zamówienie #%s', $order->getNumber()), // TODO: Introduce translations
             'payer' => [
                 'email' => $customer->getEmail(),
