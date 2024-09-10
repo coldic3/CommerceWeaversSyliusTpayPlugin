@@ -41,6 +41,13 @@ final class TpayGatewayConfigurationType extends AbstractType
                 ],
             )
             ->add(
+                'cards_api',
+                TextType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.cards_api',
+                ]
+            )
+            ->add(
                 'type',
                 ChoiceType::class,
                 [

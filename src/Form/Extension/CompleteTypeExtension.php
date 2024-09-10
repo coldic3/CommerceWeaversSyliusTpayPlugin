@@ -14,13 +14,15 @@ final class CompleteTypeExtension extends AbstractTypeExtension
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add(
-            'tpay',
-            TpayPaymentDetailsType::class,
-            [
-                'property_path' => 'last_payment.details[tpay]'
-            ]
-        );
+        $builder
+            ->add(
+                'tpay',
+                TpayPaymentDetailsType::class,
+                [
+                    'property_path' => 'last_payment.details[tpay]'
+                ],
+            )
+        ;
         $builder->add('others', PaymentDetailsType::class, [
             'label' => 'commerce_weavers_sylius_tpay.payment.blik.token',
 //          TODO some validation that works becuase this kind does not

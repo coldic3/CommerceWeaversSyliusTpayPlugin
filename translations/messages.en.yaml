@@ -2,6 +2,7 @@ commerce_weavers_sylius_tpay:
     admin:
         name: 'Tpay'
         gateway_configuration:
+            cards_api: 'Cards API'
             client_id: 'Client ID'
             client_secret: 'Client secret'
             production_mode: 'Production mode'

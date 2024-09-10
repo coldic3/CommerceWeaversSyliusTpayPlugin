@@ -23,6 +23,8 @@
                     </div>
                 </div>
                 {{ form_row(form.tpay.card.card) }}
+
+                <input id="sylius_checkout_complete_tpay_cards_api" type="hidden" value="{{ payment.method.gatewayConfig.config.cards_api }}" />
             </div>
         </div>
     </div>
