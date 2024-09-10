@@ -19,7 +19,7 @@ final class CompleteTypeExtension extends AbstractTypeExtension
                 'tpay',
                 TpayPaymentDetailsType::class,
                 [
-                    'property_path' => 'last_payment.details[tpay]'
+                    'property_path' => 'last_payment.details[tpay]',
                 ],
             )
         ;

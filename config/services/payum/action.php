@@ -31,7 +31,6 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(CreateCardTransactionAction::class)
         ->args([
-            service('router'),
             service('commerce_weavers_tpay.tpay.factory.create_card_payment_payload'),
             service('commerce_weavers_tpay.payum.factory.token.notify'),
         ])
@@ -40,7 +39,6 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(CreateRedirectBasedTransactionAction::class)
         ->args([
-            service('router'),
             service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
             service('commerce_weavers_tpay.payum.factory.token.notify'),
         ])

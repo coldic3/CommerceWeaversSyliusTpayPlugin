@@ -20,11 +20,12 @@ final class TpayPaymentDetailsType extends AbstractType
             'card',
             TpayCardType::class,
             [
-                'property_path' => '[card]'
-            ]
+                'property_path' => '[card]',
+            ],
         );
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            /** @var array{card?: string} $data */
             $data = $event->getData() ?? [];
             $form = $event->getForm();
 

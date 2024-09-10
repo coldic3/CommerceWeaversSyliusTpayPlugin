@@ -17,7 +17,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 use Webmozart\Assert\InvalidArgumentException;
@@ -28,8 +27,6 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
     private TpayApi|ObjectProphecy $api;
 
-    private RouterInterface|ObjectProphecy $router;
-
     private CreateRedirectBasedPaymentPayloadFactoryInterface|ObjectProphecy $createRedirectBasedPaymentPayloadFactory;
 
     private GenericTokenFactoryInterface|ObjectProphecy $tokenFactory;
@@ -39,7 +36,6 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
     protected function setUp(): void
     {
         $this->api = $this->prophesize(TpayApi::class);
-        $this->router = $this->prophesize(RouterInterface::class);
         $this->createRedirectBasedPaymentPayloadFactory = $this->prophesize(CreateRedirectBasedPaymentPayloadFactoryInterface::class);
         $this->tokenFactory = $this->prophesize(GenericTokenFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
@@ -178,7 +174,6 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
     private function createTestSubject(): CreateRedirectBasedTransactionAction
     {
         $action = new CreateRedirectBasedTransactionAction(
-            $this->router->reveal(),
             $this->createRedirectBasedPaymentPayloadFactory->reveal(),
             $this->notifyTokenFactory->reveal(),
         );

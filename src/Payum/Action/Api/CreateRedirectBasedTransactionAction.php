@@ -10,7 +10,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayl
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Webmozart\Assert\Assert;
 
 class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionAction
@@ -18,11 +17,10 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
     use GenericTokenFactoryAwareTrait;
 
     public function __construct(
-        private RouterInterface $router,
         private CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,
         private NotifyTokenFactoryInterface $notifyTokenFactory,
     ) {
-        parent::__construct($router);
+        parent::__construct();
     }
 
     /**
@@ -50,11 +48,11 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
 
     public function supports($request): bool
     {
-        $model = $request->getModel();
-
         if (!$request instanceof CreateTransaction) {
             return false;
         }
+
+        $model = $request->getModel();
 
         if (!$model instanceof PaymentInterface) {
             return false;

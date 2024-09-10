@@ -8,19 +8,12 @@ use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Webmozart\Assert\Assert;
 
 abstract class AbstractCreateTransactionAction extends BaseApiAwareAction implements GenericTokenFactoryAwareInterface
 {
     use GenericTokenFactoryAwareTrait;
     use GatewayAwareTrait;
-
-    public function __construct(
-        private RouterInterface $router,
-    ) {
-        parent::__construct();
-    }
 
     protected function createTransaction(PaymentInterface $payment, array $payload): void
     {
@@ -41,6 +34,6 @@ abstract class AbstractCreateTransactionAction extends BaseApiAwareAction implem
 
     protected function getLocaleCodeFrom(PaymentInterface $payment): string
     {
-        return $payment->getOrder()->getLocaleCode() ?? throw new \InvalidArgumentException('Cannot determine locale code for a given payment');
+        return $payment->getOrder()?->getLocaleCode() ?? throw new \InvalidArgumentException('Cannot determine locale code for a given payment');
     }
 }

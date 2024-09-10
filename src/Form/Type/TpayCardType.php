@@ -24,24 +24,27 @@ final class TpayCardType extends AbstractType
                 TextType::class,
                 [
                     'mapped' => false,
-                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.holder_name'
+                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.holder_name',
                 ],
             )
-            ->add('number',
+            ->add(
+                'number',
                 TextType::class,
                 [
                     'mapped' => false,
-                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.number'
+                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.number',
                 ],
             )
-            ->add('cvv',
+            ->add(
+                'cvv',
                 TextType::class,
                 [
                     'mapped' => false,
-                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.cvv'
+                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.cvv',
                 ],
             )
-            ->add('expiration_date_month',
+            ->add(
+                'expiration_date_month',
                 ChoiceType::class,
                 [
                     'mapped' => false,
@@ -59,7 +62,7 @@ final class TpayCardType extends AbstractType
                         'commerce_weavers_sylius_tpay.shop.order_summary.card.expiration_date.month.october' => '10',
                         'commerce_weavers_sylius_tpay.shop.order_summary.card.expiration_date.month.november' => '11',
                         'commerce_weavers_sylius_tpay.shop.order_summary.card.expiration_date.month.december' => '12',
-                    ]
+                    ],
                 ],
             )
             ->add(
@@ -68,19 +71,26 @@ final class TpayCardType extends AbstractType
                 [
                     'mapped' => false,
                     'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.expiration_date.year',
-                ]
+                ],
             )
             ->add('card', HiddenType::class)
         ;
 
-        $builder->addModelTransformer(new class implements DataTransformerInterface {
+        $builder->addModelTransformer(new class() implements DataTransformerInterface {
             public function transform($value): ?array
             {
                 return null;
             }
 
-            public function reverseTransform($value): string
+            /**
+             * @param mixed|array{card: string} $value
+             */
+            public function reverseTransform(mixed $value): string
             {
+                if (!is_array($value)) {
+                    return '';
+                }
+
                 return $value['card'];
             }
         });

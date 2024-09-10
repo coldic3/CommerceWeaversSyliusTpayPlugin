@@ -11,6 +11,7 @@ use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\Capture;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
 final class CaptureAction implements ActionInterface, GatewayAwareInterface
 {
@@ -27,22 +28,25 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
      */
     public function execute($request): void
     {
+        $token = $request->getToken();
+        Assert::notNull($token);
+
         /** @var PaymentInterface $model */
         $model = $request->getModel();
 
         if ($this->transactionIsBlik($model)) {
             $this->gateway->execute(
-                $this->createBlik0TransactionFactory->createNewWithModel($request->getToken()),
+                $this->createBlik0TransactionFactory->createNewWithModel($token),
             );
 
             return;
         }
 
         $this->gateway->execute(
-            $this->createTransactionFactory->createNewWithModel($request->getToken()),
+            $this->createTransactionFactory->createNewWithModel($token),
         );
 
-        throw new HttpRedirect($request->getToken()->getAfterUrl());
+        throw new HttpRedirect($token->getAfterUrl());
     }
 
     public function supports($request): bool

@@ -12,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 final class NotifyTokenFactory implements NotifyTokenFactoryInterface
 {
-    public function __construct (
+    public function __construct(
         private Payum $payum,
         private RouterInterface $router,
         private string $notifyRouteName,

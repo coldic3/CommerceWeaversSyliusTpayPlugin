@@ -8,7 +8,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 
 final class CreateCardPaymentPayloadFactory implements CreateCardPaymentPayloadFactoryInterface
 {
-    public function __construct (
+    public function __construct(
         private CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,
     ) {
     }
@@ -18,6 +18,7 @@ final class CreateCardPaymentPayloadFactory implements CreateCardPaymentPayloadF
      */
     public function createFrom(PaymentInterface $payment, string $notifyUrl, string $localeCode): array
     {
+        /** @var array{pay: array<string, mixed>} $payload */
         $payload = $this->createRedirectBasedPaymentPayloadFactory->createFrom($payment, $notifyUrl, $localeCode);
 
         $payload['pay']['groupId'] = 103;

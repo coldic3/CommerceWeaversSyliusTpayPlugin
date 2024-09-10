@@ -19,7 +19,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 use Webmozart\Assert\InvalidArgumentException;
@@ -29,8 +28,6 @@ final class CreateCardTransactionActionTest extends TestCase
     use ProphecyTrait;
 
     private TpayApi|ObjectProphecy $api;
-
-    private RouterInterface|ObjectProphecy $router;
 
     private CreateCardPaymentPayloadFactoryInterface|ObjectProphecy $createCardPaymentPayloadFactory;
 
@@ -43,7 +40,6 @@ final class CreateCardTransactionActionTest extends TestCase
     protected function setUp(): void
     {
         $this->api = $this->prophesize(TpayApi::class);
-        $this->router = $this->prophesize(RouterInterface::class);
         $this->createCardPaymentPayloadFactory = $this->prophesize(CreateCardPaymentPayloadFactoryInterface::class);
         $this->tokenFactory = $this->prophesize(GenericTokenFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
@@ -164,7 +160,6 @@ final class CreateCardTransactionActionTest extends TestCase
     private function createTestSubject(): CreateCardTransactionAction
     {
         $action = new CreateCardTransactionAction(
-            $this->router->reveal(),
             $this->createCardPaymentPayloadFactory->reveal(),
             $this->notifyTokenFactory->reveal(),
         );

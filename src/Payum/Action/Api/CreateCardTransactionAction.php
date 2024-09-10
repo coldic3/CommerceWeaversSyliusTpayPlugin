@@ -12,7 +12,6 @@ use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Webmozart\Assert\Assert;
 
 final class CreateCardTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
@@ -21,11 +20,10 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
     use GatewayAwareTrait;
 
     public function __construct(
-        private RouterInterface $router,
         private CreateCardPaymentPayloadFactoryInterface $createCardPaymentPayloadFactory,
         private NotifyTokenFactoryInterface $notifyTokenFactory,
     ) {
-        parent::__construct($router);
+        parent::__construct();
     }
 
     /**
@@ -51,11 +49,11 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
 
     public function supports($request): bool
     {
-        $model = $request->getModel();
-
         if (!$request instanceof CreateTransaction) {
             return false;
         }
+
+        $model = $request->getModel();
 
         if (!$model instanceof PaymentInterface) {
             return false;
