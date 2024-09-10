@@ -42,9 +42,7 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
             $this->createTransactionFactory->createNewWithModel($request->getToken()),
         );
 
-        $paymentDetails = $model->getDetails();
-
-        throw new HttpRedirect($paymentDetails['tpay']['transaction_payment_url']);
+        throw new HttpRedirect($request->getToken()->getAfterUrl());
     }
 
     public function supports($request): bool

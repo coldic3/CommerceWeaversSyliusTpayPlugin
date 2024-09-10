@@ -6,7 +6,10 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlik0TransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateCardTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
@@ -26,18 +29,30 @@ return function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.capture'])
     ;
 
-    $services->set(CreateTransactionAction::class)
+    $services->set(CreateCardTransactionAction::class)
         ->args([
             service('router'),
-            param('commerce_weavers_tpay.payum.create_transaction.success_route'),
-            param('commerce_weavers_tpay.payum.create_transaction.error_route'),
-            param('commerce_weavers_tpay.payum.create_transaction.notify_route'),
+            service('commerce_weavers_tpay.tpay.factory.create_card_payment_payload'),
+            service('commerce_weavers_tpay.payum.factory.token.notify'),
         ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_transaction'])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_card_transaction'])
+    ;
+
+    $services->set(CreateRedirectBasedTransactionAction::class)
+        ->args([
+            service('router'),
+            service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
+            service('commerce_weavers_tpay.payum.factory.token.notify'),
+        ])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_redirect_based_transaction'])
     ;
 
     $services->set(NotifyAction::class)
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.notify'])
+    ;
+
+    $services->set(PayWithCardAction::class)
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.pay_with_card'])
     ;
 
     $services->set(GetStatusAction::class)

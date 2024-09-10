@@ -60,7 +60,7 @@ final class CaptureActionTest extends TestCase
         $this->assertTrue($action->supports(new Capture($this->model->reveal())));
     }
 
-    public function test_it_throws_http_redirect_with_using_transaction_payment_url(): void
+    public function test_it_throws_http_redirect_with_token_after_url(): void
     {
         $this->expectException(HttpRedirect::class);
 
@@ -70,11 +70,6 @@ final class CaptureActionTest extends TestCase
         $this->request->getToken()->willReturn($token);
         $this->createTransactionFactory->createNewWithModel($token)->willReturn($createTransaction = $this->prophesize(CreateTransaction::class));
         $this->gateway->execute($createTransaction)->shouldBeCalled();
-        $this->model->getDetails()->shouldBeCalled()->willReturn([
-            'tpay' => [
-                'transaction_payment_url' => 'https://tpay.pay',
-            ],
-        ]);
 
         $this->createTestSubject()->execute($this->request->reveal());
     }

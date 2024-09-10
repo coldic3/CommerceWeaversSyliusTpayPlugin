@@ -1,31 +1,33 @@
-<div class="ui stackable grid">
-    <div class="column" id="sylius-payments">
-        {% set payment = order.lastPayment('cart') %}
+{% set payment = order.lastPayment('cart') %}
 
-        <div class="ui small icon message">
-            <i class="payment icon"></i>
-            <div class="content">
-                <div class="field">
-                    {{ form_row(form.tpay.card.holder_name) }}
-                </div>
-                <div class="field">
-                    {{ form_row(form.tpay.card.number) }}
-                </div>
-                <div class="fields">
-                    <div class="six wide field">
-                        {{ form_row(form.tpay.card.cvv) }}
+{% if payment.method.gatewayConfig.config.type == 'card' %}
+    <div class="ui stackable grid">
+        <div class="column" id="sylius-payments">
+            <div class="ui small icon message">
+                <i class="payment icon"></i>
+                <div class="content">
+                    <div class="field">
+                        {{ form_row(form.tpay.card.holder_name) }}
                     </div>
-                    <div class="twelve wide field">
-                        <div class="two fields">
-                            {{ form_row(form.tpay.card.expiration_date_month) }}
-                            {{ form_row(form.tpay.card.expiration_date_year) }}
+                    <div class="field">
+                        {{ form_row(form.tpay.card.number) }}
+                    </div>
+                    <div class="fields">
+                        <div class="six wide field">
+                            {{ form_row(form.tpay.card.cvv) }}
+                        </div>
+                        <div class="twelve wide field">
+                            <div class="two fields">
+                                {{ form_row(form.tpay.card.expiration_date_month) }}
+                                {{ form_row(form.tpay.card.expiration_date_year) }}
+                            </div>
                         </div>
                     </div>
-                </div>
-                {{ form_row(form.tpay.card.card) }}
+                    {{ form_row(form.tpay.card.card) }}
 
-                <input id="sylius_checkout_complete_tpay_cards_api" type="hidden" value="{{ payment.method.gatewayConfig.config.cards_api }}" />
+                    <input id="sylius_checkout_complete_tpay_cards_api" type="hidden" value="{{ payment.method.gatewayConfig.config.cards_api }}" />
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}
