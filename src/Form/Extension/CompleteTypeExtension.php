@@ -7,22 +7,19 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Extension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\PaymentDetailsType;
 use Sylius\Bundle\CoreBundle\Form\Type\Checkout\CompleteType;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class CompleteTypeExtension extends AbstractTypeExtension
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('notes', TextareaType::class, [
-            'label' => 'sylius.form.notes',
-            'required' => false,
-        ]);
-
         $builder->add('others', PaymentDetailsType::class, [
             'label' => 'commerce_weavers_sylius_tpay.payment.blik.token',
-            // TODO missing validation
-            'property_path' => 'last_new_payment.details["tpay"]',
+//          TODO some validation that works becuase this kind does not
+//            'constraints' => [
+//                new Length(['value' => 6, 'min' => 6, 'max' => 6, 'groups' => ['sylius']]),
+//            ],
+            'property_path' => 'last_new_payment.details[tpay]',
             'required' => false,
         ]);
     }

@@ -46,12 +46,12 @@ final class CreateTransactionActionTest extends TestCase
         $this->request->getModel()->willReturn($this->model->reveal());
     }
 
-    public function it_supports_only_create_transaction_requests(): void
+    public function test_it_supports_only_create_transaction_requests(): void
     {
         $action = $this->createTestSubject();
 
         $this->assertFalse($action->supports(new Sync($this->model->reveal())));
-        $this->assertTrue($action->supports(new CreateTransaction('https://cw.org', $this->model->reveal())));
+        $this->assertTrue($action->supports(new CreateTransaction($this->model->reveal())));
     }
 
     public function test_it_supports_only_payment_interface_based_models(): void

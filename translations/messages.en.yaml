@@ -9,4 +9,3 @@ commerce_weavers_sylius_tpay:
     payment:
         blik:
             token: 'BLIK code'
-            

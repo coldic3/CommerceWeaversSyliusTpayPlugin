@@ -78,42 +78,42 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $order->getBillingAddress()->willReturn($billingAddress);
         $order->getNumber()->willReturn('00000001');
 
-        $this->model->getAmount()->willReturn(123);
+        $this->model->getAmount()->willReturn(1230);
         $this->model->getOrder()->willReturn($order);
         $blikCode = '777456';
         $this->model->getDetails()->willReturn([
-            'blik' => $blikCode,
+            'tpay' => [
+                'blik' => $blikCode,
+            ],
         ]);
         $this->model->setDetails([
             'tpay' => [
-                'transaction_id' => '123awsd',
-                'transaction_payment_url' => 'https://tpay.pay',
+                'blik' => $blikCode,
+                'transaction_id' => '1234awsd',
+                'status' => 'success',
             ],
         ])->shouldBeCalled();
-
-        $NOTIFY_URL = 'https://cw.org/notify';
-        $THANK_YOU_URL = 'https://cw.org/thank-you';
 
         $this->tokenFactory->createToken(
             'tpay',
             $this->model,
-            $NOTIFY_URL,
+            'https://cw.org/notify',
         )->willReturn($token = $this->prophesize(TokenInterface::class));
-        $token->getTargetUrl()->willReturn($NOTIFY_URL);
+        $token->getTargetUrl()->willReturn('https://cw.org/notify');
 
         $this->router
-            ->generate('sylius_shop_order_thank_you', ['_locale' => 'en_US', UrlGeneratorInterface::ABSOLUTE_URL])
-            ->willReturn($THANK_YOU_URL)
+            ->generate('sylius_shop_order_thank_you', ['_locale' => 'en_US'], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->willReturn('https://cw.org/thank-you')
         ;
 
         $this->router
             ->generate('commerce_weavers_tpay_payment_notification', ['_locale' => 'en_US'], UrlGeneratorInterface::ABSOLUTE_URL)
-            ->willReturn($NOTIFY_URL)
+            ->willReturn('https://cw.org/notify')
         ;
 
         $transactionsApi = $this->prophesize(TransactionsApi::class);
         $transactionsApi->createTransaction([
-            'amount' => 12.3,
+            'amount' => 12.30,
             'description' => 'zamówienie #00000001',
             'payer' => [
                 'email' => 'domino@jahas.com',
@@ -127,16 +127,16 @@ final class CreateBlik0TransactionActionTest extends TestCase
             ],
             'callbacks' => [
                 'payerUrls' => [
-                    'success' => $THANK_YOU_URL,
-                    'error' => $THANK_YOU_URL,
+                    'success' => 'https://cw.org/thank-you',
+                    'error' => 'https://cw.org/thank-you',
                 ],
                 'notification' => [
-                    'url' => $NOTIFY_URL,
+                    'url' => 'https://cw.org/notify',
                 ],
             ],
         ])->shouldBeCalled()->willReturn([
-            'transactionId' => '123awsd',
-            'transactionPaymentUrl' => 'https://tpay.pay',
+            'transactionId' => '1234awsd',
+            'status' => 'success',
         ]);
 
         $this->api->transactions()->willReturn($transactionsApi);
@@ -158,4 +158,3 @@ final class CreateBlik0TransactionActionTest extends TestCase
         return $action;
     }
 }
-

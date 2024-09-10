@@ -20,10 +20,6 @@
                     <p {{ sylius_test_html_attribute('payment-price') }}>{{ money.format(payment.amount, payment.currencyCode) }}</p>
 
                     {{ form_row(form.others) }}
-                    <label for="blik-token">
-                        {{ 'commerce_weavers_sylius_tpay.payment.blik.token'|trans }}
-                    </label>
-                    <input id="blik-token" name="blik token" type="text" minlength="6" maxlength="6" required />
 
                     {% if state != 'cart' %}
                         <p id="payment-status" {{ sylius_test_html_attribute('payment-state') }}>
