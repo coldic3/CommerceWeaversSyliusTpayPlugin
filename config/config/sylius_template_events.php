@@ -9,6 +9,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         'events' => [
             'sylius.shop.checkout.complete.summary' => [
                 'blocks' => [
+                    'blik' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/_blik.html.twig',
+                        'priority' => 5,
+                    ],
                     'card' => [
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/_card.html.twig',
                         'priority' => 5,
