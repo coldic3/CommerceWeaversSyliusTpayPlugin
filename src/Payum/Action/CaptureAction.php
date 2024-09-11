@@ -18,6 +18,7 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
 
     public function __construct(
         private CreateTransactionFactoryInterface $createTransactionFactory,
+        private CreateTransactionFactoryInterface $createBlik0TransactionFactory,
     ) {
     }
 
@@ -28,6 +29,14 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
+
+        if ($this->transactionIsBlik($model)) {
+            $this->gateway->execute(
+                $this->createBlik0TransactionFactory->createNewWithModel($request->getToken()),
+            );
+
+            return;
+        }
 
         $this->gateway->execute(
             $this->createTransactionFactory->createNewWithModel($request->getToken()),
@@ -41,5 +50,12 @@ final class CaptureAction implements ActionInterface, GatewayAwareInterface
     public function supports($request): bool
     {
         return $request instanceof Capture && $request->getModel() instanceof PaymentInterface;
+    }
+
+    private function transactionIsBlik(PaymentInterface $model): bool
+    {
+        return array_key_exists('tpay', $model->getDetails()) &&
+            array_key_exists('blik', $model->getDetails()['tpay'])
+        ;
     }
 }

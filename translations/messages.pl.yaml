@@ -5,3 +5,7 @@ commerce_weavers_sylius_tpay:
             client_id: 'Identyfikator klienta'
             client_secret: 'Hasło klienta'
             production_mode: 'Tryb produkcyjny'
+
+    payment:
+        blik:
+            token: 'Kod BLIK'
