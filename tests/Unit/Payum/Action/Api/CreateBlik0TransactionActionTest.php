@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlik0TransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateBlik0Transaction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use Payum\Core\Request\Sync;
-use Payum\Core\Security\GenericTokenFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
+use Payum\Core\GatewayInterface;
+use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Sylius\Component\Core\Model\AddressInterface;
-use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
@@ -26,134 +23,125 @@ final class CreateBlik0TransactionActionTest extends TestCase
 {
     use ProphecyTrait;
 
-    private CreateBlik0Transaction|ObjectProphecy $request;
-    private PaymentInterface|ObjectProphecy $model;
     private TpayApi|ObjectProphecy $api;
-    private RouterInterface|ObjectProphecy $router;
-    private GenericTokenFactoryInterface|ObjectProphecy $tokenFactory;
+
+    private CreateBlik0PaymentPayloadFactoryInterface|ObjectProphecy $createBlik0PaymentPayloadFactory;
+
+    private NotifyTokenFactoryInterface|ObjectProphecy $notifyTokenFactory;
+
+    private GatewayInterface|ObjectProphecy $gateway;
 
     protected function setUp(): void
     {
-        $this->request = $this->prophesize(CreateTransaction::class);
-        $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
-        $this->router = $this->prophesize(RouterInterface::class);
-        $this->tokenFactory = $this->prophesize(GenericTokenFactoryInterface::class);
-
-        $this->request->getModel()->willReturn($this->model->reveal());
+        $this->createBlik0PaymentPayloadFactory = $this->prophesize(CreateBlik0PaymentPayloadFactoryInterface::class);
+        $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
+        $this->gateway = $this->prophesize(GatewayInterface::class);
     }
 
-    public function test_it_supports_only_create_blik0_transaction_request(): void
+    public function test_it_supports_create_transaction_requests_with_a_valid_payment_model(): void
     {
-        $action = $this->createTestSubject();
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn(['tpay' => ['blik_token' => '123456']]);
 
-        $this->assertFalse($action->supports(new Sync($this->model->reveal())));
-        $this->assertTrue($action->supports(new CreateBlik0Transaction($this->model->reveal())));
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+
+        $isSupported = $this->createTestSubject()->supports($request->reveal());
+
+        $this->assertTrue($isSupported);
     }
 
-    public function test_it_supports_only_payment_interface_based_models(): void
+    public function test_it_does_not_support_non_create_transaction_requests(): void
     {
-        $action = $this->createTestSubject();
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
 
-        $this->assertFalse($action->supports(new CreateBlik0Transaction(new \stdClass())));
-        $this->assertTrue($action->supports(new CreateBlik0Transaction($this->model->reveal())));
+        $request = $this->prophesize(Capture::class);
+        $request->getModel()->willReturn($payment);
+
+        $isSupported = $this->createTestSubject()->supports($request->reveal());
+
+        $this->assertFalse($isSupported);
     }
 
-    public function test_it_creates_blik0_transaction(): void
+    public function test_it_does_not_support_requests_with_non_payment_model(): void
     {
-        $createTransactionToken = $this->prophesize(TokenInterface::class);
-        $createTransactionToken->getGatewayName()->willReturn('tpay');
+        $nonPaymentModel = new \stdClass();
 
-        $this->request->getToken()->willReturn($createTransactionToken);
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($nonPaymentModel);
 
-        $customer = $this->prophesize(CustomerInterface::class);
-        $customer->getEmail()->willReturn('domino@jahas.com');
+        $isSupported = $this->createTestSubject()->supports($request->reveal());
 
-        $billingAddress = $this->prophesize(AddressInterface::class);
-        $billingAddress->getFullName()->willReturn('Domino Jahas');
+        $this->assertFalse($isSupported);
+    }
 
+    public function test_it_does_not_support_requests_with_payment_model_not_containing_tpay_blik(): void
+    {
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn(['tpay' => ['card' => 'some_crazy_card_hash']]);
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+
+        $isSupported = $this->createTestSubject()->supports($request->reveal());
+
+        $this->assertFalse($isSupported);
+    }
+
+    public function test_it_creates_a_payment_and_requests_paying_it_with_a_provided_blik_token(): void
+    {
         $order = $this->prophesize(OrderInterface::class);
-        $order->getLocaleCode()->willReturn('en_US');
-        $order->getCustomer()->willReturn($customer);
-        $order->getBillingAddress()->willReturn($billingAddress);
-        $order->getNumber()->willReturn('00000001');
+        $order->getLocaleCode()->willReturn('pl_PL');
 
-        $this->model->getAmount()->willReturn(1230);
-        $this->model->getOrder()->willReturn($order);
-        $blikCode = '777456';
-        $this->model->getDetails()->willReturn([
-            'tpay' => [
-                'blik' => $blikCode,
-            ],
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'transactionId' => 'tr4ns4ct!0n_id',
+            'status' => 'correct',
         ]);
-        $this->model->setDetails([
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $payment->setDetails([
             'tpay' => [
-                'blik' => $blikCode,
-                'transaction_id' => '1234awsd',
-                'status' => 'success',
+                'transaction_id' => 'tr4ns4ct!0n_id',
+                'status' => 'correct',
             ],
         ])->shouldBeCalled();
 
-        $this->tokenFactory->createToken(
-            'tpay',
-            $this->model,
-            'https://cw.org/notify',
-        )->willReturn($token = $this->prophesize(TokenInterface::class));
-        $token->getTargetUrl()->willReturn('https://cw.org/notify');
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
-        $this->router
-            ->generate('sylius_shop_order_thank_you', ['_locale' => 'en_US'], UrlGeneratorInterface::ABSOLUTE_URL)
-            ->willReturn('https://cw.org/thank-you')
+        $this->createBlik0PaymentPayloadFactory
+            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
         ;
 
-        $this->router
-            ->generate('commerce_weavers_tpay_payment_notification', ['_locale' => 'en_US'], UrlGeneratorInterface::ABSOLUTE_URL)
-            ->willReturn('https://cw.org/notify')
-        ;
-
-        $transactionsApi = $this->prophesize(TransactionsApi::class);
-        $transactionsApi->createTransaction([
-            'amount' => 12.30,
-            'description' => 'zamówienie #00000001',
-            'payer' => [
-                'email' => 'domino@jahas.com',
-                'name' => 'Domino Jahas',
-            ],
-            'pay' => [
-                'groupId' => 150,
-                'blikPaymentData' => [
-                    'blikToken' => $blikCode,
-                ],
-            ],
-            'callbacks' => [
-                'payerUrls' => [
-                    'success' => 'https://cw.org/thank-you',
-                    'error' => 'https://cw.org/thank-you',
-                ],
-                'notification' => [
-                    'url' => 'https://cw.org/notify',
-                ],
-            ],
-        ])->shouldBeCalled()->willReturn([
-            'transactionId' => '1234awsd',
-            'status' => 'success',
-        ]);
-
-        $this->api->transactions()->willReturn($transactionsApi);
-        $this->createTestSubject()->execute($this->request->reveal());
+        $this->createTestSubject()->execute($request->reveal());
     }
 
     private function createTestSubject(): CreateBlik0TransactionAction
     {
         $action = new CreateBlik0TransactionAction(
-            $this->router->reveal(),
-            'sylius_shop_order_thank_you',
-            'sylius_shop_order_thank_you',
-            'commerce_weavers_tpay_payment_notification',
+            $this->createBlik0PaymentPayloadFactory->reveal(),
+            $this->notifyTokenFactory->reveal(),
         );
 
         $action->setApi($this->api->reveal());
-        $action->setGenericTokenFactory($this->tokenFactory->reveal());
 
         return $action;
     }

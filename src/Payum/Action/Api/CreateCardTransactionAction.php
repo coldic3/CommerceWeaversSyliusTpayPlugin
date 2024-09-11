@@ -39,10 +39,15 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
 
-        $this->createTransaction(
-            $model,
+        $response = $this->api->transactions()->createTransaction(
             $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
+
+        $details = $model->getDetails();
+        $details['tpay']['transaction_id'] = $response['transactionId'];
+        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
+
+        $model->setDetails($details);
 
         $this->gateway->execute(new PayWithCard($token));
     }

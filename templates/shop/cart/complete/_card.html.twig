@@ -1,8 +1,8 @@
-{% set payment = order.lastPayment('cart') %}
+{% set payment = order.lastCartPayment() %}
 
 {% if payment.method.gatewayConfig.config.type == 'card' %}
     <div class="ui stackable grid">
-        <div class="column" id="sylius-payments">
+        <div class="column">
             <div class="ui small icon message">
                 <i class="payment icon"></i>
                 <div class="content">

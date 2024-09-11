@@ -84,6 +84,22 @@ return function(SyliusFixturesConfig $fixtures): void {
                     ],
                     'enabled' => true,
                 ],
+                'blik' => [
+                    'code' => 'tpay_blik',
+                    'name' => 'Blik (Tpay)',
+                    'gatewayFactory' => 'tpay',
+                    'gatewayName' => 'Tpay',
+                    'gatewayConfig' => [
+                        'client_id' => '%env(string:TPAY_CLIENT_ID)%',
+                        'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                        'type' => 'blik',
+                        'production_mode' => false,
+                    ],
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
             ],
         ],
     ]);

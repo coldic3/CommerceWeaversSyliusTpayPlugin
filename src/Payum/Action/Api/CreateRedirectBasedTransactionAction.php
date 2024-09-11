@@ -36,12 +36,15 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
 
-        $this->createTransaction(
-            $model,
+        $response = $this->api->transactions()->createTransaction(
             $this->createRedirectBasedPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
         $details = $model->getDetails();
+        $details['tpay']['transaction_id'] = $response['transactionId'];
+        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
+
+        $model->setDetails($details);
 
         throw new HttpRedirect($details['tpay']['transaction_payment_url']);
     }
@@ -60,6 +63,6 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
 
         $details = $model->getDetails();
 
-        return !isset($details['tpay']['card']) && !isset($details['tpay']['blik']);
+        return !isset($details['tpay']['card']) && !isset($details['tpay']['blik_token']);
     }
 }

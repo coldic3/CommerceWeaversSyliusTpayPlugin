@@ -7,11 +7,14 @@ commerce_weavers_sylius_tpay:
             client_secret: 'Hasło klienta'
             production_mode: 'Tryb produkcyjny'
             type:
+                blik: 'BLIK'
                 card: 'Karta (na stronie)'
                 label: 'Typ'
                 redirect: 'Przekierowanie do Tpay'
     shop:
         order_summary:
+            blik:
+                token: 'Kod BLIK'
             card:
                 cvv: 'CVC2/CVV2'
                 expiration_date:
@@ -31,7 +34,3 @@ commerce_weavers_sylius_tpay:
                         december: 'Grudzień'
                 holder_name: 'Imię i nazwisko właściciela'
                 number: 'Numer'
-
-    payment:
-        blik:
-            token: 'Kod BLIK'

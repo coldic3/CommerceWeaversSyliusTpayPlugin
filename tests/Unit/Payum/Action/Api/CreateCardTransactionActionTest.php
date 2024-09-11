@@ -59,7 +59,6 @@ final class CreateCardTransactionActionTest extends TestCase
         $this->assertTrue($isSupported);
     }
 
-
     public function test_it_does_not_support_non_create_transaction_requests(): void
     {
         $payment = $this->prophesize(PaymentInterface::class);

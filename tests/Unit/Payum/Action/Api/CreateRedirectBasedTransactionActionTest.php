@@ -54,7 +54,6 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
         $this->assertTrue($isSupported);
     }
 
-
     public function test_it_does_not_support_non_create_transaction_requests(): void
     {
         $payment = $this->prophesize(PaymentInterface::class);
@@ -96,7 +95,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
     public function test_it_does_not_support_requests_with_payment_model_containing_tpay_blik(): void
     {
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn(['tpay' => ['blik' => 'some_value']]);
+        $payment->getDetails()->willReturn(['tpay' => ['blik_token' => 'some_value']]);
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);

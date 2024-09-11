@@ -1,35 +1,14 @@
-<div class="ui two column stackable grid">
-    <div class="column" id="sylius-payments">
-        {% import "@SyliusShop/Common/Macro/money.html.twig" as money %}
+{% set payment = order.lastCartPayment() %}
 
-        {% set state = order.paymentState %}
-
-        {% if state != 'cart' %}
-            {% include "@SyliusShop/Common/Order/Label/PaymentState/orderPaymentState.html.twig" %}
-        {% endif %}
-
-        {% for payment in order.payments %}
-            {% set state = payment.state %}
-
+{% if payment.method.gatewayConfig.config.type == 'blik' %}
+    <div class="ui stackable grid">
+        <div class="ui column eight wide">
             <div class="ui small icon message">
                 <i class="payment icon"></i>
                 <div class="content">
-                    <div class="header" id="sylius-payment-method" {{ sylius_test_html_attribute('payment-method') }}>
-                        {{ payment.method }}
-                    </div>
-                    <p {{ sylius_test_html_attribute('payment-price') }}>{{ money.format(payment.amount, payment.currencyCode) }}</p>
-
-                    {{ form_row(form.others) }}
-
-                    {% if state != 'cart' %}
-                        <p id="payment-status" {{ sylius_test_html_attribute('payment-state') }}>
-                            {% include "@SyliusShop/Common/Order/Label/PaymentState/singlePaymentState.html.twig" with { 'state': state } %}
-                        </p>
-                    {% endif %}
+                    {{ form_row(form.tpay.blik_token) }}
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
-    <div class="column" id="sylius-shipments">
-    </div>
-</div>
+{% endif %}

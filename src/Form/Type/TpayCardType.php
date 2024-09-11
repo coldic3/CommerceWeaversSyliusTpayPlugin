@@ -76,6 +76,7 @@ final class TpayCardType extends AbstractType
             ->add('card', HiddenType::class)
         ;
 
+        /** TODO: Extract into a separate class */
         $builder->addModelTransformer(new class() implements DataTransformerInterface {
             public function transform($value): ?array
             {
