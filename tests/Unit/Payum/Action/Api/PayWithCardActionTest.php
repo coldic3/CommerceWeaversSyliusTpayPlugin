@@ -54,48 +54,7 @@ final class PayWithCardActionTest extends TestCase
     }
 
 
-    public function test_it_executes_pay_with_card_request_successfully(): void
-    {
-        $request = $this->prophesize(PayWithCard::class);
-        $paymentModel = $this->prophesize(PaymentInterface::class);
-        $details = [
-            'tpay' => [
-                'card' => 'test-card',
-                'transaction_id' => 12345,
-            ],
-        ];
-
-        $response = [
-            'transactionPaymentUrl' => 'http://example.com',
-            'status' => 'completed',
-        ];
-
-        $request->getModel()->willReturn($paymentModel->reveal());
-        $paymentModel->getDetails()->willReturn($details);
-
-        $transactions = $this->prophesize(TransactionsApi::class);
-        $transactions->createPaymentByTransactionId([
-            'groupId' => 103,
-            'cardPaymentData' => [
-                'card' => $details['tpay']['card'],
-            ],
-        ], $details['tpay']['transaction_id'])->willReturn($response);
-
-        $this->api->transactions()->willReturn($transactions);
-
-        $paymentModel->setDetails([
-            'tpay' => [
-                'transaction_id' => 12345,
-                'transaction_payment_url' => 'http://example.com',
-            ],
-        ])->shouldBeCalled();
-
-        $subject = $this->createTestSubject();
-
-        $subject->execute($request->reveal());
-    }
-
-    public function test_it_throws_http_redirect_for_pending_status(): void
+    public function test_it_redirects_a_customer_to_3ds_verification_once_a_transaction_status_is_pending(): void
     {
         $this->expectException(HttpRedirect::class);
 
@@ -109,8 +68,9 @@ final class PayWithCardActionTest extends TestCase
         ];
 
         $response = [
-            'transactionPaymentUrl' => 'http://example.com',
+            'result' => 'success',
             'status' => 'pending',
+            'transactionPaymentUrl' => 'http://example.com',
         ];
 
         $request->getModel()->willReturn($paymentModel->reveal());
@@ -137,6 +97,48 @@ final class PayWithCardActionTest extends TestCase
 
         $subject->execute($request->reveal());
     }
+
+    public function test_it_marks_a_payment_status_as_failed_once_a_transaction_status_is_failed(): void
+    {
+        $request = $this->prophesize(PayWithCard::class);
+        $paymentModel = $this->prophesize(PaymentInterface::class);
+        $details = [
+            'tpay' => [
+                'card' => 'test-card',
+                'transaction_id' => 12345,
+            ],
+        ];
+
+        $response = [
+            'result' => 'failed',
+            'transactionPaymentUrl' => 'http://example.com',
+        ];
+
+        $request->getModel()->willReturn($paymentModel->reveal());
+        $paymentModel->getDetails()->willReturn($details);
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createPaymentByTransactionId([
+            'groupId' => 103,
+            'cardPaymentData' => [
+                'card' => $details['tpay']['card'],
+            ],
+        ], $details['tpay']['transaction_id'])->willReturn($response);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $paymentModel->setDetails([
+            'tpay' => [
+                'transaction_id' => 12345,
+                'status' => PaymentInterface::STATE_FAILED,
+            ],
+        ])->shouldBeCalled();
+
+        $subject = $this->createTestSubject();
+
+        $subject->execute($request->reveal());
+    }
+
 
     private function createTestSubject(): PayWithCardAction
     {

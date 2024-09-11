@@ -26,14 +26,21 @@ class PayWithCardAction extends BaseApiAwareAction
             ],
         ], $details['tpay']['transaction_id']);
 
-        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
         unset($details['tpay']['card']);
 
-        $model->setDetails($details);
+        if ('failed' === $response['result']) {
+            $details['tpay']['status'] = PaymentInterface::STATE_FAILED;
+        }
 
-        if ($response['status'] === 'pending') {
+        if ('success' === $response['result'] && 'pending' === $response['status']) {
+            $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
+
+            $model->setDetails($details);
+
             throw new HttpRedirect($details['tpay']['transaction_payment_url']);
         }
+
+        $model->setDetails($details);
     }
 
     public function supports($request): bool
