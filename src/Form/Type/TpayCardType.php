@@ -13,6 +13,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class TpayCardType extends AbstractType
 {
+    public function __construct(
+        private DataTransformerInterface $cardTypeDataTransformer,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $options
      */
@@ -76,24 +81,6 @@ final class TpayCardType extends AbstractType
             ->add('card', HiddenType::class)
         ;
 
-        /** TODO: Extract into a separate class */
-        $builder->addModelTransformer(new class() implements DataTransformerInterface {
-            public function transform($value): ?array
-            {
-                return null;
-            }
-
-            /**
-             * @param mixed|array{card: string} $value
-             */
-            public function reverseTransform(mixed $value): string
-            {
-                if (!is_array($value)) {
-                    return '';
-                }
-
-                return $value['card'];
-            }
-        });
+        $builder->addModelTransformer($this->cardTypeDataTransformer);
     }
 }
