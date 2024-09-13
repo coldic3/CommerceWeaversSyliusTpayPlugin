@@ -18,6 +18,8 @@ final class GetStatusActionTest extends TestCase
 {
     use ProphecyTrait;
 
+    private Notify|ObjectProphecy $request;
+
     private PaymentInterface|ObjectProphecy $model;
 
     private GatewayInterface|ObjectProphecy $gateway;

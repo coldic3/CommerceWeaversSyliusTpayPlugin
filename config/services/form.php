@@ -4,17 +4,25 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCardType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayGatewayConfigurationType;
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayPaymentDetailsType;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
 
+    $services->set(CompleteTypeExtension::class)
+        ->tag('form.type_extension')
+    ;
+
     $services->set(TpayGatewayConfigurationType::class)
         ->args([
-            service(PreventSavingEmptyClientSecretListener::class),
+            service('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret'),
         ])
         ->tag(
             'sylius.gateway_configuration_type',
@@ -23,12 +31,23 @@ return function(ContainerConfigurator $container): void {
         ->tag('form.type')
     ;
 
-    $services->set(PreventSavingEmptyClientSecretListener::class);
-
-    $services->set(CompleteTypeExtension::class)
-        ->tag(
-            'form.type_extension',
-            ['extended_type' => CompleteType::class]
-        )
+    $services->set(TpayCardType::class)
+        ->args([
+            service('commerce_weavers_tpay.form.data_transformer.card_type'),
+        ])
+        ->tag('form.type')
     ;
+
+    $services->set(TpayPaymentDetailsType::class)
+        ->args([
+            service('commerce_weavers_tpay.form.event_listener.remove_unnecessary_payment_details_fields'),
+        ])
+        ->tag('form.type')
+    ;
+
+    $services->set('commerce_weavers_tpay.form.data_transformer.card_type', CardTypeDataTransformer::class);
+
+    $services->set('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret', PreventSavingEmptyClientSecretListener::class);
+
+    $services->set('commerce_weavers_tpay.form.event_listener.remove_unnecessary_payment_details_fields', RemoveUnnecessaryPaymentDetailsFieldsListener::class);
 };

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlik0TransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
-use Payum\Core\GatewayInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\Capture;
+use Payum\Core\Security\GenericTokenFactoryInterface;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -18,31 +19,32 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
+use Webmozart\Assert\InvalidArgumentException;
 
-final class CreateBlik0TransactionActionTest extends TestCase
+final class CreateRedirectBasedTransactionActionTest extends TestCase
 {
     use ProphecyTrait;
 
     private TpayApi|ObjectProphecy $api;
 
-    private CreateBlik0PaymentPayloadFactoryInterface|ObjectProphecy $createBlik0PaymentPayloadFactory;
+    private CreateRedirectBasedPaymentPayloadFactoryInterface|ObjectProphecy $createRedirectBasedPaymentPayloadFactory;
+
+    private GenericTokenFactoryInterface|ObjectProphecy $tokenFactory;
 
     private NotifyTokenFactoryInterface|ObjectProphecy $notifyTokenFactory;
-
-    private GatewayInterface|ObjectProphecy $gateway;
 
     protected function setUp(): void
     {
         $this->api = $this->prophesize(TpayApi::class);
-        $this->createBlik0PaymentPayloadFactory = $this->prophesize(CreateBlik0PaymentPayloadFactoryInterface::class);
+        $this->createRedirectBasedPaymentPayloadFactory = $this->prophesize(CreateRedirectBasedPaymentPayloadFactoryInterface::class);
+        $this->tokenFactory = $this->prophesize(GenericTokenFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
-        $this->gateway = $this->prophesize(GatewayInterface::class);
     }
 
     public function test_it_supports_create_transaction_requests_with_a_valid_payment_model(): void
     {
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn(['tpay' => ['blik_token' => '123456']]);
+        $payment->getDetails()->willReturn([]);
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
@@ -77,10 +79,10 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-    public function test_it_does_not_support_requests_with_payment_model_not_containing_tpay_blik(): void
+    public function test_it_does_not_support_requests_with_payment_model_containing_tpay_card(): void
     {
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn(['tpay' => ['card' => 'some_crazy_card_hash']]);
+        $payment->getDetails()->willReturn(['tpay' => ['card' => 'some_value']]);
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
@@ -90,14 +92,37 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-    public function test_it_creates_a_payment_and_requests_paying_it_with_a_provided_blik_token(): void
+    public function test_it_does_not_support_requests_with_payment_model_containing_tpay_blik(): void
     {
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn(['tpay' => ['blik_token' => 'some_value']]);
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+
+        $isSupported = $this->createTestSubject()->supports($request->reveal());
+
+        $this->assertFalse($isSupported);
+    }
+
+    public function test_it_creates_a_payment_and_redirects_to_a_payment_page(): void
+    {
+        $this->expectException(HttpRedirect::class);
+
         $order = $this->prophesize(OrderInterface::class);
         $order->getLocaleCode()->willReturn('pl_PL');
 
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn([]);
+        $payment->getDetails()->willReturn(
+            [],
+            [
+                'tpay' => [
+                    'transaction_id' => 'tr4ns4ct!0n_id',
+                    'transaction_payment_url' => 'https://tpay.org/pay',
+                ],
+            ],
+        );
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');
@@ -112,7 +137,7 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
             'transactionId' => 'tr4ns4ct!0n_id',
-            'status' => 'correct',
+            'transactionPaymentUrl' => 'https://tpay.org/pay',
         ]);
 
         $this->api->transactions()->willReturn($transactions);
@@ -120,13 +145,13 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
-                'status' => 'correct',
+                'transaction_payment_url' => 'https://tpay.org/pay',
             ],
         ])->shouldBeCalled();
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
-        $this->createBlik0PaymentPayloadFactory
+        $this->createRedirectBasedPaymentPayloadFactory
             ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
@@ -134,14 +159,26 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $this->createTestSubject()->execute($request->reveal());
     }
 
-    private function createTestSubject(): CreateBlik0TransactionAction
+    public function test_it_throws_an_exception_if_a_token_is_null(): void
     {
-        $action = new CreateBlik0TransactionAction(
-            $this->createBlik0PaymentPayloadFactory->reveal(),
+        $this->expectException(InvalidArgumentException::class);
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($this->prophesize(PaymentInterface::class)->reveal());
+        $request->getToken()->willReturn(null);
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    private function createTestSubject(): CreateRedirectBasedTransactionAction
+    {
+        $action = new CreateRedirectBasedTransactionAction(
+            $this->createRedirectBasedPaymentPayloadFactory->reveal(),
             $this->notifyTokenFactory->reveal(),
         );
 
         $action->setApi($this->api->reveal());
+        $action->setGenericTokenFactory($this->tokenFactory->reveal());
 
         return $action;
     }

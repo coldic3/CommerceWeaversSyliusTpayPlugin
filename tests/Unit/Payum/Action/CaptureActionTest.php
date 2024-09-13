@@ -7,7 +7,6 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateBlik0TransactionFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateBlik0Transaction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Reply\HttpRedirect;
@@ -31,15 +30,12 @@ final class CaptureActionTest extends TestCase
 
     private CreateTransactionFactoryInterface|ObjectProphecy $createTransactionFactory;
 
-    private CreateTransactionFactoryInterface|ObjectProphecy $createBlik0TransactionFactory;
-
     protected function setUp(): void
     {
         $this->gateway = $this->prophesize(GatewayInterface::class);
         $this->request = $this->prophesize(Capture::class);
         $this->model = $this->prophesize(PaymentInterface::class);
         $this->createTransactionFactory = $this->prophesize(CreateTransactionFactoryInterface::class);
-        $this->createBlik0TransactionFactory = $this->prophesize(CreateTransactionFactoryInterface::class);
 
         $this->request->getModel()->willReturn($this->model->reveal());
     }
@@ -60,7 +56,7 @@ final class CaptureActionTest extends TestCase
         $this->assertTrue($action->supports(new Capture($this->model->reveal())));
     }
 
-    public function test_it_throws_http_redirect_with_using_transaction_payment_url(): void
+    public function test_it_throws_http_redirect_with_token_after_url(): void
     {
         $this->expectException(HttpRedirect::class);
 
@@ -70,29 +66,6 @@ final class CaptureActionTest extends TestCase
         $this->request->getToken()->willReturn($token);
         $this->createTransactionFactory->createNewWithModel($token)->willReturn($createTransaction = $this->prophesize(CreateTransaction::class));
         $this->gateway->execute($createTransaction)->shouldBeCalled();
-        $this->model->getDetails()->shouldBeCalled()->willReturn([
-            'tpay' => [
-                'transaction_payment_url' => 'https://tpay.pay',
-            ],
-        ]);
-
-        $this->createTestSubject()->execute($this->request->reveal());
-    }
-
-    public function test_it_creates_blik0_transaction_if_transaction_is_blik0(): void
-    {
-        $token = $this->prophesize(TokenInterface::class);
-        $token->getAfterUrl()->willReturn('http://foo.bar');
-
-        $this->model->getDetails()->willReturn([
-            'tpay' => [
-                'blik' => '777123',
-            ],
-        ]);
-
-        $this->request->getToken()->willReturn($token);
-        $this->createBlik0TransactionFactory->createNewWithModel($token)->willReturn($createBlik0Transaction = $this->prophesize(CreateBlik0Transaction::class));
-        $this->gateway->execute($createBlik0Transaction)->shouldBeCalled();
 
         $this->createTestSubject()->execute($this->request->reveal());
     }
@@ -101,7 +74,6 @@ final class CaptureActionTest extends TestCase
     {
         $action = new CaptureAction(
             $this->createTransactionFactory->reveal(),
-            $this->createBlik0TransactionFactory->reveal(),
         );
 
         $action->setGateway($this->gateway->reveal());

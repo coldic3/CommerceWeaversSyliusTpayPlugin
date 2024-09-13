@@ -6,21 +6,21 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
+use Payum\Core\GatewayAwareInterface;
+use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Webmozart\Assert\Assert;
 
-/**
- * @property TpayApi $api
- */
-final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
+final class CreateCardTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
 {
     use GenericTokenFactoryAwareTrait;
+    use GatewayAwareTrait;
 
     public function __construct(
-        private CreateBlik0PaymentPayloadFactoryInterface $createBlik0PaymentPayloadFactory,
+        private CreateCardPaymentPayloadFactoryInterface $createCardPaymentPayloadFactory,
         private NotifyTokenFactoryInterface $notifyTokenFactory,
     ) {
         parent::__construct();
@@ -40,14 +40,16 @@ final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
         $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
 
         $response = $this->api->transactions()->createTransaction(
-            $this->createBlik0PaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
         $details = $model->getDetails();
         $details['tpay']['transaction_id'] = $response['transactionId'];
-        $details['tpay']['status'] = $response['status'];
+        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
 
         $model->setDetails($details);
+
+        $this->gateway->execute(new PayWithCard($token));
     }
 
     public function supports($request): bool
@@ -64,6 +66,6 @@ final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
 
         $details = $model->getDetails();
 
-        return isset($details['tpay']['blik_token']);
+        return isset($details['tpay']['card']);
     }
 }

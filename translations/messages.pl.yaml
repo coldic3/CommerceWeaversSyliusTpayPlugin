@@ -2,10 +2,35 @@ commerce_weavers_sylius_tpay:
     admin:
         name: 'Tpay'
         gateway_configuration:
+            cards_api: 'Cards API'
             client_id: 'Identyfikator klienta'
             client_secret: 'Hasło klienta'
             production_mode: 'Tryb produkcyjny'
-
-    payment:
-        blik:
-            token: 'Kod BLIK'
+            type:
+                blik: 'BLIK'
+                card: 'Karta (na stronie)'
+                label: 'Typ'
+                redirect: 'Przekierowanie do Tpay'
+    shop:
+        order_summary:
+            blik:
+                token: 'Kod BLIK'
+            card:
+                cvv: 'CVC2/CVV2'
+                expiration_date:
+                    month:
+                        label: 'Miesiąc'
+                        january: 'Styczeń'
+                        february: 'Luty'
+                        march: 'Marzec'
+                        april: 'Kwiecień'
+                        may: 'Maj'
+                        june: 'Czerwiec'
+                        july: 'Lipiec'
+                        august: 'Sierpień'
+                        september: 'Wrzesień'
+                        october: 'Październik'
+                        november: 'Listopad'
+                        december: 'Grudzień'
+                holder_name: 'Imię i nazwisko właściciela'
+                number: 'Numer'
