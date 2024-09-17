@@ -1,6 +1,6 @@
 {% set payment = order.lastCartPayment() %}
 
-{% if payment.method.gatewayConfig.config.type == 'card' %}
+{% if cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == 'card' %}
     <div class="ui stackable grid">
         <div class="column">
             <div class="ui small icon message">
