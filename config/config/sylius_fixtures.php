@@ -55,7 +55,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'code' => 'tpay',
                     'name' => 'Tpay',
                     'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'Tpay',
+                    'gatewayName' => 'tpay',
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
@@ -71,7 +71,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'code' => 'tpay_card',
                     'name' => 'Card (Tpay)',
                     'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'Tpay',
+                    'gatewayName' => 'tpay',
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
@@ -88,7 +88,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'code' => 'tpay_blik',
                     'name' => 'Blik (Tpay)',
                     'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'Tpay',
+                    'gatewayName' => 'tpay',
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',

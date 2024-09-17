@@ -16,7 +16,7 @@ class TpayGatewayFactory extends GatewayFactory
     {
         $config->defaults([
             'payum.factory_name' => self::NAME,
-            'payum.factory_title' => ucfirst(self::NAME),
+            'payum.factory_title' => self::NAME,
         ]);
 
         $config['payum.api'] = function (ArrayObject $config): TpayApi {

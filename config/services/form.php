@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
@@ -22,6 +24,8 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(TpayGatewayConfigurationType::class)
         ->args([
+            service('commerce_weavers_tpay.form.event_listener.decrypt_gateway_config'),
+            service('commerce_weavers_tpay.form.event_listener.encrypt_gateway_config'),
             service('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret'),
         ])
         ->tag(
@@ -46,6 +50,20 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set('commerce_weavers_tpay.form.data_transformer.card_type', CardTypeDataTransformer::class);
+
+    $services
+        ->set('commerce_weavers_tpay.form.event_listener.decrypt_gateway_config', DecryptGatewayConfigListener::class)
+        ->args([
+            service('payum.dynamic_gateways.cypher'),
+        ])
+    ;
+
+    $services
+        ->set('commerce_weavers_tpay.form.event_listener.encrypt_gateway_config', EncryptGatewayConfigListener::class)
+        ->args([
+            service('payum.dynamic_gateways.cypher'),
+        ])
+    ;
 
     $services->set('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret', PreventSavingEmptyClientSecretListener::class);
 
