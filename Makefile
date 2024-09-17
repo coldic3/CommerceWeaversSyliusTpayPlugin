@@ -26,6 +26,12 @@ phpstan:
 	@vendor/bin/phpstan
 phpunit:
 	@vendor/bin/phpunit
+phpunit.unit:
+	@vendor/bin/phpunit --testsuite unit
+phpunit.e2e:
+	@vendor/bin/phpunit --testsuite e2e
+phpunit.contract_external:
+	@vendor/bin/phpunit --testsuite contract_external
 qa.static-analysis: ecs phpstan
 qa.tests: phpunit
 ci: qa.static-analysis qa.tests
