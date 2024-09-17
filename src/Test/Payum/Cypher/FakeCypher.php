@@ -8,7 +8,7 @@ use Payum\Core\Security\CypherInterface;
 
 final class FakeCypher implements CypherInterface
 {
-    public function __construct (string $cypherKey)
+    public function __construct(string $cypherKey)
     {
     }
 
