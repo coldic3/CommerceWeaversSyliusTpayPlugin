@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Form\EventListener;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListenerInterface;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\CryptedInterface;
@@ -47,7 +48,7 @@ final class EncryptGatewayConfigListenerTest extends TestCase
         $this->createTestSubject()->__invoke(new PostSubmitEvent($form->reveal(), $gateway->reveal()));
     }
 
-    private function createTestSubject(): EncryptGatewayConfigListener
+    private function createTestSubject(): EncryptGatewayConfigListenerInterface
     {
         return new EncryptGatewayConfigListener($this->cypher->reveal());
     }

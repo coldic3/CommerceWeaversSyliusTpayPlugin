@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Form\EventListener;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListenerInterface;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\CryptedInterface;
@@ -47,7 +48,7 @@ final class DecryptGatewayConfigListenerTest extends TestCase
         $this->createTestSubject()->__invoke(new PreSetDataEvent($form->reveal(), $gateway->reveal()));
     }
 
-    private function createTestSubject(): DecryptGatewayConfigListener
+    private function createTestSubject(): DecryptGatewayConfigListenerInterface
     {
         return new DecryptGatewayConfigListener($this->cypher->reveal());
     }

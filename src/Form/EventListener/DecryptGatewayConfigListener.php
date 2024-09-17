@@ -8,7 +8,7 @@ use Payum\Core\Security\CryptedInterface;
 use Payum\Core\Security\CypherInterface;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 
-final class DecryptGatewayConfigListener
+final class DecryptGatewayConfigListener implements DecryptGatewayConfigListenerInterface
 {
     public function __construct(
         private CypherInterface $cypher,

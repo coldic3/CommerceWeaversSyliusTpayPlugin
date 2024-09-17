@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListenerInterface;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListenerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,8 +18,8 @@ use Symfony\Component\Form\FormEvents;
 final class TpayGatewayConfigurationType extends AbstractType
 {
     public function __construct(
-        private DecryptGatewayConfigListener $decryptGatewayConfigListener,
-        private EncryptGatewayConfigListener $encryptGatewayConfigListener,
+        private DecryptGatewayConfigListenerInterface $decryptGatewayConfigListener,
+        private EncryptGatewayConfigListenerInterface $encryptGatewayConfigListener,
         private PreventSavingEmptyClientSecretListener $preventSavingEmptyClientSecretListener,
     ) {
     }

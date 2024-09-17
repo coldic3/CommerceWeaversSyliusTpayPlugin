@@ -8,7 +8,7 @@ use Payum\Core\Security\CryptedInterface;
 use Payum\Core\Security\CypherInterface;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 
-final class EncryptGatewayConfigListener
+final class EncryptGatewayConfigListener implements EncryptGatewayConfigListenerInterface
 {
     public function __construct(
         private CypherInterface $cypher,
