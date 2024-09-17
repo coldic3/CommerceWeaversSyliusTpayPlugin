@@ -25,7 +25,7 @@ class TestTpayGatewayFactory extends GatewayFactory
             $clientSecret = $config['client_secret'] ?? null;
             $productionMode = $config['production_mode'] ?? false;
             /** @var string $testApiUrl */
-            $testApiUrl = getenv('TPAY_API_URL');
+            $testApiUrl = getenv('TPAY_API_URL') !== false ? getenv('TPAY_API_URL') : null;
 
             if (null === $clientId || null === $clientSecret) {
                 throw new \InvalidArgumentException('Tpay ClientId and ClientSecret are required.');
