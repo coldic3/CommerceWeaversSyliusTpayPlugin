@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Fixture\Factory;
 
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 use Payum\Core\Security\CryptedInterface;
 use Payum\Core\Security\CypherInterface;
 use Sylius\Bundle\CoreBundle\Fixture\Factory\ExampleFactoryInterface;
@@ -28,7 +29,7 @@ final class PaymentMethodExampleFactory implements ExampleFactoryInterface
         $gatewayConfig = $paymentMethod->getGatewayConfig();
         Assert::notNull($gatewayConfig);
 
-        if ($gatewayConfig->getGatewayName() !== 'Tpay') {
+        if ($gatewayConfig->getGatewayName() !== TpayGatewayFactory::NAME) {
             return $paymentMethod;
         }
 
