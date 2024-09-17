@@ -42,13 +42,28 @@ jobs:
             APP_ENV: test
             DATABASE_URL: "mysql://root:root@127.0.0.1/sylius?serverVersion=${{ matrix.mysql }}"
             STATE_MACHINE_DEFAULT_ADAPTER: ${{ matrix.state_machine }}
+            PANTHER_WEB_SERVER_DIR: './tests/Application/public'
+            PANTHER_NO_SANDBOX: 1
+            PANTHER_CHROME_ARGUMENTS: '--disable-dev-shm-usage --window-size=1400,900'
+            TPAY_CLIENT_ID: '${{ secrets.TPAY_CLIENT_ID }}'
+            TPAY_CLIENT_SECRET: '${{ secrets.TPAY_CLIENT_SECRET }}'
+            TPAY_CARDS_API: '${{ secrets.TPAY_CARDS_API }}'
+            PAYUM_CYPHER_KEY: '${{ secrets.PAYUM_CYPHER_KEY }}'
 
         steps:
             -
                 uses: actions/checkout@v3
 
+            -
+                name: Run Mockoon CLI
+                uses: mockoon/cli-action@v2
+                with:
+                    version: "latest"
+                    data-file: "./tests/mockoon_tpay.json"
+                    port: 4000
+
             -   name: Build application
-                uses: SyliusLabs/BuildTestAppAction@v2.1
+                uses: SyliusLabs/BuildTestAppAction@v2.2.1
                 with:
                     build_type: "plugin"
                     cache_key: "${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('composer.json') }}-sylius-${{ matrix.sylius }}-symfony-${{ matrix.symfony }}"
@@ -57,7 +72,9 @@ jobs:
                     php_version: ${{ matrix.php }}
                     symfony_version: ${{ matrix.symfony }}
                     sylius_version: ${{ matrix.sylius }}
-                    e2e_js: true
+                    e2e: "yes"
+                    e2e_js: "yes"
+                    node_version: '18.x'
 
             -   name: Check dependencies
                 continue-on-error: true
@@ -69,5 +86,24 @@ jobs:
             -   name: Check coding standard
                 run: vendor/bin/ecs check
 
-            -   name: Run tests
-                run: vendor/bin/phpunit
+            -   name: Run tests (Unit)
+                run: vendor/bin/phpunit --testsuite unit
+
+            -   name: Run tests (E2E)
+                env:
+                    TPAY_API_URL: 'http://localhost:4000'
+                run: vendor/bin/phpunit --testsuite e2e
+
+            -   name: Run Tpay contract tests
+                if: "${{ inputs.type == 'daily' }}"
+                run: vendor/bin/phpunit --testsuite contract_external
+
+            -   name: Upload logs
+                uses: actions/upload-artifact@v3
+                if: failure()
+                with:
+                    name: "Logs for (Sylius ${{ matrix.sylius }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, MySQL ${{ matrix.mysql }}, State Machine ${{ matrix.state_machine }})"
+                    path: |
+                        tests/Application/var/log
+                        tests/Application/var/panther
+                    if-no-files-found: ignore

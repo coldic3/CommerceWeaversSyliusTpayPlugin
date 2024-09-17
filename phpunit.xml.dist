@@ -7,6 +7,16 @@
     <testsuites>
         <testsuite name="default">
             <directory>tests</directory>
+            <exclude>tests/Contract/Tpay</exclude>
+        </testsuite>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="e2e">
+            <directory>tests/E2E</directory>
+        </testsuite>
+        <testsuite name="contract_external">
+            <directory>tests/Contract/Tpay</directory>
         </testsuite>
     </testsuites>
 
@@ -15,8 +25,13 @@
 
         <server name="KERNEL_CLASS_PATH" value="/tests/Application/src/Kernel.php" />
         <server name="IS_DOCTRINE_ORM_SUPPORTED" value="true" />
+        <server name="PANTHER_ERROR_SCREENSHOT_DIR" value="tests/Application/var/panther" />
 
         <env name="APP_ENV" value="test"/>
         <env name="SHELL_VERBOSITY" value="-1" />
     </php>
+
+    <extensions>
+        <extension class="Symfony\Component\Panther\ServerExtension" />
+    </extensions>
 </phpunit>
