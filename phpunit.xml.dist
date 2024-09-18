@@ -26,6 +26,8 @@
         <server name="KERNEL_CLASS_PATH" value="/tests/Application/src/Kernel.php" />
         <server name="IS_DOCTRINE_ORM_SUPPORTED" value="true" />
         <server name="PANTHER_ERROR_SCREENSHOT_DIR" value="tests/Application/var/panther" />
+        <server name="FIXTURES_DIR" value="../Api/DataFixtures" /> <!-- relative to tests/Application dir -->
+        <server name="EXPECTED_RESPONSE_DIR" value="../Api/Responses" /> <!-- relative to tests/Application dir -->
 
         <env name="APP_ENV" value="test"/>
         <env name="SHELL_VERBOSITY" value="-1" />
