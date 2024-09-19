@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
+use Symfony\Config\FrameworkConfig;
+
+const COMMERCE_WEAVERS_TPAY_SYNC_TRANSPORT = 'commerce_weavers_tpay_sync';
+
+return function(FrameworkConfig $framework): void {
+    $messenger = $framework->messenger();
+
+    $messenger->transport(COMMERCE_WEAVERS_TPAY_SYNC_TRANSPORT)->dsn('sync://');
+
+    $messenger->routing(PayByBlik::class)->senders([COMMERCE_WEAVERS_TPAY_SYNC_TRANSPORT]);
+};

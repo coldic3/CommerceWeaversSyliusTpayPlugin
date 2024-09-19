@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
-use Payum\Core\Model\GatewayConfigInterface;
-use Payum\Core\Payum;
-use Payum\Core\Reply\ReplyInterface;
-use Payum\Core\Request\Capture;
-use Payum\Core\Security\TokenInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\HandleTrait;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class PayHandler
 {
+    use HandleTrait;
+
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly Payum $payum,
+        MessageBusInterface $messageBus,
     ) {
+        $this->messageBus = $messageBus;
     }
 
     public function __invoke(Pay $command): PayResult
@@ -40,43 +39,11 @@ final class PayHandler
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not have a new payment.', $command->orderToken));
         }
 
-        $lastPaymentDetails = $lastPayment->getDetails();
-
-        match (true) {
-            $command->blikToken !== null => $lastPaymentDetails['tpay']['blik_token'] = $command->blikToken,
-            default => throw new \InvalidArgumentException('Missing blik token.'),
+        $nextCommand = match (true) {
+            $command->blikToken !== null => new PayByBlik($lastPayment->getId(), $command->blikToken),
+            default => throw new \InvalidArgumentException('Unsupported'),
         };
 
-        $lastPayment->setDetails($lastPaymentDetails);
-
-        $token = $this->provideTokenBasedOnPayment($lastPayment);
-
-        try {
-            $this->payum->getGateway($token->getGatewayName())->execute(new Capture($token));
-        } catch (ReplyInterface $reply) {
-        }
-
-        $this->payum->getHttpRequestVerifier()->invalidate($token);
-
-        $lastPaymentDetails = $lastPayment->getDetails();
-
-        return new PayResult(
-            $lastPaymentDetails['tpay']['status'],
-        );
-    }
-
-    private function provideTokenBasedOnPayment(PaymentInterface $payment): TokenInterface
-    {
-        /** @var PaymentMethodInterface $paymentMethod */
-        $paymentMethod = $payment->getMethod();
-
-        /** @var GatewayConfigInterface $gatewayConfig */
-        $gatewayConfig = $paymentMethod->getGatewayConfig();
-
-        return $this->payum->getTokenFactory()->createCaptureToken(
-            $gatewayConfig->getGatewayName(),
-            $payment,
-            'https://commerceweavers.com',
-        );
+        return $this->handle($nextCommand);
     }
 }
