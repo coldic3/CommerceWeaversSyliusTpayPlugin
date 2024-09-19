@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 final class OrderTokenAwareContextBuilder implements OrderTokenAwareContextBuilderInterface
 {
-    public function __construct (
+    public function __construct(
         private readonly SerializerContextBuilderInterface $decoratedContextBuilder,
     ) {
     }
@@ -29,7 +29,7 @@ final class OrderTokenAwareContextBuilder implements OrderTokenAwareContextBuild
 
         $context[AbstractNormalizer::DEFAULT_CONSTRUCTOR_ARGUMENTS][$inputClass] = array_merge(
             $context[AbstractNormalizer::DEFAULT_CONSTRUCTOR_ARGUMENTS][$inputClass] ?? [],
-            [$constructorArgumentName => $request->attributes->get('tokenValue')]
+            [$constructorArgumentName => $request->attributes->get('tokenValue')],
         );
 
         return $context;

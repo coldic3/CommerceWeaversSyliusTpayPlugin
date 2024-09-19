@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 final class PayResult
 {
-    public function __construct (
+    public function __construct(
         public readonly string $status,
     ) {
     }

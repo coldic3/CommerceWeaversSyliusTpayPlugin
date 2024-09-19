@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
-use Doctrine\Persistence\ObjectManager;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Payum;
 use Payum\Core\Reply\ReplyInterface;
@@ -20,10 +19,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class PayHandler
 {
-    public function __construct (
+    public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly
-        ObjectManager $paymentObjectManager,
         private readonly Payum $payum,
     ) {
     }

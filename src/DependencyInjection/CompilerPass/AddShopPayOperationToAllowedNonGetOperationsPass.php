@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class AddShopPayOperationToAllowedNonGetOperationsPass implements CompilerPassInterface
 {
-    const SHOP_PAY_ACTION_NAME = 'shop_pay';
+    public const SHOP_PAY_ACTION_NAME = 'shop_pay';
 
     public function process(ContainerBuilder $container): void
     {
@@ -18,14 +18,14 @@ final class AddShopPayOperationToAllowedNonGetOperationsPass implements Compiler
             array_merge(
                 $container->getParameter('sylius.api.doctrine_extension.order_visitor_item.filter_cart.allowed_non_get_operations'),
                 [self::SHOP_PAY_ACTION_NAME],
-            )
+            ),
         );
         $container->setParameter(
             'sylius.api.doctrine_extension.order_shop_user_item.filter_cart.allowed_non_get_operations',
             array_merge(
                 $container->getParameter('sylius.api.doctrine_extension.order_shop_user_item.filter_cart.allowed_non_get_operations'),
                 ['self::SHOP_PAY_ACTION_NAME'],
-            )
+            ),
         );
     }
 }
