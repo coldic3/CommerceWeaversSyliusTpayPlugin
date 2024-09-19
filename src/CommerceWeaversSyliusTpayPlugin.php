@@ -15,7 +15,7 @@ final class CommerceWeaversSyliusTpayPlugin extends Bundle
 
     public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new AddShopPayOperationToAllowedNonGetOperationsPass());
+        $container->addCompilerPass(new AddShopPayOperationToAllowedNonGetOperationsPass(), priority: -1024);
     }
 
     public function getPath(): string

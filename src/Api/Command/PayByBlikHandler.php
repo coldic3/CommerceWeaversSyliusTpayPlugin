@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class PayByBlikHandler
 {
-    public function __construct (
+    public function __construct(
         private readonly PaymentRepositoryInterface $paymentRepository,
         private readonly Payum $payum,
         private readonly CreateTransactionFactoryInterface $createTransactionFactory,
@@ -64,7 +64,7 @@ final class PayByBlikHandler
 
     private function getGatewayName(PaymentInterface $payment): string
     {
-        /** @var PaymentMethodInterface $paymentMethod */
+        /** @var PaymentMethodInterface|null $paymentMethod */
         $paymentMethod = $payment->getMethod();
 
         return $paymentMethod?->getGatewayConfig()?->getGatewayName() ?? throw new \InvalidArgumentException('Gateway name cannot be determined.');

@@ -44,6 +44,12 @@ final class PayHandler
             default => throw new \InvalidArgumentException('Unsupported'),
         };
 
-        return $this->handle($nextCommand);
+        $nextCommandResult = $this->handle($nextCommand);
+
+        if (!$nextCommandResult instanceof PayResult) {
+            throw new \TypeError(sprintf('Expected instance of %s, but got %s', PayResult::class, get_debug_type($nextCommandResult)));
+        }
+
+        return $nextCommandResult;
     }
 }

@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 final class PayByBlik
 {
-    public function __construct (
+    public function __construct(
         public readonly int $paymentId,
         public readonly string $blikToken,
     ) {

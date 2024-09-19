@@ -24,6 +24,7 @@ final class OrderTokenAwareContextBuilder implements OrderTokenAwareContextBuild
             return $context;
         }
 
+        /** @var string $inputClass */
         $inputClass = $this->getInputClassFrom($context);
         $constructorArgumentName = $this->getConstructorArgumentName($inputClass);
 
@@ -43,7 +44,7 @@ final class OrderTokenAwareContextBuilder implements OrderTokenAwareContextBuild
             return false;
         }
 
-        return is_a($this->getInputClassFrom($context), OrderTokenAwareInterface::class, true);
+        return is_a($inputClass, OrderTokenAwareInterface::class, true);
     }
 
     private function getInputClassFrom(array $context): ?string
