@@ -10,7 +10,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFacto
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tpay\OpenApi\Api\TpayApi;
-use Webmozart\Assert\Assert;
 
 /**
  * @property TpayApi $api
@@ -33,11 +32,10 @@ final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $token = $request->getToken();
-        Assert::notNull($token);
+        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
 
         $localeCode = $this->getLocaleCodeFrom($model);
-        $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
+        $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
         $response = $this->api->transactions()->createTransaction(
             $this->createBlik0PaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
