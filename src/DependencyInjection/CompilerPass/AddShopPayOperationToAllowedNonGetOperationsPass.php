@@ -17,7 +17,7 @@ final class AddShopPayOperationToAllowedNonGetOperationsPass implements Compiler
 
     public function process(ContainerBuilder $container): void
     {
-        if ($container->hasParameter(self::SYLIUS_API_DOCTRINE_EXTENSION_ORDER_VISITOR_ITEM_FILTER_CART_ALLOWED_NON_GET_OPERATIONS) === false) {
+        if ($container->hasParameter(self::SYLIUS_API_DOCTRINE_EXTENSION_ORDER_VISITOR_ITEM_FILTER_CART_ALLOWED_NON_GET_OPERATIONS)) {
             /** @var array<string> $orderVisitorItemAllowedNonGetOperations */
             $orderVisitorItemAllowedNonGetOperations = $container->getParameter(self::SYLIUS_API_DOCTRINE_EXTENSION_ORDER_VISITOR_ITEM_FILTER_CART_ALLOWED_NON_GET_OPERATIONS);
             $container->setParameter(
