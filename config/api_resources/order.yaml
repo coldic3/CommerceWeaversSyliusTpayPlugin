@@ -12,5 +12,7 @@
             normalization_context:
                 groups:
                     - 'commerce_weavers_tpay:shop:order:pay_result'
+            validation_groups:
+                - 'commerce_weavers_tpay:shop:order:pay'
             openapi_context:
                 summary: 'Pay for the order'
