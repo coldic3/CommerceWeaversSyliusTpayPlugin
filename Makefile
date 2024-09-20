@@ -25,11 +25,15 @@ ecs.fix:
 phpstan:
 	@vendor/bin/phpstan
 phpunit:
-	@vendor/bin/phpunit
-phpunit.unit:
-	@vendor/bin/phpunit --testsuite unit
+	@make phpunit.api
+	@make phpunit.e2e
+	@make phpunit.unit
+phpunit.api:
+	@vendor/bin/phpunit --testsuite api
 phpunit.e2e:
 	@vendor/bin/phpunit --testsuite e2e
+phpunit.unit:
+	@vendor/bin/phpunit --testsuite unit
 phpunit.contract_external:
 	@vendor/bin/phpunit --testsuite contract_external
 qa.static-analysis: ecs phpstan

@@ -2,4 +2,5 @@ commerce_weavers_sylius_tpay:
     shop:
         pay:
             blik:
-                message: 'Kod BLIK musi mieć dokładnie {{ limit }} znaków.'
+                length: 'Kod BLIK musi mieć dokładnie {{ limit }} znaków.'
+                required: 'Kod BLIK jest wymagany.'

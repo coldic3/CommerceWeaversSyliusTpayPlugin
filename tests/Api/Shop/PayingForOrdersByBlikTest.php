@@ -92,6 +92,29 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         ]);
     }
 
+    public function test_paying_without_providing_a_blik_token(): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseViolations($response, [
+            [
+                'propertyPath' => 'blikToken',
+                'message' => 'The BLIK token is required.',
+            ]
+        ]);
+    }
+
     private function doPlaceOrder(
         string $tokenValue,
         string $email = 'sylius@example.com',
