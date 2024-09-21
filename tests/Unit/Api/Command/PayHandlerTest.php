@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\UnresolvableNextCommandException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
@@ -82,8 +83,8 @@ final class PayHandlerTest extends TestCase
 
     public function test_it_throws_an_exception_if_a_next_command_cannot_be_resolved(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported');
+        $this->expectException(UnresolvableNextCommandException::class);
+        $this->expectExceptionMessage('Provided command does not contain a valid payment data.');
 
         $order = $this->prophesize(OrderInterface::class);
         $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn($payment = $this->prophesize(PaymentInterface::class));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\UnresolvableNextCommandException;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -41,7 +42,7 @@ final class PayHandler
 
         $nextCommand = match (true) {
             $command->blikToken !== null => new PayByBlik($lastPayment->getId(), $command->blikToken),
-            default => throw new \InvalidArgumentException('Unsupported'),
+            default => throw new UnresolvableNextCommandException('Provided command does not contain a valid payment data.'),
         };
 
         $nextCommandResult = $this->handle($nextCommand);
