@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\UnresolvableNextCommandException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -20,6 +20,7 @@ final class PayHandler
 
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
+        private readonly NextCommandFactoryInterface $nextCommandFactory,
         MessageBusInterface $messageBus,
     ) {
         $this->messageBus = $messageBus;
@@ -40,11 +41,7 @@ final class PayHandler
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not have a new payment.', $command->orderToken));
         }
 
-        $nextCommand = match (true) {
-            $command->blikToken !== null => new PayByBlik($lastPayment->getId(), $command->blikToken),
-            $command->encodedCardData !== null => new PayByCard($lastPayment->getId(), $command->encodedCardData),
-            default => throw new UnresolvableNextCommandException('Provided command does not contain a valid payment data.'),
-        };
+        $nextCommand = $this->nextCommandFactory->create($command, $lastPayment);
 
         $nextCommandResult = $this->handle($nextCommand);
 

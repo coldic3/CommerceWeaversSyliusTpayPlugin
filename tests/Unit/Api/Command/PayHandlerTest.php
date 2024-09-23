@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\UnresolvableNextCommandException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayResult;
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnresolvableNextCommandException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -27,11 +28,14 @@ final class PayHandlerTest extends TestCase
 
     private OrderRepositoryInterface|ObjectProphecy $orderRepository;
 
+    private NextCommandFactoryInterface|ObjectProphecy $nextCommandFactory;
+
     private MessageBusInterface|ObjectProphecy $messageBus;
 
     protected function setUp(): void
     {
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
+        $this->nextCommandFactory = $this->prophesize(NextCommandFactoryInterface::class);
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
     }
 
@@ -64,6 +68,8 @@ final class PayHandlerTest extends TestCase
         $this->orderRepository->findOneByTokenValue('token')->willReturn($order);
 
         $payment->getId()->willReturn(1);
+
+        $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123'));
 
         $payResult = new PayResult('success');
         $payResultEnvelope = new Envelope(new \stdClass(), [new HandledStamp($payResult, 'dummy_handler')]);
@@ -100,6 +106,7 @@ final class PayHandlerTest extends TestCase
     {
         return new PayHandler(
             $this->orderRepository->reveal(),
+            $this->nextCommandFactory->reveal(),
             $this->messageBus->reveal()
         );
     }
