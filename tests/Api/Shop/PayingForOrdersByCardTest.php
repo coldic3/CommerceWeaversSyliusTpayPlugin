@@ -43,6 +43,60 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
         $this->assertResponse($response, 'shop/paying_for_orders_by_card/test_paying_with_a_valid_card_for_an_order');
     }
 
+    /**
+     * @dataProvider data_provider_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen
+     */
+    public function test_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen(array $content): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode($content),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseViolations($response, [
+            [
+                'propertyPath' => 'encodedCardData',
+                'message' => 'The card data is required.',
+            ]
+        ]);
+    }
+
+    public static function data_provider_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen(): iterable
+    {
+        yield 'empty content' => [[]];
+        yield 'content with a BLIK token' => [['blikToken' => '777123']];
+    }
+
+    public function test_paying_with_providing_an_empt_card_data(): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode(['encodedCardData' => '']),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseViolations($response, [
+            [
+                'propertyPath' => 'encodedCardData',
+                'message' => 'The card data cannot be empty.',
+            ]
+        ]);    }
+
     private function doPlaceOrder(
         string $tokenValue,
         string $email = 'sylius@example.com',

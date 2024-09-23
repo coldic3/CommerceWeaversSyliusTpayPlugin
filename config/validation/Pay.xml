@@ -6,10 +6,24 @@
                 <value>commerce_weavers_tpay:shop:order:pay</value>
             </option>
         </constraint>
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\EncodedCardDataRequired">
+            <option name="groups">
+                <value>commerce_weavers_tpay:shop:order:pay</value>
+            </option>
+        </constraint>
         <property name="blikToken">
             <constraint name="Length">
                 <option name="value">6</option>
                 <option name="exactMessage">commerce_weavers_sylius_tpay.shop.pay.blik.length</option>
+                <option name="groups">
+                    <value>commerce_weavers_tpay:shop:order:pay</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="encodedCardData">
+            <constraint name="Length">
+                <option name="min">1</option>
+                <option name="minMessage">commerce_weavers_sylius_tpay.shop.pay.encoded_card_data.length</option>
                 <option name="groups">
                     <value>commerce_weavers_tpay:shop:order:pay</value>
                 </option>

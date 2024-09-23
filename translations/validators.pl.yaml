@@ -4,3 +4,6 @@ commerce_weavers_sylius_tpay:
             blik:
                 length: 'Kod BLIK musi mieć dokładnie {{ limit }} znaków.'
                 required: 'Kod BLIK jest wymagany.'
+            encoded_card_data:
+                length: 'Dane karty nie mogą być puste.'
+                required: 'Dane karty są wymagane.'
