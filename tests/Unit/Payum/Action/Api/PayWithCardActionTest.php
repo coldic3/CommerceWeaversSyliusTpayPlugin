@@ -88,6 +88,7 @@ final class PayWithCardActionTest extends TestCase
 
         $paymentModel->setDetails([
             'tpay' => [
+                'status' => 'pending',
                 'transaction_id' => 12345,
                 'transaction_payment_url' => 'http://example.com',
             ],
@@ -110,6 +111,7 @@ final class PayWithCardActionTest extends TestCase
         ];
 
         $response = [
+            'status' => 'pending',
             'result' => 'failed',
             'transactionPaymentUrl' => 'http://example.com',
         ];

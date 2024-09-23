@@ -42,6 +42,7 @@ final class PayHandler
 
         $nextCommand = match (true) {
             $command->blikToken !== null => new PayByBlik($lastPayment->getId(), $command->blikToken),
+            $command->encodedCardData !== null => new PayByCard($lastPayment->getId(), $command->encodedCardData),
             default => throw new UnresolvableNextCommandException('Provided command does not contain a valid payment data.'),
         };
 

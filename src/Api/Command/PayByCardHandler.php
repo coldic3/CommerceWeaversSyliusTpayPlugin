@@ -6,22 +6,22 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class PayByBlikHandler extends AbstractPayByHandler
+final class PayByCardHandler extends AbstractPayByHandler
 {
-    public function __invoke(PayByBlik $command): PayResult
+    public function __invoke(PayByCard $command): PayResult
     {
         $payment = $this->findOr404($command->paymentId);
 
-        $this->setTransactionData($payment, $command->blikToken);
+        $this->setTransactionData($payment, $command->encodedCardData);
         $this->createTransaction($payment);
 
         return $this->createResultFrom($payment);
     }
 
-    private function setTransactionData(PaymentInterface $payment, string $blikToken): void
+    private function setTransactionData(PaymentInterface $payment, string $encodedCardData): void
     {
         $details = $payment->getDetails();
-        $details['tpay']['blik_token'] = $blikToken;
+        $details['tpay']['card'] = $encodedCardData;
         $payment->setDetails($details);
     }
 
@@ -29,6 +29,9 @@ final class PayByBlikHandler extends AbstractPayByHandler
     {
         $details = $payment->getDetails();
 
-        return new PayResult($details['tpay']['status']);
+        return new PayResult(
+            $details['tpay']['status'],
+            $details['tpay']['transaction_payment_url'],
+        );
     }
 }

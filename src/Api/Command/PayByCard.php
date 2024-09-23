@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
-class PayResult
+final class PayByCard
 {
     public function __construct(
-        public readonly string $status,
-        public readonly ?string $transactionPaymentUrl = null,
+        public readonly int $paymentId,
+        public readonly string $encodedCardData,
     ) {
     }
 }

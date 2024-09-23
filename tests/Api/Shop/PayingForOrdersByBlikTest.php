@@ -23,7 +23,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_with_a_valid_blik_token_for_an_order(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
@@ -39,12 +39,12 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $response = $this->client->getResponse();
 
         $this->assertResponseCode($response, Response::HTTP_OK);
-        $this->assertResponse($response, 'shop/paying_for_orders/test_paying_with_a_valid_blik_token_for_an_order');
+        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
     }
 
     public function test_paying_with_a_too_short_blik_token(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
@@ -69,7 +69,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_with_a_too_long_blik_token(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
@@ -94,7 +94,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_without_providing_a_blik_token(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 

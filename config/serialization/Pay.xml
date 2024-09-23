@@ -19,5 +19,8 @@
         <attribute name="blikToken">
             <group>commerce_weavers_tpay:shop:order:pay</group>
         </attribute>
+        <attribute name="encodedCardData">
+            <group>commerce_weavers_tpay:shop:order:pay</group>
+        </attribute>
     </class>
 </serializer>
