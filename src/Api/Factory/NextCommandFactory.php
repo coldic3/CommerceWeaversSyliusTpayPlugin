@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnresolvableNextCommandException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnsupportedNextCommandFactory;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 final class NextCommandFactory implements NextCommandFactoryInterface
@@ -27,9 +28,9 @@ final class NextCommandFactory implements NextCommandFactoryInterface
                 continue;
             }
 
-            $factoredCommand = $nextCommandFactory->create($command, $payment);
-
-            if (null === $factoredCommand) {
+            try {
+                $factoredCommand = $nextCommandFactory->create($command, $payment);
+            } catch (UnsupportedNextCommandFactory) {
                 continue;
             }
 
