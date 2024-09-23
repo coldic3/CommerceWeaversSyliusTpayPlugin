@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use Sylius\Component\Core\Model\PaymentInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 final class PayByBlikHandler extends AbstractPayByHandler
 {
     public function __invoke(PayByBlik $command): PayResult
