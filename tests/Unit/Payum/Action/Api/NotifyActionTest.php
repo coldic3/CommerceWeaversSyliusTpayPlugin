@@ -52,12 +52,21 @@ final class NotifyActionTest extends TestCase
     /**
      * @dataProvider data_provider_it_converts_tpay_notification_status
      */
-    public function test_it_converts_tpay_notification_status(string $status, string $expectedState): void
+    public function test_it_converts_tpay_notification_status(string $status, string $expectedStatus): void
     {
         $this->model->getDetails()->willReturn([]);
         $this->request->getData()->willReturn(new ArrayObject(['tr_status' => $status]));
 
-        $this->model->setDetails(['tpay' => ['status' => $expectedState]])->shouldBeCalled();
+        $this->model->setDetails([
+            'tpay' => [
+                'transaction_id' => null,
+                'result' => null,
+                'status' => $expectedStatus,
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => null,
+            ],
+        ])->shouldBeCalled();
 
         $this->createTestSubject()->execute($this->request->reveal());
     }

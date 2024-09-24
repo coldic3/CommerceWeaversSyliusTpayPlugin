@@ -6,7 +6,6 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Model\OrderLastNewPaymentAwareInterface;
-use CommerceWeavers\SyliusTpayPlugin\TpayPaymentDetails;
 use Payum\Core\Security\CypherInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -18,6 +17,8 @@ final class BlikTokenRequiredValidator extends AbstractPayValidator
     public const BLIK_TOKEN_FIELD_NAME = 'blikToken';
 
     private const TYPE = 'type';
+
+    private const BLIK = 'blik';
 
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
@@ -54,7 +55,7 @@ final class BlikTokenRequiredValidator extends AbstractPayValidator
         /** @var array{type?: string} $config */
         $config = $this->getGatewayConfigFromOrder($order);
 
-        if (!isset($config[self::TYPE]) || TpayPaymentDetails::BLIK !== $config[self::TYPE]) {
+        if (!isset($config[self::TYPE]) || self::BLIK !== $config[self::TYPE]) {
             return;
         }
 

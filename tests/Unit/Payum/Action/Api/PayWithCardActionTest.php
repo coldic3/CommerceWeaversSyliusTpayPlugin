@@ -63,7 +63,7 @@ final class PayWithCardActionTest extends TestCase
         $details = [
             'tpay' => [
                 'card' => 'test-card',
-                'transaction_id' => 12345,
+                'transaction_id' => 'abcd',
             ],
         ];
 
@@ -88,9 +88,12 @@ final class PayWithCardActionTest extends TestCase
 
         $paymentModel->setDetails([
             'tpay' => [
+                'transaction_id' => 'abcd',
+                'result' => 'success',
                 'status' => 'pending',
-                'transaction_id' => 12345,
-                'transaction_payment_url' => 'http://example.com',
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => 'http://example.com',
             ],
         ])->shouldBeCalled();
 
@@ -101,12 +104,14 @@ final class PayWithCardActionTest extends TestCase
 
     public function test_it_marks_a_payment_status_as_failed_once_a_transaction_status_is_failed(): void
     {
+        $this->expectException(HttpRedirect::class);
+
         $request = $this->prophesize(PayWithCard::class);
         $paymentModel = $this->prophesize(PaymentInterface::class);
         $details = [
             'tpay' => [
                 'card' => 'test-card',
-                'transaction_id' => 12345,
+                'transaction_id' => 'abcd',
             ],
         ];
 
@@ -131,8 +136,12 @@ final class PayWithCardActionTest extends TestCase
 
         $paymentModel->setDetails([
             'tpay' => [
-                'transaction_id' => 12345,
-                'status' => PaymentInterface::STATE_FAILED,
+                'transaction_id' => 'abcd',
+                'result' => 'failed',
+                'status' => 'pending',
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => 'http://example.com',
             ],
         ])->shouldBeCalled();
 

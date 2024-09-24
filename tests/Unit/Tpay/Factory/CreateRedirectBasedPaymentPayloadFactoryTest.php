@@ -42,6 +42,7 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
         $order->getNumber()->willReturn('000000001');
 
         $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
         $payment->getOrder()->willReturn($order);
         $payment->getAmount()->willReturn(1050);
 

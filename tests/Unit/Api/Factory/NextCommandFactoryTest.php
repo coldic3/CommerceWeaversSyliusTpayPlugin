@@ -21,7 +21,7 @@ final class NextCommandFactoryTest extends TestCase
         $this->expectException(UnresolvableNextCommandException::class);
         $this->expectExceptionMessage('No valid next command found.');
 
-        $command = new Pay('token');
+        $command = new Pay('token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure');
         $payment = new Payment();
 
         $someFactory = $this->prophesize(NextCommandFactoryInterface::class);
@@ -43,7 +43,7 @@ final class NextCommandFactoryTest extends TestCase
         $this->expectException(UnresolvableNextCommandException::class);
         $this->expectExceptionMessage('Multiple valid next commands found.');
 
-        $command = new Pay('token');
+        $command = new Pay('token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure');
         $payment = new Payment();
 
         $someFactory = $this->prophesize(NextCommandFactoryInterface::class);
@@ -64,7 +64,7 @@ final class NextCommandFactoryTest extends TestCase
 
     public function test_it_returns_a_factored_command(): void
     {
-        $command = new Pay('token');
+        $command = new Pay('token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure');
         $payment = new Payment();
 
         $someFactory = $this->prophesize(NextCommandFactoryInterface::class);

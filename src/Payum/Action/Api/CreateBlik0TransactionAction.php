@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
@@ -37,15 +38,16 @@ final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
+
         $response = $this->api->transactions()->createTransaction(
             $this->createBlik0PaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
-        $details = $model->getDetails();
-        $details['tpay']['transaction_id'] = $response['transactionId'];
-        $details['tpay']['status'] = $response['status'];
+        $paymentDetails->setTransactionId($response['transactionId']);
+        $paymentDetails->setStatus($response['status']);
 
-        $model->setDetails($details);
+        $model->setDetails($paymentDetails->toArray());
     }
 
     public function supports($request): bool

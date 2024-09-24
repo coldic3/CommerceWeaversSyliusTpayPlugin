@@ -22,26 +22,26 @@ final class PayByCardFactoryTest extends TestCase
     {
         $factory = $this->createTestSubject();
 
-        $this->assertFalse($factory->supports(new Pay('token'), $this->createPayment()));
+        $this->assertFalse($factory->supports($this->createCommand(), $this->createPayment()));
     }
 
     public function test_it_does_not_support_a_command_without_a_payment_with_id(): void
     {
         $factory = $this->createTestSubject();
 
-        $this->assertFalse($factory->supports(new Pay('token', encodedCardData: 'card_data'), new Payment()));
+        $this->assertFalse($factory->supports($this->createCommand(encodedCardData: 'card_data'), new Payment()));
     }
 
     public function test_it_supports_a_command_with_an_encoded_card_data(): void
     {
         $factory = $this->createTestSubject();
 
-        $this->assertTrue($factory->supports(new Pay('token', encodedCardData: 'card_data'), $this->createPayment()));
+        $this->assertTrue($factory->supports($this->createCommand(encodedCardData: 'card_data'), $this->createPayment()));
     }
 
     public function test_it_creates_a_pay_by_card_command(): void
     {
-        $command = $this->createTestSubject()->create(new Pay('token', encodedCardData: 'card_data'), $this->createPayment());
+        $command = $this->createTestSubject()->create($this->createCommand(encodedCardData: 'card_data'), $this->createPayment());
 
         $this->assertInstanceOf(PayByCard::class, $command);
         $this->assertSame('card_data', $command->encodedCardData);
@@ -51,7 +51,17 @@ final class PayByCardFactoryTest extends TestCase
     {
         $this->expectException(UnsupportedNextCommandFactory::class);
 
-        $this->createTestSubject()->create(new Pay('token'), new Payment());
+        $this->createTestSubject()->create($this->createCommand(), new Payment());
+    }
+
+    private function createCommand(?string $token = null, ?string $encodedCardData = null): Pay
+    {
+        return new Pay(
+            $token ?? 'token',
+            'https://cw.nonexisting/success',
+            'https://cw.nonexisting/failure',
+            encodedCardData: $encodedCardData,
+        );
     }
 
     private function createPayment(int $id = 1): PaymentInterface

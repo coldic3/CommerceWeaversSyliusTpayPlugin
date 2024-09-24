@@ -36,11 +36,12 @@ final class PayHandler
         }
 
         $lastPayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
-        $this->setPaymentDetails($lastPayment, ['successUrl' => $command->successUrl, 'failureUrl' => $command->failureUrl]);
 
         if (null === $lastPayment) {
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not have a new payment.', $command->orderToken));
         }
+
+        $this->setPaymentDetails($lastPayment, ['successUrl' => $command->successUrl, 'failureUrl' => $command->failureUrl]);
 
         $nextCommand = $this->nextCommandFactory->create($command, $lastPayment);
 

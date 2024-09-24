@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
@@ -20,19 +21,21 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $details = $model->getDetails();
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         /** @var array{tr_status?: string} $notificationData */
         $notificationData = $request->getData();
         $status = $notificationData['tr_status'] ?? '';
 
-        $details['tpay']['status'] = match (true) {
+        $newPaymentStatus = match (true) {
             str_contains($status, 'TRUE') => PaymentInterface::STATE_COMPLETED,
             str_contains($status, 'CHARGEBACK') => PaymentInterface::STATE_REFUNDED,
             default => PaymentInterface::STATE_FAILED,
         };
 
-        $model->setDetails($details);
+        $paymentDetails->setStatus($newPaymentStatus);
+
+        $model->setDetails($paymentDetails->toArray());
     }
 
     public function supports($request): bool

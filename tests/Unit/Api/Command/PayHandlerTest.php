@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayResult;
-use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnresolvableNextCommandException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -45,7 +44,7 @@ final class PayHandlerTest extends TestCase
 
         $this->orderRepository->findOneByTokenValue('token')->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new Pay('token'));
+        $this->createTestSubject()->__invoke($this->createCommand());
     }
 
     public function test_it_throws_an_exception_if_a_payment_cannot_be_found(): void
@@ -57,7 +56,7 @@ final class PayHandlerTest extends TestCase
 
         $this->orderRepository->findOneByTokenValue('token')->willReturn($order);
 
-        $this->createTestSubject()->__invoke(new Pay('token'));
+        $this->createTestSubject()->__invoke($this->createCommand());
     }
 
     public function test_it_executes_pay_by_blik_command_if_a_blik_token_is_passed(): void
@@ -68,6 +67,11 @@ final class PayHandlerTest extends TestCase
         $this->orderRepository->findOneByTokenValue('token')->willReturn($order);
 
         $payment->getId()->willReturn(1);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails([
+            'successUrl' => 'https://cw.nonexisting/success',
+            'failureUrl' => 'https://cw.nonexisting/failure',
+        ])->shouldBeCalled();
 
         $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123'));
 
@@ -82,24 +86,19 @@ final class PayHandlerTest extends TestCase
             ->willReturn($payResultEnvelope)
         ;
 
-        $result = $this->createTestSubject()->__invoke(new Pay('token', '777123'));
+        $result = $this->createTestSubject()->__invoke($this->createCommand(blikToken: '777123'));
 
         $this->assertSame($payResult, $result);
     }
 
-    public function test_it_throws_an_exception_if_a_next_command_cannot_be_resolved(): void
+    private function createCommand(?string $token = null, ?string $blikToken = null): Pay
     {
-        $this->expectException(UnresolvableNextCommandException::class);
-        $this->expectExceptionMessage('Provided command does not contain a valid payment data.');
-
-        $order = $this->prophesize(OrderInterface::class);
-        $order->getLastPayment(PaymentInterface::STATE_NEW)->willReturn($payment = $this->prophesize(PaymentInterface::class));
-
-        $this->orderRepository->findOneByTokenValue('token')->willReturn($order);
-
-        $payment->getId()->willReturn(1);
-
-        $this->createTestSubject()->__invoke(new Pay('token'));
+        return new Pay(
+            $token ?? 'token',
+            'https://cw.nonexisting/success',
+            'https://cw.nonexisting/failure',
+            blikToken: $blikToken,
+        );
     }
 
     private function createTestSubject(): PayHandler
