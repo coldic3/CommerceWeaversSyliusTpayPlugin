@@ -36,6 +36,7 @@ final class PayHandler
         }
 
         $lastPayment = $order->getLastPayment(PaymentInterface::STATE_NEW);
+        $this->setPaymentDetails($lastPayment, ['successUrl' => $command->successUrl, 'failureUrl' => $command->failureUrl]);
 
         if (null === $lastPayment) {
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not have a new payment.', $command->orderToken));
@@ -50,5 +51,13 @@ final class PayHandler
         }
 
         return $nextCommandResult;
+    }
+
+    private function setPaymentDetails(PaymentInterface $payment, array $details): void
+    {
+        $payment->setDetails(array_merge(
+            $payment->getDetails(),
+            $details,
+        ));
     }
 }

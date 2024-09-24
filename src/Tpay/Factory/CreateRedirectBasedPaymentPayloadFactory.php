@@ -11,6 +11,12 @@ use Webmozart\Assert\Assert;
 
 final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBasedPaymentPayloadFactoryInterface
 {
+    private const TPAY_FIELD = 'tpay';
+
+    private const SUCCESS_URL_FIELD = 'successUrl';
+
+    private const FAILURE_URL_FIELD = 'failureUrl';
+
     public function __construct(
         private RouterInterface $router,
         private string $successRoute,
@@ -41,13 +47,35 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
             ],
             'callbacks' => [
                 'payerUrls' => [
-                    'success' => $this->router->generate($this->successRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
-                    'error' => $this->router->generate($this->errorRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'success' => $this->getSuccessUrl($payment, $localeCode),
+                    'error' => $this->getFailureUrl($payment, $localeCode),
                 ],
                 'notification' => [
                     'url' => $notifyUrl,
                 ],
             ],
         ];
+    }
+
+    private function getSuccessUrl(PaymentInterface $payment, string $localeCode): string
+    {
+        $paymentDetails = $payment->getDetails();
+
+        if (!isset($paymentDetails[self::TPAY_FIELD][self::SUCCESS_URL_FIELD])) {
+            return $this->router->generate($this->successRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL);
+        }
+
+        return $paymentDetails[self::TPAY_FIELD][self::SUCCESS_URL_FIELD];
+    }
+
+    private function getFailureUrl(PaymentInterface $payment, string $localeCode): string
+    {
+        $paymentDetails = $payment->getDetails();
+
+        if (!isset($paymentDetails[self::TPAY_FIELD][self::FAILURE_URL_FIELD])) {
+            return $this->router->generate($this->errorRoute, ['_locale' => $localeCode], UrlGeneratorInterface::ABSOLUTE_URL);
+        }
+
+        return $paymentDetails[self::TPAY_FIELD][self::FAILURE_URL_FIELD];
     }
 }

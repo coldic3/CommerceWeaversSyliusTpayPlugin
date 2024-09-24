@@ -34,6 +34,8 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
                 'encodedCardData' => $this->encryptCardData(
                     '2223 0002 8000 0016',
                     new \DateTimeImmutable('2029-12-31'),
@@ -76,8 +78,15 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
 
     public static function data_provider_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen(): iterable
     {
-        yield 'empty content' => [[]];
-        yield 'content with a BLIK token' => [['blikToken' => '777123']];
+        yield 'empty content' => [[
+            'successUrl' => 'https://example.com/success',
+            'failureUrl' => 'https://example.com/failure',
+        ]];
+        yield 'content with a BLIK token' => [[
+            'successUrl' => 'https://example.com/success',
+            'failureUrl' => 'https://example.com/failure',
+            'blikToken' => '777123',
+        ]];
     }
 
     public function test_paying_with_providing_an_empt_card_data(): void
@@ -90,7 +99,11 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
-            content: json_encode(['encodedCardData' => '']),
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'encodedCardData' => '',
+            ]),
         );
 
         $response = $this->client->getResponse();

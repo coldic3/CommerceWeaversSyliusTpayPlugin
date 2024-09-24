@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Model\OrderLastNewPaymentAwareInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay;
+use CommerceWeavers\SyliusTpayPlugin\TpayPaymentDetails;
 use Payum\Core\Security\CypherInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -54,7 +54,7 @@ final class EncodedCardDataRequiredValidator extends AbstractPayValidator
         /** @var array{type?: string} $config */
         $config = $this->getGatewayConfigFromOrder($order);
 
-        if (!isset($config[self::TYPE]) || Tpay::CARD !== $config[self::TYPE]) {
+        if (!isset($config[self::TYPE]) || TpayPaymentDetails::CARD !== $config[self::TYPE]) {
             return;
         }
 
