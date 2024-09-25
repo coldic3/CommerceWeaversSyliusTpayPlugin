@@ -7,10 +7,11 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\Shop;
 use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\EncodedCardData;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\JsonApiTestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\Utils\OrderPlacerTrait;
 
-final class PayingForOrdersByBlikTest extends JsonApiTestCase
+final class PayingForOrdersByCardTest extends JsonApiTestCase
 {
     use OrderPlacerTrait;
 
@@ -23,97 +24,78 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_with_a_valid_blik_token_for_an_order(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
 
-        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
-                'blikToken' => '777123',
+                'encodedCardData' => EncodedCardData::VALID_CARD,
             ]),
         );
 
         $response = $this->client->getResponse();
 
         $this->assertResponseCode($response, Response::HTTP_OK);
-        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
+        $this->assertResponse($response, 'shop/paying_for_orders_by_card/test_paying_with_a_valid_card_for_an_order');
     }
 
-    public function test_paying_with_a_too_short_blik_token(): void
+    /**
+     * @dataProvider data_provider_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen
+     */
+    public function test_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen(array $content): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
 
-        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([
-                'blikToken' => '77712',
-            ]),
+            content: json_encode($content),
         );
 
         $response = $this->client->getResponse();
 
         $this->assertResponseViolations($response, [
             [
-                'propertyPath' => 'blikToken',
-                'message' => 'The BLIK token must have exactly 6 characters.',
+                'propertyPath' => 'encodedCardData',
+                'message' => 'The card data is required.',
             ]
         ]);
     }
 
-    public function test_paying_with_a_too_long_blik_token(): void
+    public static function data_provider_paying_without_a_card_data_when_a_tpay_card_payment_has_been_chosen(): iterable
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
+        yield 'empty content' => [[]];
+        yield 'content with a BLIK token' => [['blikToken' => '777123']];
+    }
 
-        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+    public function test_paying_with_providing_an_empt_card_data(): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([
-                'blikToken' => '7771234',
-            ]),
+            content: json_encode(['encodedCardData' => '']),
         );
 
         $response = $this->client->getResponse();
 
         $this->assertResponseViolations($response, [
             [
-                'propertyPath' => 'blikToken',
-                'message' => 'The BLIK token must have exactly 6 characters.',
+                'propertyPath' => 'encodedCardData',
+                'message' => 'The card data cannot be empty.',
             ]
-        ]);
-    }
-
-    public function test_paying_without_providing_a_blik_token(): void
-    {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
-
-        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
-
-        $this->client->request(
-            Request::METHOD_POST,
-            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([]),
-        );
-
-        $response = $this->client->getResponse();
-
-        $this->assertResponseViolations($response, [
-            [
-                'propertyPath' => 'blikToken',
-                'message' => 'The BLIK token is required.',
-            ]
-        ]);
-    }
+        ]);    }
 
     private function doPlaceOrder(
         string $tokenValue,

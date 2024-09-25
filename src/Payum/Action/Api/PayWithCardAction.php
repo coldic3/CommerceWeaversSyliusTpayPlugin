@@ -27,6 +27,7 @@ class PayWithCardAction extends BaseApiAwareAction
         ], $details['tpay']['transaction_id']);
 
         unset($details['tpay']['card']);
+        $details['tpay']['status'] = $response['status'];
 
         if ('failed' === $response['result']) {
             $details['tpay']['status'] = PaymentInterface::STATE_FAILED;

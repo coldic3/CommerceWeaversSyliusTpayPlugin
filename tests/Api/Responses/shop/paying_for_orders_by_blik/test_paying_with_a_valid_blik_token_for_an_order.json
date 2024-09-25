@@ -2,7 +2,8 @@
   "@context": {
     "@vocab": "http://localhost/api/v2/docs.jsonld#",
     "hydra": "http://www.w3.org/ns/hydra/core#",
-    "status": "PayResult/status"
+    "status": "PayResult/status",
+    "transactionPaymentUrl": "PayResult/transactionPaymentUrl"
   },
   "@type": "PayResult",
   "@id": "/api/v2/.well-known/genid/@string@",

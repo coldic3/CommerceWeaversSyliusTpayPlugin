@@ -19,5 +19,8 @@
         <attribute name="status">
             <group>commerce_weavers_tpay:shop:order:pay_result</group>
         </attribute>
+        <attribute name="transactionPaymentUrl">
+            <group>commerce_weavers_tpay:shop:order:pay_result</group>
+        </attribute>
     </class>
 </serializer>

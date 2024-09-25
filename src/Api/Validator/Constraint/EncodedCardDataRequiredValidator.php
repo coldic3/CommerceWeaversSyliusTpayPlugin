@@ -13,9 +13,9 @@ use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-final class BlikTokenRequiredValidator extends AbstractPayValidator
+final class EncodedCardDataRequiredValidator extends AbstractPayValidator
 {
-    public const BLIK_TOKEN_FIELD_NAME = 'blikToken';
+    public const ENCODED_CARD_DATA_FIELD_NAME = 'encodedCardData';
 
     private const TYPE = 'type';
 
@@ -36,11 +36,11 @@ final class BlikTokenRequiredValidator extends AbstractPayValidator
             throw new UnexpectedValueException($value, OrderInterface::class);
         }
 
-        if (!is_a($constraint, BlikTokenRequired::class)) {
+        if (!is_a($constraint, EncodedCardDataRequired::class)) {
             throw new UnexpectedValueException($constraint, BlikTokenRequired::class);
         }
 
-        if (null !== $value->blikToken) {
+        if (null !== $value->encodedCardData) {
             return;
         }
 
@@ -54,13 +54,13 @@ final class BlikTokenRequiredValidator extends AbstractPayValidator
         /** @var array{type?: string} $config */
         $config = $this->getGatewayConfigFromOrder($order);
 
-        if (!isset($config[self::TYPE]) || Tpay::BLIK !== $config[self::TYPE]) {
+        if (!isset($config[self::TYPE]) || Tpay::CARD !== $config[self::TYPE]) {
             return;
         }
 
         $this->context->buildViolation($constraint->message)
-            ->atPath(self::BLIK_TOKEN_FIELD_NAME)
-            ->setCode($constraint::BLIK_TOKEN_REQUIRED_ERROR)
+            ->atPath(self::ENCODED_CARD_DATA_FIELD_NAME)
+            ->setCode($constraint::ENCODED_CARD_DATA_REQUIRED_ERROR)
             ->addViolation()
         ;
     }
