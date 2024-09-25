@@ -1,0 +1,6 @@
+commerce_weavers_sylius_tpay:
+    shop:
+        pay:
+            blik:
+                length: 'The BLIK token must have exactly {{ limit }} characters.'
+                required: 'The BLIK token is required.'

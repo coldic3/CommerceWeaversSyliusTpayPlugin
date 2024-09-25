@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInter
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
 use Payum\Core\GatewayInterface;
+use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
@@ -130,6 +132,66 @@ final class CreateBlik0TransactionActionTest extends TestCase
             ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_tries_to_determine_a_gateway_name_by_model_once_token_is_not_present(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn(null);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'transactionId' => 'tr4ns4ct!0n_id',
+            'status' => 'correct',
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $payment->setDetails([
+            'tpay' => [
+                'transaction_id' => 'tr4ns4ct!0n_id',
+                'status' => 'correct',
+            ],
+        ])->shouldBeCalled();
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlik0PaymentPayloadFactory
+            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_throws_an_exception_when_a_gateway_name_cannot_be_determined(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot determine gateway name for a given payment');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($this->prophesize(PaymentInterface::class)->reveal());
+        $request->getToken()->willReturn(null);
 
         $this->createTestSubject()->execute($request->reveal());
     }

@@ -12,7 +12,6 @@ use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
 final class CreateCardTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
 {
@@ -33,11 +32,10 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $token = $request->getToken();
-        Assert::notNull($token);
+        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
 
         $localeCode = $this->getLocaleCodeFrom($model);
-        $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
+        $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
         $response = $this->api->transactions()->createTransaction(
             $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
@@ -49,7 +47,7 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
 
         $model->setDetails($details);
 
-        $this->gateway->execute(new PayWithCard($token));
+        $this->gateway->execute(new PayWithCard($request->getToken() ?? $model));
     }
 
     public function supports($request): bool

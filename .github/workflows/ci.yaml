@@ -88,6 +88,11 @@ jobs:
 
             -   name: Run tests (Unit)
                 run: vendor/bin/phpunit --testsuite unit
+                
+            -   name: Run tests (API)
+                env:
+                    TPAY_API_URL: 'http://localhost:4000'
+                run: vendor/bin/phpunit --testsuite api
 
             -   name: Run tests (E2E)
                 env:

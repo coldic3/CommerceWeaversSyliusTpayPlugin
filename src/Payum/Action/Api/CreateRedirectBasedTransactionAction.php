@@ -10,7 +10,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayl
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
 class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionAction
 {
@@ -30,11 +29,10 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $token = $request->getToken();
-        Assert::notNull($token);
+        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
 
         $localeCode = $this->getLocaleCodeFrom($model);
-        $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
+        $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
         $response = $this->api->transactions()->createTransaction(
             $this->createRedirectBasedPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
