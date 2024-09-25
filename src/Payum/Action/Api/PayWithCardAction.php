@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use Payum\Core\Reply\HttpRedirect;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
 class PayWithCardAction extends BaseApiAwareAction
 {
@@ -17,31 +19,28 @@ class PayWithCardAction extends BaseApiAwareAction
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $details = $model->getDetails();
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
+
+        Assert::notNull($paymentDetails->getEncodedCardData(), 'Card data is required to pay with card.');
+        Assert::notNull($paymentDetails->getTransactionId(), 'Transaction ID is required to pay with card.');
 
         $response = $this->api->transactions()->createPaymentByTransactionId([
             'groupId' => 103,
             'cardPaymentData' => [
-                'card' => $details['tpay']['card'],
+                'card' => $paymentDetails->getEncodedCardData(),
             ],
-        ], $details['tpay']['transaction_id']);
+        ], $paymentDetails->getTransactionId());
 
-        unset($details['tpay']['card']);
-        $details['tpay']['status'] = $response['status'];
+        $paymentDetails->clearSensitiveData();
+        $paymentDetails->setResult($response['result']);
+        $paymentDetails->setStatus($response['status']);
+        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
-        if ('failed' === $response['result']) {
-            $details['tpay']['status'] = PaymentInterface::STATE_FAILED;
+        $model->setDetails($paymentDetails->toArray());
+
+        if ($paymentDetails->getPaymentUrl() !== null) {
+            throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }
-
-        if ('success' === $response['result'] && 'pending' === $response['status']) {
-            $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
-
-            $model->setDetails($details);
-
-            throw new HttpRedirect($details['tpay']['transaction_payment_url']);
-        }
-
-        $model->setDetails($details);
     }
 
     public function supports($request): bool

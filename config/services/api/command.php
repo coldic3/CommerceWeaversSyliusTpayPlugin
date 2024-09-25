@@ -15,6 +15,7 @@ return function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_tpay.api.command.pay_handler', PayHandler::class)
         ->args([
             service('sylius.repository.order'),
+            service('commerce_weavers_tpay.api.factory.next_command'),
             service('sylius.command_bus'),
         ])
         ->tag('messenger.message_handler')

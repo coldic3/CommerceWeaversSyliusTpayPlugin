@@ -128,7 +128,11 @@ final class CreateCardTransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
-                'transaction_payment_url' => 'https://tpay.org/pay',
+                'result' => null,
+                'status' => null,
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => 'https://tpay.org/pay',
             ],
         ])->shouldBeCalled();
 
@@ -180,7 +184,11 @@ final class CreateCardTransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
-                'transaction_payment_url' => 'https://tpay.org/pay',
+                'result' => null,
+                'status' => null,
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => 'https://tpay.org/pay',
             ],
         ])->shouldBeCalled();
 

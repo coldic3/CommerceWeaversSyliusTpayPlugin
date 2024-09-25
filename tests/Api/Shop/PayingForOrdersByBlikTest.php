@@ -32,6 +32,8 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
                 'blikToken' => '777123',
             ]),
         );
@@ -53,6 +55,8 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
                 'blikToken' => '77712',
             ]),
         );
@@ -78,6 +82,8 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
                 'blikToken' => '7771234',
             ]),
         );
@@ -102,7 +108,10 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
             server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([]),
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+            ]),
         );
 
         $response = $this->client->getResponse();

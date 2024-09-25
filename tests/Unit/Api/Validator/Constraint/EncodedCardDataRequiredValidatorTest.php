@@ -54,12 +54,18 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
     {
         $this->expectException(UnexpectedValueException::class);
 
-        $this->validator->validate(new Pay('order_token', '777123'), $this->prophesize(Constraint::class)->reveal());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure', '777123'),
+            $this->prophesize(Constraint::class)->reveal(),
+        );
     }
 
     public function test_it_does_not_validate_if_encoded_card_data_is_provided(): void
     {
-        $this->validator->validate(new Pay('order_token', encodedCardData: 'encoded_card_data'), new EncodedCardDataRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure', encodedCardData: 'encoded_card_data'),
+            new EncodedCardDataRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -68,7 +74,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
     {
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn(null);
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->assertNoViolation();
     }
@@ -79,7 +85,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->assertNoViolation();
     }
@@ -93,7 +99,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->assertNoViolation();
     }
@@ -110,7 +116,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->assertNoViolation();
     }
@@ -133,7 +139,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
     }
 
     public function test_it_does_not_validate_if_gateway_config_type_is_not_card(): void
@@ -152,7 +158,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->assertNoViolation();
     }
@@ -173,7 +179,7 @@ final class EncodedCardDataRequiredValidatorTest extends ConstraintValidatorTest
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token'), new EncodedCardDataRequired());
+        $this->validator->validate(new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'), new EncodedCardDataRequired());
 
         $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.encoded_card_data.required')
             ->atPath('property.path.encodedCardData')

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Webmozart\Assert\Assert;
 
 #[AsMessageHandler]
 final class PayByCardHandler extends AbstractPayByHandler
@@ -22,18 +24,22 @@ final class PayByCardHandler extends AbstractPayByHandler
 
     private function setTransactionData(PaymentInterface $payment, string $encodedCardData): void
     {
-        $details = $payment->getDetails();
-        $details['tpay']['card'] = $encodedCardData;
-        $payment->setDetails($details);
+        $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
+        $paymentDetails->setEncodedCardData($encodedCardData);
+
+        $payment->setDetails($paymentDetails->toArray());
     }
 
     private function createResultFrom(PaymentInterface $payment): PayResult
     {
-        $details = $payment->getDetails();
+        $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
+
+        Assert::notNull($paymentDetails->getStatus(), 'Payment status is required to create a result.');
+        Assert::notNull($paymentDetails->getPaymentUrl(), 'Payment URL is required to create a result.');
 
         return new PayResult(
-            $details['tpay']['status'],
-            $details['tpay']['transaction_payment_url'],
+            $paymentDetails->getStatus(),
+            $paymentDetails->getPaymentUrl(),
         );
     }
 }

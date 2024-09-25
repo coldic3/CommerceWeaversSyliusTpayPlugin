@@ -122,7 +122,11 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
+                'result' => null,
                 'status' => 'correct',
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => null,
             ],
         ])->shouldBeCalled();
 
@@ -170,7 +174,11 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
+                'result' => null,
                 'status' => 'correct',
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => null,
             ],
         ])->shouldBeCalled();
 

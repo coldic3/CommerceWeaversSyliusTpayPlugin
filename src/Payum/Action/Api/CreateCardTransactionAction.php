@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
@@ -37,15 +38,16 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
+
         $response = $this->api->transactions()->createTransaction(
             $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
-        $details = $model->getDetails();
-        $details['tpay']['transaction_id'] = $response['transactionId'];
-        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
+        $paymentDetails->setTransactionId($response['transactionId']);
+        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
-        $model->setDetails($details);
+        $model->setDetails($paymentDetails->toArray());
 
         $this->gateway->execute(new PayWithCard($request->getToken() ?? $model));
     }

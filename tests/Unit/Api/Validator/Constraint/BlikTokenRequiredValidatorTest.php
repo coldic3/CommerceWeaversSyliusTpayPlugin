@@ -54,12 +54,18 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
     {
         $this->expectException(UnexpectedValueException::class);
 
-        $this->validator->validate(new Pay('order_token', '777123'), $this->prophesize(Constraint::class)->reveal());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure', '777123'),
+            $this->prophesize(Constraint::class)->reveal(),
+        );
     }
 
     public function test_it_does_not_validate_if_blik_token_is_provided(): void
     {
-        $this->validator->validate(new Pay('order_token', '777123'), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure', '777123'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -68,7 +74,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
     {
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn(null);
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -79,7 +88,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -93,7 +105,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -110,7 +125,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -133,7 +151,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
     }
 
     public function test_it_does_not_validate_if_gateway_config_type_is_not_blik(): void
@@ -152,7 +173,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->assertNoViolation();
     }
@@ -173,7 +197,10 @@ final class BlikTokenRequiredValidatorTest extends ConstraintValidatorTestCase
 
         $this->orderRepository->findOneByTokenValue('order_token')->willReturn($order->reveal());
 
-        $this->validator->validate(new Pay('order_token', null), new BlikTokenRequired());
+        $this->validator->validate(
+            new Pay('order_token', 'https://cw.nonexisting/success', 'https://cw.nonexisting/failure'),
+            new BlikTokenRequired(),
+        );
 
         $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.blik.required')
             ->atPath('property.path.blikToken')

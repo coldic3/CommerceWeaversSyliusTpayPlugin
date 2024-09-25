@@ -73,7 +73,16 @@ final class PayByBlikHandlerTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
-        $payment->setDetails(['tpay' => ['blik_token' => '777123']])->shouldBeCalled();
+        $payment->setDetails([
+            'tpay' => [
+                'transaction_id' => null,
+                'result' => null,
+                'status' => null,
+                'blik_token' => '777123',
+                'card' => null,
+                'payment_url' => null,
+            ],
+        ])->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
