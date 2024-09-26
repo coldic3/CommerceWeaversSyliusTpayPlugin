@@ -8,6 +8,8 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayl
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
@@ -23,6 +25,8 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Checksu
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifier;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
@@ -95,5 +99,19 @@ return function(ContainerConfigurator $container): void {
             service('commerce_weavers_tpay.tpay.security.notification.factory.x509'),
         ])
         ->alias(SignatureVerifierInterface::class, 'commerce_weavers_tpay.security.notification.verifier.signature')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.factory.create_pay_by_link_payment_payload', CreatePayByLinkPayloadFactory::class)
+        ->args([
+            service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
+        ])
+        ->alias(CreatePayByLinkPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_pay_by_link_payment_payload')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.provider.tpay_api_bank_list', TpayApiBankListProvider::class)
+        ->args([
+            service('payum')
+        ])
+        ->alias(TpayApiBankListProviderInterface::class, 'commerce_weavers_tpay.provider.tpay_api_bank_list')
     ;
 };
