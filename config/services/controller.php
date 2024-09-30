@@ -25,6 +25,7 @@ return function(ContainerConfigurator $container): void {
         ->args([
             service('payum'),
             service('commerce_weavers.tpay.payum.factory.notify'),
+            service('commerce_weavers_tpay.payum.factory.notify_data'),
         ])
         ->tag('controller.service_arguments')
     ;

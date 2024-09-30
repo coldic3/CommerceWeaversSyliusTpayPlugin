@@ -6,11 +6,11 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify\NotifyData;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\Sync;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -51,15 +51,15 @@ final class NotifyActionTest extends TestCase
         $action = $this->createTestSubject();
 
         $this->assertFalse($action->supports(new Sync($this->model->reveal())));
-        $this->assertTrue($action->supports(new Notify($this->model->reveal(), new ArrayObject())));
+        $this->assertTrue($action->supports(new Notify($this->model->reveal(), $this->createNotifyDataObject())));
     }
 
     public function test_it_supports_only_payment_interface_based_models(): void
     {
         $action = $this->createTestSubject();
 
-        $this->assertFalse($action->supports(new Notify(new \stdClass(), new ArrayObject())));
-        $this->assertTrue($action->supports(new Notify($this->model->reveal(), new ArrayObject())));
+        $this->assertFalse($action->supports(new Notify(new \stdClass(), $this->createNotifyDataObject())));
+        $this->assertTrue($action->supports(new Notify($this->model->reveal(), $this->createNotifyDataObject())));
     }
 
     /**
@@ -67,13 +67,13 @@ final class NotifyActionTest extends TestCase
      */
     public function test_it_converts_tpay_notification_status(string $status, string $expectedStatus): void
     {
-        $this->request->getData()->willReturn(new ArrayObject([
-            'jws' => 'jws',
-            'request_data' => [
+        $this->request->getData()->willReturn(new NotifyData(
+            'jws',
+            'content',
+            [
                 'tr_status' => $status,
             ],
-            'request_content' => 'content',
-        ]));
+        ));
 
         $this->api->getNotificationSecretCode()->willReturn('merchant_code');
 
@@ -103,6 +103,11 @@ final class NotifyActionTest extends TestCase
         yield 'status containing the `TRUE` word' => ['TRUE', PaymentInterface::STATE_COMPLETED];
         yield 'status containing the other than `TRUE` word' => ['FALSE', PaymentInterface::STATE_FAILED];
         yield 'status containing the `CHARGEBACK` word' => ['CHARGEBACK', PaymentInterface::STATE_REFUNDED];
+    }
+
+    private function createNotifyDataObject(string $jws = 'jws', string $content = 'content', array $parameters = []): NotifyData
+    {
+        return new NotifyData($jws, $content, $parameters);
     }
 
     private function createTestSubject(): NotifyAction

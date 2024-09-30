@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Controller;
 
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyDataFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyFactoryInterface;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Payum;
 use Payum\Core\Reply\HttpResponse;
@@ -19,6 +19,7 @@ final class PaymentNotificationAction
     public function __construct(
         private readonly Payum $payum,
         private readonly NotifyFactoryInterface $notifyFactory,
+        private readonly NotifyDataFactoryInterface $notifyDataFactory,
     ) {
     }
 
@@ -27,13 +28,19 @@ final class PaymentNotificationAction
         $token = $this->getHttpRequestVerifier()->verify($request);
         $gateway = $this->getGateway($token->getGatewayName());
 
+        /** @var string $signature */
+        $signature = $request->headers->get('x-jws-signature');
+
+        /** @var string $content */
+        $content = $request->getContent();
+
         $notify = $this->notifyFactory->createNewWithModel(
             $token,
-            new ArrayObject([
-                'jws' => $request->headers->get('x-jws-signature'),
-                'request_data' => $request->request->all(),
-                'request_content' => $request->getContent(),
-            ]),
+            $this->notifyDataFactory->create(
+                $signature,
+                $content,
+                $request->request->all(),
+            ),
         );
 
         try {

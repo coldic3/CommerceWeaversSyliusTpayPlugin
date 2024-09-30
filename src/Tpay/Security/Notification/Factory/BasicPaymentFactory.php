@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Tpay\OpenApi\Model\Fields\Field;
 use Tpay\OpenApi\Utilities\Util;
 use tpaySDK\Model\Objects\NotificationBody\BasicPayment;
 
@@ -22,8 +24,17 @@ final class BasicPaymentFactory implements BasicPaymentFactoryInterface
 
     private function setPaymentData(BasicPayment $paymentData, string $key, mixed $value): void
     {
+        if (!is_string($value)) {
+            return;
+        }
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+        /** @var Field $field */
+        $field = $propertyAccessor->getValue($paymentData, $key);
+
         if (property_exists($paymentData, $key)) {
-            $paymentData->{$key} = Util::cast($value, $paymentData->{$key}->getType());
+            $propertyAccessor->setValue($paymentData, $key, Util::cast($value, $field->getType()));
         }
     }
 }

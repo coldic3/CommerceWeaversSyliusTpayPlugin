@@ -2,6 +2,7 @@ parameters:
     level: max
     reportUnmatchedIgnoredErrors: false
     checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false
     paths:
         - src
 

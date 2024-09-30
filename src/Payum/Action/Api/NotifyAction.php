@@ -35,15 +35,14 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
         $model = $request->getModel();
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        /** @var array{jws: string, request_data: array<string, mixed>, request_content: string} $requestData */
         $requestData = $request->getData();
 
-        $paymentData = $this->basicPaymentFactory->createFromArray($requestData['request_data']);
+        $paymentData = $this->basicPaymentFactory->createFromArray($requestData->requestParameters);
         $isChecksumValid = $this->checksumVerifier->verify(
             $paymentData,
             $this->api->getNotificationSecretCode() ?? throw new \RuntimeException('Notification secret code is not set'),
         );
-        $isSignatureValid = $this->signatureVerifier->verify($requestData['jws'], $requestData['request_content']);
+        $isSignatureValid = $this->signatureVerifier->verify($requestData->jws, $requestData->requestContent);
 
         if (!$isChecksumValid || !$isSignatureValid) {
             throw new HttpResponse('FALSE - Invalid checksum or signature', 400);

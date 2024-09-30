@@ -29,7 +29,8 @@ final class SignatureVerifier implements SignatureVerifierInterface
             throw new InvalidSignatureException('Invalid JWS format');
         }
 
-        $headersJson = base64_decode(strtr($headers, '-_', '+/'));
+        /** @var string $headersJson */
+        $headersJson = base64_decode(strtr($headers, '-_', '+/'), true);
 
         /** @var array $headersData */
         $headersData = json_decode($headersJson, true);
@@ -48,12 +49,12 @@ final class SignatureVerifier implements SignatureVerifierInterface
         $x509->loadX509($certificate);
         $x509->loadCA($trusted);
 
-        if (!$x509->validateSignature()) {
+        if (true !== $x509->validateSignature()) {
             return false;
         }
 
         $payload = str_replace('=', '', strtr(base64_encode($requestContent), '+/', '-_'));
-        $decodedSignature = base64_decode(strtr($signature, '-_', '+/'));
+        $decodedSignature = base64_decode(strtr($signature, '-_', '+/'), true);
         $publicKey = $x509->getPublicKey();
         $publicKey = $x509->withSettings($publicKey, 'sha256', RSA::SIGNATURE_PKCS1);
 
