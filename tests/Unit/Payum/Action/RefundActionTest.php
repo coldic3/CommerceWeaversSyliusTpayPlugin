@@ -6,13 +6,13 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\RefundCannotBeMadeException;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Request\Refund;
 use Payum\Core\Request\Sync;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class RefundActionTest extends TestCase

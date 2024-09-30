@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 final class PaymentNotificationAction
 {
     public function __construct(
-        private Payum $payum,
-        private NotifyFactoryInterface $notifyFactory,
+        private readonly Payum $payum,
+        private readonly NotifyFactoryInterface $notifyFactory,
     ) {
     }
 
@@ -27,14 +27,21 @@ final class PaymentNotificationAction
         $token = $this->getHttpRequestVerifier()->verify($request);
         $gateway = $this->getGateway($token->getGatewayName());
 
-        $notify = $this->notifyFactory->createNewWithModel($token, new ArrayObject($request->request->all()));
+        $notify = $this->notifyFactory->createNewWithModel(
+            $token,
+            new ArrayObject([
+                'jws' => $request->headers->get('x-jws-signature'),
+                'request_data' => $request->request->all(),
+                'request_content' => $request->getContent(),
+            ]),
+        );
 
         try {
             $gateway->execute($notify);
 
             return new Response('TRUE');
         } catch (HttpResponse $reply) {
-            return new Response((string) $reply->getCode(), $reply->getStatusCode(), $reply->getHeaders());
+            return new Response($reply->getContent(), $reply->getStatusCode(), $reply->getHeaders());
         } catch (ReplyInterface $reply) {
             throw new \LogicException('Unsupported reply', previous: $reply);
         }

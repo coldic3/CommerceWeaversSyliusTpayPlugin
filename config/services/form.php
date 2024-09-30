@@ -7,7 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyPasswordFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCardType;
@@ -26,7 +26,7 @@ return function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_tpay.form.event_listener.decrypt_gateway_config'),
             service('commerce_weavers_tpay.form.event_listener.encrypt_gateway_config'),
-            service('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret'),
+            service('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_password_fields'),
         ])
         ->tag(
             'sylius.gateway_configuration_type',
@@ -65,7 +65,7 @@ return function(ContainerConfigurator $container): void {
         ])
     ;
 
-    $services->set('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_client_secret', PreventSavingEmptyClientSecretListener::class);
+    $services->set('commerce_weavers_tpay.form.event_listener.prevent_saving_empty_password_fields', PreventSavingEmptyPasswordFieldsListener::class);
 
     $services->set('commerce_weavers_tpay.form.event_listener.remove_unnecessary_payment_details_fields', RemoveUnnecessaryPaymentDetailsFieldsListener::class);
 };

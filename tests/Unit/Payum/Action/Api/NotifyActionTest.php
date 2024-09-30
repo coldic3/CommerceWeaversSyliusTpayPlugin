@@ -6,13 +6,17 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\Sync;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tpay\OpenApi\Api\TpayApi;
+use tpaySDK\Model\Objects\NotificationBody\BasicPayment;
 
 final class NotifyActionTest extends TestCase
 {
@@ -24,11 +28,20 @@ final class NotifyActionTest extends TestCase
 
     private TpayApi|ObjectProphecy $api;
 
+    private BasicPaymentFactoryInterface|ObjectProphecy $basicPaymentFactory;
+
+    private ChecksumVerifierInterface|ObjectProphecy $checksumVerifier;
+
+    private SignatureVerifierInterface|ObjectProphecy $signatureVerifier;
+
     protected function setUp(): void
     {
         $this->request = $this->prophesize(Notify::class);
         $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
+        $this->basicPaymentFactory = $this->prophesize(BasicPaymentFactoryInterface::class);
+        $this->checksumVerifier = $this->prophesize(ChecksumVerifierInterface::class);
+        $this->signatureVerifier = $this->prophesize(SignatureVerifierInterface::class);
 
         $this->request->getModel()->willReturn($this->model->reveal());
     }
@@ -54,9 +67,23 @@ final class NotifyActionTest extends TestCase
      */
     public function test_it_converts_tpay_notification_status(string $status, string $expectedStatus): void
     {
-        $this->model->getDetails()->willReturn([]);
-        $this->request->getData()->willReturn(new ArrayObject(['tr_status' => $status]));
+        $this->request->getData()->willReturn(new ArrayObject([
+            'jws' => 'jws',
+            'request_data' => [
+                'tr_status' => $status,
+            ],
+            'request_content' => 'content',
+        ]));
 
+        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
+
+        $this->basicPaymentFactory->createFromArray(['tr_status' => $status])->willReturn($basicPayment = new BasicPayment());
+        $basicPayment->tr_status = $status;
+
+        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
+        $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
+
+        $this->model->getDetails()->willReturn([]);
         $this->model->setDetails([
             'tpay' => [
                 'transaction_id' => null,
@@ -80,7 +107,11 @@ final class NotifyActionTest extends TestCase
 
     private function createTestSubject(): NotifyAction
     {
-        $action = new NotifyAction();
+        $action = new NotifyAction(
+            $this->basicPaymentFactory->reveal(),
+            $this->checksumVerifier->reveal(),
+            $this->signatureVerifier->reveal(),
+        );
 
         $action->setApi($this->api->reveal());
 

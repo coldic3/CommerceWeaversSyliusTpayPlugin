@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Factory;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
-use Tpay\OpenApi\Api\TpayApi;
 
 class TpayGatewayFactory extends GatewayFactory
 {
@@ -20,16 +20,17 @@ class TpayGatewayFactory extends GatewayFactory
         ]);
 
         $config['payum.api'] = function (ArrayObject $config): TpayApi {
-            /** @var array{client_id?: string, client_secret?: string, production_mode?: bool} $config */
+            /** @var array{client_id?: string, client_secret?: string, production_mode?: bool, notification_security_code?: string} $config */
             $clientId = $config['client_id'] ?? null;
             $clientSecret = $config['client_secret'] ?? null;
             $productionMode = $config['production_mode'] ?? false;
+            $notificationSecretCode = $config['notification_security_code'] ?? null;
 
             if (null === $clientId || null === $clientSecret) {
                 throw new \InvalidArgumentException('Tpay ClientId and ClientSecret are required.');
             }
 
-            return new TpayApi($clientId, $clientSecret, $productionMode);
+            return new TpayApi($clientId, $clientSecret, $productionMode, notificationSecretCode: $notificationSecretCode);
         };
     }
 }

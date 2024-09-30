@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransac
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\Capture;
@@ -19,7 +20,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class CreateRedirectBasedTransactionActionTest extends TestCase

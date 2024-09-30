@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\EventListener;
 use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
-final class PreventSavingEmptyClientSecretListener
+final class PreventSavingEmptyPasswordFieldsListener
 {
     public function __invoke(PreSubmitEvent $preSubmitEvent): void
     {
@@ -22,6 +22,18 @@ final class PreventSavingEmptyClientSecretListener
                 PasswordType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
+                    'mapped' => false,
+                ],
+            );
+        }
+
+        if (!isset($data['notification_security_code']) || '' === $data['notification_security_code']) {
+            $form->remove('notification_security_code');
+            $form->add(
+                'notification_security_code',
+                PasswordType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.notification_security_code',
                     'mapped' => false,
                 ],
             );

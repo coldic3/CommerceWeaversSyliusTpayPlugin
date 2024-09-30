@@ -6,6 +6,7 @@ commerce_weavers_sylius_tpay:
             client_id: 'Client ID'
             client_secret: 'Client secret'
             production_mode: 'Production mode'
+            notification_security_code: 'Notification security code'
             type:
                 blik: 'BLIK'
                 card: 'Card (on-site)'

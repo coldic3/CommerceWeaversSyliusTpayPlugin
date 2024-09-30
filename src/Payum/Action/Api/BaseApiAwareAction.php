@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\ApiAwareTrait;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Utilities\Logger;
 
 /**

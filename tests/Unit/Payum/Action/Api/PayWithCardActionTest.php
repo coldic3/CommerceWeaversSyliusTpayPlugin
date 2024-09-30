@@ -6,12 +6,12 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Reply\HttpRedirect;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class PayWithCardActionTest extends TestCase
