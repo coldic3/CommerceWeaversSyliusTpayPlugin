@@ -13,6 +13,8 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayl
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509Factory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509FactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CachedCertificateResolver;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CachedTrustedCertificateResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CertificateResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CertificateResolverInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\TrustedCertificateResolver;
@@ -60,8 +62,26 @@ return function(ContainerConfigurator $container): void {
         ->alias(CertificateResolverInterface::class, 'commerce_weavers_tpay.security.notification.resolver.certificate')
     ;
 
+    $services->set('commerce_weavers_tpay.tpay.security.notification.resolver.cached_certificate', CachedCertificateResolver::class)
+        ->decorate('commerce_weavers_tpay.tpay.security.notification.resolver.certificate')
+        ->args([
+            service('cache.app'),
+            service('.inner'),
+            param('commerce_weavers_tpay.certificate.cache_ttl_in_seconds'),
+        ])
+    ;
+
     $services->set('commerce_weavers_tpay.tpay.security.notification.resolver.trusted_certificate', TrustedCertificateResolver::class)
         ->alias(TrustedCertificateResolverInterface::class, 'commerce_weavers_tpay.security.notification.resolver.trusted_certificate')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.security.notification.resolver.cached_trusted_certificate', CachedTrustedCertificateResolver::class)
+        ->decorate('commerce_weavers_tpay.tpay.security.notification.resolver.trusted_certificate')
+        ->args([
+            service('cache.app'),
+            service('.inner'),
+            param('commerce_weavers_tpay.certificate.cache_ttl_in_seconds'),
+        ])
     ;
 
     $services->set('commerce_weavers_tpay.tpay.security.notification.verifier.checksum', ChecksumVerifier::class)
