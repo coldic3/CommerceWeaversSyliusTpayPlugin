@@ -11,6 +11,7 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPay
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
+use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Request\Sync;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -94,6 +95,54 @@ final class NotifyActionTest extends TestCase
                 'payment_url' => null,
             ],
         ])->shouldBeCalled();
+
+        $this->createTestSubject()->execute($this->request->reveal());
+    }
+
+    public function test_it_throws_false_http_reply_when_checksum_is_invalid(): void
+    {
+        $this->model->getDetails()->willReturn([]);
+        $this->request->getData()->willReturn(new NotifyData(
+            'jws',
+            'content',
+            [
+                'tr_status' => 'TRUE',
+            ],
+        ));
+
+        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
+
+        $this->basicPaymentFactory->createFromArray(['tr_status' => 'TRUE'])->willReturn($basicPayment = new BasicPayment());
+        $basicPayment->tr_status = 'TRUE';
+
+        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(false);
+        $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
+
+        $this->expectException(HttpResponse::class);
+
+        $this->createTestSubject()->execute($this->request->reveal());
+    }
+
+    public function test_it_throws_false_http_reply_when_signature_is_invalid(): void
+    {
+        $this->model->getDetails()->willReturn([]);
+        $this->request->getData()->willReturn(new NotifyData(
+            'jws',
+            'content',
+            [
+                'tr_status' => 'TRUE',
+            ],
+        ));
+
+        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
+
+        $this->basicPaymentFactory->createFromArray(['tr_status' => 'TRUE'])->willReturn($basicPayment = new BasicPayment());
+        $basicPayment->tr_status = 'TRUE';
+
+        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
+        $this->signatureVerifier->verify('jws', 'content')->willReturn(false);
+
+        $this->expectException(HttpResponse::class);
 
         $this->createTestSubject()->execute($this->request->reveal());
     }

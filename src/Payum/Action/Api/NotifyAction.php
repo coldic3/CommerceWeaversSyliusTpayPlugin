@@ -44,8 +44,12 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
         );
         $isSignatureValid = $this->signatureVerifier->verify($requestData->jws, $requestData->requestContent);
 
-        if (!$isChecksumValid || !$isSignatureValid) {
-            throw new HttpResponse('FALSE - Invalid checksum or signature', 400);
+        if (!$isChecksumValid) {
+            throw new HttpResponse('FALSE - Invalid checksum', 400);
+        }
+
+        if (!$isSignatureValid) {
+            throw new HttpResponse('FALSE - Invalid signature', 400);
         }
 
         /** @var string $status */
