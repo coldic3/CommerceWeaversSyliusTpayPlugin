@@ -58,10 +58,6 @@ final class SignatureVerifier implements SignatureVerifierInterface
         $publicKey = $x509->getPublicKey();
         $publicKey = $x509->withSettings($publicKey, 'sha256', RSA::SIGNATURE_PKCS1);
 
-        if (!$publicKey->verify($headers . '.' . $payload, $decodedSignature)) {
-            return false;
-        }
-
-        return true;
+        return $publicKey->verify(sprintf('%s.%s', $headers, $payload), $decodedSignature);
     }
 }
