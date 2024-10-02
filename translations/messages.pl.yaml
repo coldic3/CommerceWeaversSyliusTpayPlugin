@@ -34,3 +34,6 @@ commerce_weavers_sylius_tpay:
                         december: 'Grudzień'
                 holder_name: 'Imię i nazwisko właściciela'
                 number: 'Numer'
+        waiting_for_payment:
+            title: 'Oczekiwanie na płatność'
+            we_are_waiting_for_payment: 'Oczekujemy na potwierdzenie płatności'
