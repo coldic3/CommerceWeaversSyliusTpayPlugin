@@ -8,7 +8,7 @@ final class Route
 {
     public const WEBHOOK_PAYMENT_NOTIFICATION = 'commerce_weavers_tpay_payment_notification';
 
-    public const WEBHOOK_PAYMENT_NOTIFICATION_PATH = '/{_locale}/tpay/payment-notification';
+    public const WEBHOOK_PAYMENT_NOTIFICATION_PATH = '/webhook/{_locale}/tpay/payment-notification';
 
     public const SHOP_WAITING_FOR_PAYMENT = 'commerce_weavers_tpay_waiting_for_payment';
 
