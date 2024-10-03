@@ -1,61 +1,47 @@
-# SyliusTpayPlugin
+# Tpay Plugin for Sylius
 
+[![Build](https://github.com/CommerceWeavers/SyliusTPayPlugin/actions/workflows/ci__daily.yaml/badge.svg)](https://github.com/CommerceWeavers/SyliusTPayPlugin/actions/workflows/ci__daily.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/commerce-weavers/sylius-tpay-plugin.svg?style=flat-square)](https://packagist.org/packages/commerce-weavers/sylius-tpay-plugin)
-[![Total Downloads](https://img.shields.io/packagist/dt/commerce-weavers/sylius-tpay-plugin.svg?style=flat-square)](https://packagist.org/packages/commerce-weavers/sylius-tpay-plugin)  
+[![Total Downloads](https://img.shields.io/packagist/dt/commerce-weavers/sylius-tpay-plugin.svg?style=flat-square)](https://packagist.org/packages/commerce-weavers/sylius-tpay-plugin) 
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+### Requirements
 
-## Installation
+| Package       | Version |
+|---------------|---------|
+| PHP           | ^8.1    |
+| sylius/sylius | ^1.12   |
 
-1. Run `composer require commerce-weavers/sylius-tpay-plugin`.
+### Overview
 
-2. Import routes
-    ```yaml
-    # config/routes/sylius_shop.yaml
+`Sylius Tpay Plugin` is an official integration of the Tpay payment gateway for the Sylius e-commerce platform.
+This plugin allows you to accept payments using various payment methods provided by Tpay, like BLIK, credit cards,
+Apple Pay, Google Pay, and many more.
 
-    commerce_weavers_sylius_tpay_shop:
-        resource: "@CommerceWeaversSyliusTpayPlugin/config/shop_routing.yaml"
-        prefix: /{_locale}
-        requirements:
-            _locale: ^[A-Za-z]{2,4}(_([A-Za-z]{4}|[0-9]{3}))?(_([A-Za-z]{2}|[0-9]{3}))?$
+### Documentation
 
-    # config/routes/sylius_admin.yaml
+All the installation and configuration guides are available in our [wiki](https://github.com/CommerceWeavers/SyliusTpayPlugin/wiki).
 
-    commerce_weavers_sylius_tpay_admin:
-        resource: "@CommerceWeaversSyliusTpayPlugin/config/admin_routing.yml"
-        prefix: /admin
-    ```
+### License
 
-3. Import configuration
-    ```yaml
-    # config/packages/_sylius.yaml
+This plugin's source code is completely free and released under the terms of the MIT license.
 
-    imports:
-    # ...
-    - { resource: "@CommerceWeaversSyliusTpayPlugin/config/config.yaml" }
-    ```
+### Support
 
-4. Apply migrations
-    ```bash
-    bin/console doctrine:migrations:migrate
-    ```
+As plugin creators, we will be happy to help you implement it in your system and maintain it later on.
+If you wish to use the free-of-charge community support, make sure to join [Sylius Slack](https://sylius-community.slack.com/).
+We encourage you to use the official Sylius resources to feel more confident in using this plugin:
 
-## Changelog
+- [Sylius Documentation](https://docs.sylius.com/en/latest/)
+- [Sylius Online Course](https://sylius.com/online-course/)
+- [Sylius Stack Overflow](https://stackoverflow.com/questions/tagged/sylius)
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+### About us
 
-## Contributing
+- [Commerce Weavers](https://www.commerceweavers.com/) is the web agency formed by ex-Sylius company members and long-term core team & community leaders of Sylius - the open-source e-commerce framework based on Symfony, PHP.
+- With these origins, we naturally provide services related to all the above-mentioned technologies - using Sylius, Symfony, and API Platform for various applications development and maintenance.
+- We also actively contribute to the open-source community by creating dedicated plugins and visiting tech events.
+- We are probably the most active company promoting Sylius on industry meetups - our speakers can be frequently seen at the stages of the biggest PHP & Symfony conferences throughout Europe, and beyond.
+- In need of training or consulting? We love knowledge sharing and have a proven track record of over 200 trained developers all over Europe. [Get in touch!](https://www.commerceweavers.com/#contact)
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [All Contributors](../../contributors)
-
-## License
-
-Please see the [License File](LICENSE.md) for more information about licensing.
+![Commerce Weavers](docs/images/cw.png)
