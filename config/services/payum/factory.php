@@ -6,6 +6,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyDataFactory;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyDataFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactory;
@@ -29,6 +31,10 @@ return function(ContainerConfigurator $container): void {
 
     $services->set('commerce_weavers.tpay.payum.factory.create_transaction', CreateTransactionFactory::class)
         ->alias(CreateTransactionFactoryInterface::class, 'commerce_weavers.tpay.payum.factory.create_transaction')
+    ;
+
+    $services->set('commerce_weavers_tpay.payum.factory.notify_data', NotifyDataFactory::class)
+        ->alias(NotifyDataFactoryInterface::class, 'commerce_weavers_tpay.payum.factory.notify_data')
     ;
 
     $services->set('commerce_weavers_tpay.payum.factory.token.notify', NotifyTokenFactory::class)

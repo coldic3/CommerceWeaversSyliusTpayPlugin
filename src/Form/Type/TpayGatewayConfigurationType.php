@@ -6,9 +6,8 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListenerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListenerInterface;
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyClientSecretListener;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyPasswordFieldsListener;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +19,7 @@ final class TpayGatewayConfigurationType extends AbstractType
     public function __construct(
         private DecryptGatewayConfigListenerInterface $decryptGatewayConfigListener,
         private EncryptGatewayConfigListenerInterface $encryptGatewayConfigListener,
-        private PreventSavingEmptyClientSecretListener $preventSavingEmptyClientSecretListener,
+        private PreventSavingEmptyPasswordFieldsListener $preventSavingEmptyClientSecretListener,
     ) {
     }
 
@@ -49,6 +48,8 @@ final class TpayGatewayConfigurationType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.cards_api',
+                    'required' => false,
+                    'empty_data' => '',
                 ],
             )
             ->add(
@@ -64,11 +65,21 @@ final class TpayGatewayConfigurationType extends AbstractType
                 ],
             )
             ->add(
+                'notification_security_code',
+                PasswordType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.notification_security_code',
+                ],
+            )
+            ->add(
                 'production_mode',
-                CheckboxType::class,
+                ChoiceType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.production_mode',
-                    'value' => false,
+                    'choices' => [
+                        'sylius.ui.yes_label' => true,
+                        'sylius.ui.no_label' => false,
+                    ],
                 ],
             )
         ;

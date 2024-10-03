@@ -9,6 +9,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInter
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Request\Capture;
@@ -21,7 +22,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class CreateCardTransactionActionTest extends TestCase

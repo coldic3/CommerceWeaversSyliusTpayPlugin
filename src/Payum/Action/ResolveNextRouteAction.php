@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Route;
+use CommerceWeavers\SyliusTpayPlugin\Routing;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
@@ -32,11 +32,11 @@ final class ResolveNextRouteAction implements ActionInterface, GenericTokenFacto
         }
 
         if ($model->getState() === PaymentInterface::STATE_PROCESSING) {
-            $request->setRouteName(Route::SHOP_WAITING_FOR_PAYMENT);
+            $request->setRouteName(Routing::SHOP_WAITING_FOR_PAYMENT);
             $request->setRouteParameters([
                 'payum_token' => $this->createTokenForRoute(
                     $model,
-                    Route::SHOP_WAITING_FOR_PAYMENT,
+                    Routing::SHOP_WAITING_FOR_PAYMENT,
                 ),
             ]);
 

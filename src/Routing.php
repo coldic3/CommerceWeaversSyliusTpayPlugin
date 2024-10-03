@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin;
 
-final class Route
+final class Routing
 {
     public const WEBHOOK_PAYMENT_NOTIFICATION = 'commerce_weavers_tpay_payment_notification';
 
-    public const WEBHOOK_PAYMENT_NOTIFICATION_PATH = '/{_locale}/tpay/payment-notification';
+    public const WEBHOOK_PAYMENT_NOTIFICATION_PATH = '/webhook/{_locale}/tpay/payment-notification';
 
     public const SHOP_WAITING_FOR_PAYMENT = 'commerce_weavers_tpay_waiting_for_payment';
 

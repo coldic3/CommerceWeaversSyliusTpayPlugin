@@ -54,6 +54,11 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set(NotifyAction::class)
+        ->args([
+            service('commerce_weavers_tpay.tpay.security.notification.factory.basic_payment'),
+            service('commerce_weavers_tpay.tpay.security.notification.verifier.checksum'),
+            service('commerce_weavers_tpay.tpay.security.notification.verifier.signature'),
+        ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.notify'])
     ;
 

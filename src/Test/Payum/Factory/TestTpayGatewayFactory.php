@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Test\Payum\Factory;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
-use Tpay\OpenApi\Api\TpayApi;
 
 class TestTpayGatewayFactory extends GatewayFactory
 {

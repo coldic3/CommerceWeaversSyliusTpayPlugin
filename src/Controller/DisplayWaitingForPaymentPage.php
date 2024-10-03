@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Controller;
 
+use CommerceWeavers\SyliusTpayPlugin\Routing;
 use Payum\Core\Payum;
 use Sylius\Bundle\PayumBundle\Factory\ResolveNextRouteFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,7 +34,7 @@ final class DisplayWaitingForPaymentPage
 
         if (
             is_string($resolveNextRoute->getRouteName()) &&
-            $resolveNextRoute->getRouteName() !== 'commerce_weavers_tpay_waiting_for_payment'
+            $resolveNextRoute->getRouteName() !== Routing::SHOP_WAITING_FOR_PAYMENT
         ) {
             $this->payum->getHttpRequestVerifier()->invalidate($token);
 

@@ -9,5 +9,6 @@ return function(ContainerConfigurator $container): void {
 
     $parameters = $container->parameters();
 
+    $parameters->set('commerce_weavers_tpay.certificate.cache_ttl_in_seconds', 300);
     $parameters->set('commerce_weavers_tpay.waiting_for_payment.refresh_interval', 5);
 };
