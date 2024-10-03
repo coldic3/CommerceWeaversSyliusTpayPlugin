@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
 
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class CreateBlik0PaymentPayloadFactory implements CreateBlik0PaymentPayloadFactoryInterface
+final class CreateBlikLevelZeroPaymentPayloadFactory implements CreateBlikLevelZeroPaymentPayloadFactoryInterface
 {
     public function __construct(
         private CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,

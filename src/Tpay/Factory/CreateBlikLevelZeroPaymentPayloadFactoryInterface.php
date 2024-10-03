@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
 
 use Sylius\Component\Core\Model\PaymentInterface;
 
-interface CreateBlik0PaymentPayloadFactoryInterface
+interface CreateBlikLevelZeroPaymentPayloadFactoryInterface
 {
     /**
      * @return array<string, mixed>

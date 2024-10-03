@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlik0TransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Model\GatewayConfigInterface;
@@ -21,13 +21,13 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
-final class CreateBlik0TransactionActionTest extends TestCase
+final class CreateBlikLevelZeroTransactionActionTest extends TestCase
 {
     use ProphecyTrait;
 
     private TpayApi|ObjectProphecy $api;
 
-    private CreateBlik0PaymentPayloadFactoryInterface|ObjectProphecy $createBlik0PaymentPayloadFactory;
+    private CreateBlikLevelZeroPaymentPayloadFactoryInterface|ObjectProphecy $createBlikLevelZeroPaymentPayloadFactory;
 
     private NotifyTokenFactoryInterface|ObjectProphecy $notifyTokenFactory;
 
@@ -36,7 +36,7 @@ final class CreateBlik0TransactionActionTest extends TestCase
     protected function setUp(): void
     {
         $this->api = $this->prophesize(TpayApi::class);
-        $this->createBlik0PaymentPayloadFactory = $this->prophesize(CreateBlik0PaymentPayloadFactoryInterface::class);
+        $this->createBlikLevelZeroPaymentPayloadFactory = $this->prophesize(CreateBlikLevelZeroPaymentPayloadFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
         $this->gateway = $this->prophesize(GatewayInterface::class);
     }
@@ -132,7 +132,7 @@ final class CreateBlik0TransactionActionTest extends TestCase
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
-        $this->createBlik0PaymentPayloadFactory
+        $this->createBlikLevelZeroPaymentPayloadFactory
             ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
@@ -184,7 +184,7 @@ final class CreateBlik0TransactionActionTest extends TestCase
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
-        $this->createBlik0PaymentPayloadFactory
+        $this->createBlikLevelZeroPaymentPayloadFactory
             ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
@@ -204,10 +204,10 @@ final class CreateBlik0TransactionActionTest extends TestCase
         $this->createTestSubject()->execute($request->reveal());
     }
 
-    private function createTestSubject(): CreateBlik0TransactionAction
+    private function createTestSubject(): CreateBlikLevelZeroTransactionAction
     {
-        $action = new CreateBlik0TransactionAction(
-            $this->createBlik0PaymentPayloadFactory->reveal(),
+        $action = new CreateBlikLevelZeroTransactionAction(
+            $this->createBlikLevelZeroPaymentPayloadFactory->reveal(),
             $this->notifyTokenFactory->reveal(),
         );
 
