@@ -7,11 +7,12 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\GetTpayTransactionsChannelsAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify\NotifyData;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Model\PaymentInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class GetTpayTransactionsChannelsActionTest extends TestCase
@@ -35,7 +36,7 @@ final class GetTpayTransactionsChannelsActionTest extends TestCase
     {
         $action = new GetTpayTransactionsChannelsAction();
 
-        $this->assertFalse($action->supports(new Notify(new \stdClass(), new \ArrayObject())));
+        $this->assertFalse($action->supports(new Notify(new \stdClass(), $this->createNotifyDataObject())));
         $this->assertTrue($action->supports(new GetTpayTransactionsChannels($this->model->reveal())));
     }
 
@@ -55,4 +56,8 @@ final class GetTpayTransactionsChannelsActionTest extends TestCase
         $action->execute($this->request->reveal());
     }
 
+    private function createNotifyDataObject(string $jws = 'jws', string $content = 'content', array $parameters = []): NotifyData
+    {
+        return new NotifyData($jws, $content, $parameters);
+    }
 }

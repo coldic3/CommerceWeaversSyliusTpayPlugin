@@ -100,6 +100,22 @@ return function(SyliusFixturesConfig $fixtures): void {
                     ],
                     'enabled' => true,
                 ],
+                'pbl' => [
+                    'code' => 'tpay_pbl',
+                    'name' => 'Pay by Link (Tpay)',
+                    'gatewayFactory' => 'tpay',
+                    'gatewayName' => 'tpay',
+                    'gatewayConfig' => [
+                        'client_id' => '%env(string:TPAY_CLIENT_ID)%',
+                        'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                        'type' => 'pay-by-link',
+                        'production_mode' => false,
+                    ],
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
             ],
         ],
     ]);
