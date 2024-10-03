@@ -41,7 +41,7 @@ final class ResolveNextRouteActionTest extends TestCase
         $this->request->getModel()->willReturn($this->model);
     }
 
-    public function it_supports_only_resolve_next_route_requests(): void
+    public function test_it_supports_only_resolve_next_route_requests(): void
     {
         $action = $this->createTestSubject();
 

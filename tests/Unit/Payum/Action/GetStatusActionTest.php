@@ -33,7 +33,7 @@ final class GetStatusActionTest extends TestCase
         $this->request->getFirstModel()->willReturn($this->model->reveal());
     }
 
-    public function it_supports_only_get_status_requests(): void
+    public function test_it_supports_only_get_status_requests(): void
     {
         $action = $this->createTestSubject();
 

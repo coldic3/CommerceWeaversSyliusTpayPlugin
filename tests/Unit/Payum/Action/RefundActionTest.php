@@ -34,7 +34,7 @@ final class RefundActionTest extends TestCase
         $this->request->getModel()->willReturn($this->model->reveal());
     }
 
-    public function it_supports_only_refund_requests(): void
+    public function test_it_supports_only_refund_requests(): void
     {
         $action = $this->createTestSubject();
 
