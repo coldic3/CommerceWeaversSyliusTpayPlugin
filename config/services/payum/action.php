@@ -13,6 +13,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
 return function(ContainerConfigurator $container): void {
@@ -65,5 +66,10 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set(RefundAction::class)
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund']);
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund'])
+    ;
+
+    $services->set(ResolveNextRouteAction::class)
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.resolve_next_route'])
+    ;
 };

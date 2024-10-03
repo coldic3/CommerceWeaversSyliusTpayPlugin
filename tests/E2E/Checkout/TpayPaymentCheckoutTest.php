@@ -61,6 +61,6 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
         $this->fillBlikToken('777123');
         $this->placeOrder();
 
-        $this->assertPageTitleContains('Summary of your order');
+        $this->assertPageTitleContains('Waiting for payment');
     }
 }

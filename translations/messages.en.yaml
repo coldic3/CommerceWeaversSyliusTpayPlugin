@@ -35,3 +35,6 @@ commerce_weavers_sylius_tpay:
                     year: Year
                 holder_name: 'Cardholder name'
                 number: 'Number'
+        waiting_for_payment:
+            title: 'Waiting for payment'
+            we_are_waiting_for_payment: 'We are waiting for payment confirmation'
