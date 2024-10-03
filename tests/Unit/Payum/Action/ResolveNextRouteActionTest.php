@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\ResolveNextRouteAction;
-use CommerceWeavers\SyliusTpayPlugin\Route;
+use CommerceWeavers\SyliusTpayPlugin\Routing;
 use Payum\Core\Request\Sync;
 use Payum\Core\Security\GenericTokenFactoryInterface;
 use Payum\Core\Security\TokenInterface;
@@ -86,7 +86,7 @@ final class ResolveNextRouteActionTest extends TestCase
         $token->getHash()->willReturn('token_hash');
 
         $this->genericTokenFactory
-            ->createToken('tpay', $this->model->reveal(), Route::SHOP_WAITING_FOR_PAYMENT)
+            ->createToken('tpay', $this->model->reveal(), Routing::SHOP_WAITING_FOR_PAYMENT)
             ->willReturn($token)
         ;
 
