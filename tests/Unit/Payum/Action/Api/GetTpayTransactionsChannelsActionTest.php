@@ -14,7 +14,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
-final class GetTpayTransactionsChannelsTest extends TestCase
+final class GetTpayTransactionsChannelsActionTest extends TestCase
 {
     use ProphecyTrait;
 

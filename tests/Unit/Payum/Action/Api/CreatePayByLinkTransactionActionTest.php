@@ -19,6 +19,7 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tpay\OpenApi\Api\TpayApi;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
+use Webmozart\Assert\InvalidArgumentException;
 
 final class CreatePayByLinkTransactionActionTest extends TestCase
 {
@@ -89,6 +90,24 @@ final class CreatePayByLinkTransactionActionTest extends TestCase
         $isSupported = $this->createTestSubject()->supports($request->reveal());
 
         $this->assertFalse($isSupported);
+    }
+
+    public function test_it_throws_an_exception_if_there_is_no_request_token(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn(null);
+
+        $this->createTestSubject()->execute($request->reveal());
     }
 
     public function test_it_creates_a_payment_and_redirects_to_a_payment_page(): void

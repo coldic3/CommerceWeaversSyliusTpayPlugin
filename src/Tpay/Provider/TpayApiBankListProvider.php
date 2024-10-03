@@ -37,9 +37,11 @@ final class TpayApiBankListProvider implements TpayApiBankListProviderInterface
             throw new UnableToGetBankListException('Unable to get banks list. Response: ' . json_encode($result));
         }
 
-        return array_filter($result['channels'], static function ($channel) {
-            return $channel['instantRedirection'] === true &&
-                $channel['onlinePayment'] === true;
+        return array_filter($result['channels'], static function (array $channel) {
+            return
+                ($channel['instantRedirection'] ?? false) === true &&
+                ($channel['onlinePayment'] ?? false) === true
+            ;
         });
     }
 }
