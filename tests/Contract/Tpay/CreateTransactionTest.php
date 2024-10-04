@@ -39,7 +39,7 @@ final class CreateTransactionTest extends TpayTestCase
                 "phone" => "",
                 "address" => "",
                 "city" => "",
-                "country" => "PL",
+                "country" => "",
                 "postalCode" => "",
             ],
             "payments" => [
@@ -50,7 +50,7 @@ final class CreateTransactionTest extends TpayTestCase
                     "realization" => null,
                 ],
             ],
-            "transactionPaymentUrl" => "https://secure.sandbox.tpay.com/?gtitle=@string@",
+            "transactionPaymentUrl" => "https://secure.sandbox.tpay.com/?title=@string@",
         ], $response);
     }
 
@@ -93,7 +93,7 @@ final class CreateTransactionTest extends TpayTestCase
                 "phone" => "",
                 "address" => "",
                 "city" => "",
-                "country" => "PL",
+                "country" => "",
                 "postalCode" => "",
             ],
             "payments" => [
@@ -146,7 +146,7 @@ final class CreateTransactionTest extends TpayTestCase
                 "phone" => "",
                 "address" => "",
                 "city" => "",
-                "country" => "PL",
+                "country" => "",
                 "postalCode" => "",
             ],
             "payments" => [
