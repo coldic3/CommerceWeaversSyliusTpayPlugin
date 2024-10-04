@@ -7,7 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlik0PaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tpay\OpenApi\Api\TpayApi;
@@ -15,12 +15,12 @@ use Tpay\OpenApi\Api\TpayApi;
 /**
  * @property TpayApi $api
  */
-final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
+final class CreateBlikLevelZeroTransactionAction extends AbstractCreateTransactionAction
 {
     use GenericTokenFactoryAwareTrait;
 
     public function __construct(
-        private CreateBlik0PaymentPayloadFactoryInterface $createBlik0PaymentPayloadFactory,
+        private CreateBlikLevelZeroPaymentPayloadFactoryInterface $createBlikLevelZeroPaymentPayloadFactory,
         private NotifyTokenFactoryInterface $notifyTokenFactory,
     ) {
         parent::__construct();
@@ -41,7 +41,7 @@ final class CreateBlik0TransactionAction extends AbstractCreateTransactionAction
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         $response = $this->api->transactions()->createTransaction(
-            $this->createBlik0PaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            $this->createBlikLevelZeroPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
         $paymentDetails->setTransactionId($response['transactionId']);

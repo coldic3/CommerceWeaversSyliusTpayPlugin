@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\Length;
 
 final class TpayPaymentDetailsType extends AbstractType
 {
@@ -35,6 +36,10 @@ final class TpayPaymentDetailsType extends AbstractType
                 [
                     'property_path' => '[blik_token]',
                     'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.blik.token',
+                    'validation_groups' => ['sylius_checkout_complete'],
+                    'constraints' => [
+                        new Length(exactly: 6, groups: ['sylius_checkout_complete']),
+                    ],
                 ],
             )
         ;

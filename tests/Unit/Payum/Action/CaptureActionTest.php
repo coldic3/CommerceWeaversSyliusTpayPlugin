@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateBlik0TransactionFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\GatewayInterface;
