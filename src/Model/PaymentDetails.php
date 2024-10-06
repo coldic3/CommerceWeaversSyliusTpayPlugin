@@ -15,6 +15,8 @@ class PaymentDetails
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
         private ?string $paymentUrl = null,
+        private ?string $successUrl = null,
+        private ?string $failureUrl = null,
     ) {
     }
 
@@ -78,6 +80,26 @@ class PaymentDetails
         $this->paymentUrl = $paymentUrl;
     }
 
+    public function getSuccessUrl(): ?string
+    {
+        return $this->successUrl;
+    }
+
+    public function setSuccessUrl(?string $successUrl): void
+    {
+        $this->successUrl = $successUrl;
+    }
+
+    public function getFailureUrl(): ?string
+    {
+        return $this->failureUrl;
+    }
+
+    public function setFailureUrl(?string $failureUrl): void
+    {
+        $this->failureUrl = $failureUrl;
+    }
+
     public function clearSensitiveData(): void
     {
         $this->blikToken = null;
@@ -93,6 +115,8 @@ class PaymentDetails
             $details['tpay']['blik_token'] ?? null,
             $details['tpay']['card'] ?? null,
             $details['tpay']['payment_url'] ?? null,
+            $details['tpay']['success_url'] ?? null,
+            $details['tpay']['failure_url'] ?? null,
         );
     }
 
@@ -106,6 +130,8 @@ class PaymentDetails
                 'blik_token' => $this->blikToken,
                 'card' => $this->encodedCardData,
                 'payment_url' => $this->paymentUrl,
+                'success_url' => $this->successUrl,
+                'failure_url' => $this->failureUrl,
             ],
         ];
     }

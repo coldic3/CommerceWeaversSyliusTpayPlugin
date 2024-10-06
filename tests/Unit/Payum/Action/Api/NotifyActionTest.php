@@ -93,6 +93,8 @@ final class NotifyActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 

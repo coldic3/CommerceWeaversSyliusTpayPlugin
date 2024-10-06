@@ -137,6 +137,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'status' => 'pending',
             'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay',
         ]);
@@ -147,10 +148,12 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
                 'result' => null,
-                'status' => null,
+                'status' => 'pending',
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'https://tpay.org/pay',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
@@ -199,6 +202,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'status' => 'pending',
             'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay',
         ]);
@@ -209,10 +213,12 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
                 'result' => null,
-                'status' => null,
+                'status' => 'pending',
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'https://tpay.org/pay',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 

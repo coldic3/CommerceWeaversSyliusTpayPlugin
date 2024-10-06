@@ -94,6 +94,8 @@ final class PayWithCardActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'http://example.com',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
@@ -142,6 +144,8 @@ final class PayWithCardActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'http://example.com',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 

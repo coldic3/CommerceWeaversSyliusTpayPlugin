@@ -81,6 +81,8 @@ final class PayByCardHandlerTest extends TestCase
                 'blik_token' => null,
                 'card' => 'encoded_card_data',
                 'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
