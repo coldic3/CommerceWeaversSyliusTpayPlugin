@@ -69,8 +69,16 @@ final class PayHandlerTest extends TestCase
         $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn([]);
         $payment->setDetails([
-            'successUrl' => 'https://cw.nonexisting/success',
-            'failureUrl' => 'https://cw.nonexisting/failure',
+            'tpay' => [
+                'transaction_id' => null,
+                'result' => null,
+                'status' => null,
+                'blik_token' => null,
+                'card' => null,
+                'payment_url' => null,
+                'success_url' => 'https://cw.nonexisting/success',
+                'failure_url' => 'https://cw.nonexisting/failure',
+            ],
         ])->shouldBeCalled();
 
         $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123'));

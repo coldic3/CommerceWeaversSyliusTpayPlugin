@@ -127,6 +127,8 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
@@ -179,6 +181,8 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 

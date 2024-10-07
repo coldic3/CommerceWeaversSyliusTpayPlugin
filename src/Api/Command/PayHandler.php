@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -41,7 +42,11 @@ final class PayHandler
             throw new NotFoundHttpException(sprintf('Order with token "%s" does not have a new payment.', $command->orderToken));
         }
 
-        $this->setPaymentDetails($lastPayment, ['successUrl' => $command->successUrl, 'failureUrl' => $command->failureUrl]);
+        $paymentDetails = PaymentDetails::fromArray($lastPayment->getDetails());
+        $paymentDetails->setSuccessUrl($command->successUrl);
+        $paymentDetails->setFailureUrl($command->failureUrl);
+
+        $lastPayment->setDetails($paymentDetails->toArray());
 
         $nextCommand = $this->nextCommandFactory->create($command, $lastPayment);
 
@@ -52,13 +57,5 @@ final class PayHandler
         }
 
         return $nextCommandResult;
-    }
-
-    private function setPaymentDetails(PaymentInterface $payment, array $details): void
-    {
-        $payment->setDetails(array_merge(
-            $payment->getDetails(),
-            $details,
-        ));
     }
 }

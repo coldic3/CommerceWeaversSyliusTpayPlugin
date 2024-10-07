@@ -133,6 +133,8 @@ final class CreateCardTransactionActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'https://tpay.org/pay',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
@@ -189,6 +191,8 @@ final class CreateCardTransactionActionTest extends TestCase
                 'blik_token' => null,
                 'card' => null,
                 'payment_url' => 'https://tpay.org/pay',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 

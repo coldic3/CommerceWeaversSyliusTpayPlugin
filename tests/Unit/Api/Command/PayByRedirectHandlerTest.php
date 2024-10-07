@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCard;
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCardHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirect;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirectHandler;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\GatewayInterface;
@@ -19,8 +19,9 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Webmozart\Assert\InvalidArgumentException;
 
-final class PayByCardHandlerTest extends TestCase
+final class PayByRedirectHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -44,7 +45,7 @@ final class PayByCardHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
     }
 
     public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
@@ -59,10 +60,66 @@ final class PayByCardHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
     }
 
-    public function test_it_creates_a_card_based_transaction(): void
+    public function test_it_throws_an_exception_if_payment_details_does_not_have_a_set_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment status is required to create a result.');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn(['tpay' => ['payment_url' => 'https://cw.org/pay']]);
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
+    }
+
+    public function test_it_throws_an_exception_if_payment_details_does_not_have_a_set_payment_url(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment URL is required to create a result.');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn(['tpay' => ['status' => 'pending']]);
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
+    }
+
+    public function test_it_creates_a_redirect_based_transaction(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $gatewayConfig->getGatewayName()->willReturn('tpay');
@@ -72,19 +129,7 @@ final class PayByCardHandlerTest extends TestCase
 
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
-        $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'blik_token' => null,
-                'card' => 'encoded_card_data',
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->getDetails()->willReturn(['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
@@ -97,15 +142,15 @@ final class PayByCardHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
+        $result = $this->createTestSubject()->__invoke(new PayByRedirect(1));
 
         self::assertSame('pending', $result->status);
         self::assertSame('https://cw.org/pay', $result->transactionPaymentUrl);
     }
 
-    private function createTestSubject(): PayByCardHandler
+    private function createTestSubject(): PayByRedirectHandler
     {
-        return new PayByCardHandler(
+        return new PayByRedirectHandler(
             $this->paymentRepository->reveal(),
             $this->payum->reveal(),
             $this->createTransactionFactory->reveal(),

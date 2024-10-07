@@ -41,6 +41,7 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
             $this->createRedirectBasedPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
+        $paymentDetails->setStatus($response['status']);
         $paymentDetails->setTransactionId($response['transactionId']);
         $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
