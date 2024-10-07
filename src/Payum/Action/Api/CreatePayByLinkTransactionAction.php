@@ -7,18 +7,20 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
+use Payum\Core\GatewayAwareInterface;
+use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
-use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
-class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionAction
+final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
 {
-    use GenericTokenFactoryAwareTrait;
+    use GatewayAwareTrait;
 
     public function __construct(
-        private CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,
-        private NotifyTokenFactoryInterface $notifyTokenFactory,
+        private readonly CreatePayByLinkPayloadFactoryInterface $createPayByLinkPayloadFactory,
+        private readonly NotifyTokenFactoryInterface $notifyTokenFactory,
     ) {
         parent::__construct();
     }
@@ -35,20 +37,21 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
         $response = $this->api->transactions()->createTransaction(
-            $this->createRedirectBasedPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
+
         $paymentDetails->setTransactionId($response['transactionId']);
+        $paymentDetails->setStatus($response['status']);
         $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
         $model->setDetails($paymentDetails->toArray());
 
-        if ($paymentDetails->getPaymentUrl() !== null) {
-            throw new HttpRedirect($paymentDetails->getPaymentUrl());
-        }
+        Assert::notNull($paymentUrl = $paymentDetails->getPaymentUrl());
+
+        throw new HttpRedirect($paymentUrl);
     }
 
     public function supports($request): bool
@@ -65,9 +68,6 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
 
         $details = $model->getDetails();
 
-        return !isset($details['tpay']['card']) &&
-            !isset($details['tpay']['blik_token']) &&
-            !isset($details['tpay']['pay_by_link_channel_id'])
-        ;
+        return isset($details['tpay']['pay_by_link_channel_id']);
     }
 }

@@ -8,8 +8,12 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayl
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\CachedTpayTransactionChannelResolver;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509Factory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509FactoryInterface;
@@ -23,8 +27,10 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Checksu
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifier;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 
-return function(ContainerConfigurator $container): void {
+return static function(ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set('commerce_weavers_tpay.tpay.factory.create_blik_level_zero_payment_payload', CreateBlikLevelZeroPaymentPayloadFactory::class)
@@ -48,6 +54,13 @@ return function(ContainerConfigurator $container): void {
             param('commerce_weavers_tpay.payum.create_transaction.error_route'),
         ])
         ->alias(CreateRedirectBasedPaymentPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_redirect_based_payment_payload')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.factory.create_pay_by_link_payment_payload', CreatePayByLinkPayloadFactory::class)
+        ->args([
+            service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
+        ])
+        ->alias(CreatePayByLinkPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_pay_by_link_payment_payload')
     ;
 
     $services->set('commerce_weavers_tpay.tpay.security.notification.factory.basic_payment', BasicPaymentFactory::class)
@@ -95,5 +108,28 @@ return function(ContainerConfigurator $container): void {
             service('commerce_weavers_tpay.tpay.security.notification.factory.x509'),
         ])
         ->alias(SignatureVerifierInterface::class, 'commerce_weavers_tpay.security.notification.verifier.signature')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.provider.tpay_api_bank_list', TpayApiBankListProvider::class)
+        ->args([
+            service('commerce_weavers_tpay.tpay.resolver.tpay_transaction_channel_resolver'),
+        ])
+        ->alias(TpayApiBankListProviderInterface::class, 'commerce_weavers_tpay.provider.tpay_api_bank_list')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.resolver.tpay_transaction_channel_resolver', TpayTransactionChannelResolver::class)
+        ->args([
+            service('payum'),
+        ])
+        ->alias(TpayApiBankListProviderInterface::class, 'commerce_weavers_tpay.resolver.tpay_transaction_channel_resolver')
+    ;
+
+    $services->set('commerce_weavers_tpay.tpay.resolver.cached_tpay_transaction_channel_resolver', CachedTpayTransactionChannelResolver::class)
+        ->decorate('commerce_weavers_tpay.tpay.resolver.tpay_transaction_channel_resolver')
+        ->args([
+            service('.inner'),
+            service('cache.app'),
+            param('commerce_weavers_tpay.tpay_transaction_channels.cache_ttl_in_seconds'),
+        ])
     ;
 };

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints\Length;
 final class TpayPaymentDetailsType extends AbstractType
 {
     public function __construct(
-        private object $removeUnnecessaryPaymentDetailsFieldsListener,
+        private readonly object $removeUnnecessaryPaymentDetailsFieldsListener,
     ) {
     }
 
@@ -40,6 +41,13 @@ final class TpayPaymentDetailsType extends AbstractType
                     'constraints' => [
                         new Length(exactly: 6, groups: ['sylius_checkout_complete']),
                     ],
+                ],
+            )
+            ->add(
+                'pay_by_link_channel_id',
+                HiddenType::class,
+                [
+                    'property_path' => '[pay_by_link_channel_id]',
                 ],
             )
         ;
