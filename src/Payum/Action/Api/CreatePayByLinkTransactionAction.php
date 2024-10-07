@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
@@ -31,24 +32,26 @@ final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAc
     {
         /** @var PaymentInterface $model */
         $model = $request->getModel();
-        $token = $request->getToken();
-        Assert::notNull($token);
+        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
 
         $localeCode = $this->getLocaleCodeFrom($model);
-        $notifyToken = $this->notifyTokenFactory->create($model, $token->getGatewayName(), $localeCode);
+        $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
         $response = $this->api->transactions()->createTransaction(
             $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
         );
 
-        $details = $model->getDetails();
-        $details['tpay']['transaction_id'] = $response['transactionId'];
-        $details['tpay']['status'] = $response['status'];
-        $details['tpay']['transaction_payment_url'] = $response['transactionPaymentUrl'];
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        $model->setDetails($details);
+        $paymentDetails->setTransactionId($response['transactionId']);
+        $paymentDetails->setStatus($response['status']);
+        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
-        throw new HttpRedirect($details['tpay']['transaction_payment_url']);
+        $model->setDetails($paymentDetails->toArray());
+
+        Assert::notNull($paymentUrl = $paymentDetails->getPaymentUrl());
+
+        throw new HttpRedirect($paymentUrl);
     }
 
     public function supports($request): bool

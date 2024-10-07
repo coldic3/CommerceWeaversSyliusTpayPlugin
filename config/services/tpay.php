@@ -54,6 +54,13 @@ return function(ContainerConfigurator $container): void {
         ->alias(CreateRedirectBasedPaymentPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_redirect_based_payment_payload')
     ;
 
+    $services->set('commerce_weavers_tpay.tpay.factory.create_pay_by_link_payment_payload', CreatePayByLinkPayloadFactory::class)
+        ->args([
+            service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
+        ])
+        ->alias(CreatePayByLinkPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_pay_by_link_payment_payload')
+    ;
+
     $services->set('commerce_weavers_tpay.tpay.security.notification.factory.basic_payment', BasicPaymentFactory::class)
         ->alias(BasicPaymentFactory::class, 'commerce_weavers_tpay.security.notification.factory.basic_payment')
     ;
@@ -99,13 +106,6 @@ return function(ContainerConfigurator $container): void {
             service('commerce_weavers_tpay.tpay.security.notification.factory.x509'),
         ])
         ->alias(SignatureVerifierInterface::class, 'commerce_weavers_tpay.security.notification.verifier.signature')
-    ;
-
-    $services->set('commerce_weavers_tpay.tpay.factory.create_pay_by_link_payment_payload', CreatePayByLinkPayloadFactory::class)
-        ->args([
-            service('commerce_weavers_tpay.tpay.factory.create_redirect_based_payment_payload'),
-        ])
-        ->alias(CreatePayByLinkPayloadFactoryInterface::class, 'commerce_weavers_tpay.factory.create_pay_by_link_payment_payload')
     ;
 
     $services->set('commerce_weavers_tpay.tpay.provider.tpay_api_bank_list', TpayApiBankListProvider::class)

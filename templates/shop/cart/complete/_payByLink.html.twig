@@ -1,33 +1,6 @@
 {% set payment = order.lastCartPayment() %}
 
-{# TODO remove comments and move style and js to different file (how to) #}
 {% if cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == 'pay-by-link' %}
-<style>
-    .bank-tile {
-        display: inline-block;
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-        width: 100px;
-        text-align: center;
-    }
-    .bank-tile img {
-        max-width: 100%;
-        height: auto;
-    }
-    .bank-tile.selected {
-        border-color: blue;
-        background-color: #f0f8ff;
-    }
-
-    .bank-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-    }
-</style>
-
 <div class="bank-container">
     {% for bank in banks %}
         <div class="bank-tile" data-bank-id="{{ bank.id }}">
@@ -39,20 +12,4 @@
 
 {{ form_row(form.tpay.pay_by_link_channel_id) }}
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const tiles = document.querySelectorAll('.bank-tile');
-        const hiddenInput = document.getElementById('sylius_checkout_complete_tpay_pay_by_link_channel_id');
-
-        tiles.forEach(tile => {
-            tile.addEventListener('click', function () {
-                tiles.forEach(tileElement => tileElement.classList.remove('selected'));
-
-                tile.classList.add('selected');
-
-                hiddenInput.value = tile.getAttribute('data-bank-id');
-            });
-        });
-    });
-</script>
 {% endif %}
