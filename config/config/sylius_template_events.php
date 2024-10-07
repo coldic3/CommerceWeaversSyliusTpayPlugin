@@ -30,6 +30,13 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     ],
                 ],
             ],
+            'sylius.shop.layout.stylesheets' => [
+                'blocks' => [
+                    'commerce_weavers_tpay_styles' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/styles.html.twig',
+                    ],
+                ],
+            ],
         ],
     ]);
 };

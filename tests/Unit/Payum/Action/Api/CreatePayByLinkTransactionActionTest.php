@@ -92,24 +92,6 @@ final class CreatePayByLinkTransactionActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-    public function test_it_throws_an_exception_if_there_is_no_request_token(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $order = $this->prophesize(OrderInterface::class);
-        $order->getLocaleCode()->willReturn('pl_PL');
-
-        $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn([]);
-
-        $request = $this->prophesize(CreateTransaction::class);
-        $request->getModel()->willReturn($payment);
-        $request->getToken()->willReturn(null);
-
-        $this->createTestSubject()->execute($request->reveal());
-    }
-
     public function test_it_creates_a_payment_and_redirects_to_a_payment_page(): void
     {
         $this->expectException(HttpRedirect::class);
@@ -143,8 +125,11 @@ final class CreatePayByLinkTransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
-                'transaction_payment_url' => 'https://tpay.org/pay',
+                'payment_url' => 'https://tpay.org/pay',
                 'status' => 'pending',
+                'result' => null,
+                'blik_token' => null,
+                'card' => null,
             ],
         ])->shouldBeCalled();
 

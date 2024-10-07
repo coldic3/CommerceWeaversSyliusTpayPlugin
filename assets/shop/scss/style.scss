@@ -7,10 +7,12 @@
     width: 100px;
     text-align: center;
 }
+
 .bank-tile img {
     max-width: 100%;
     height: auto;
 }
+
 .bank-tile.selected {
     border-color: blue;
     background-color: #f0f8ff;

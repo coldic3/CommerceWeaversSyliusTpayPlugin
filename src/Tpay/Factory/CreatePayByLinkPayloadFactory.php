@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 final class CreatePayByLinkPayloadFactory implements CreatePayByLinkPayloadFactoryInterface
