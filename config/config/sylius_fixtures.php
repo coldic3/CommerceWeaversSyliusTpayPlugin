@@ -59,6 +59,8 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                        'cards_api' => '%env(string:TPAY_CARDS_API)%',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
                         'type' => 'redirect',
                         'production_mode' => false,
                     ],
@@ -76,6 +78,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
                         'cards_api' => '%env(string:TPAY_CARDS_API)%',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
                         'type' => 'card',
                         'production_mode' => false,
                     ],
@@ -93,6 +96,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
                         'type' => 'blik',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
                         'production_mode' => false,
                     ],
                     'channels' => [
@@ -109,6 +113,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
                         'type' => 'pay-by-link',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
                         'production_mode' => false,
                     ],
                     'channels' => [
