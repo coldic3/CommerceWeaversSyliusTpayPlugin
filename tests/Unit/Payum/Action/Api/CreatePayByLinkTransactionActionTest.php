@@ -19,7 +19,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
-use Webmozart\Assert\InvalidArgumentException;
 
 final class CreatePayByLinkTransactionActionTest extends TestCase
 {
@@ -125,11 +124,13 @@ final class CreatePayByLinkTransactionActionTest extends TestCase
         $payment->setDetails([
             'tpay' => [
                 'transaction_id' => 'tr4ns4ct!0n_id',
-                'payment_url' => 'https://tpay.org/pay',
-                'status' => 'pending',
                 'result' => null,
+                'status' => 'pending',
                 'blik_token' => null,
                 'card' => null,
+                'payment_url' => 'https://tpay.org/pay',
+                'success_url' => null,
+                'failure_url' => null,
             ],
         ])->shouldBeCalled();
 
