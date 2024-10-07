@@ -19,6 +19,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Webmozart\Assert\InvalidArgumentException;
 
 final class PayByRedirectHandlerTest extends TestCase
 {
@@ -58,6 +59,62 @@ final class PayByRedirectHandlerTest extends TestCase
         $payment->getMethod()->willReturn(null);
 
         $this->paymentRepository->find(1)->willReturn($payment);
+
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
+    }
+
+    public function test_it_throws_an_exception_if_payment_details_does_not_have_a_set_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment status is required to create a result.');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn(['tpay' => ['payment_url' => 'https://cw.org/pay']]);
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $this->createTestSubject()->__invoke(new PayByRedirect(1));
+    }
+
+    public function test_it_throws_an_exception_if_payment_details_does_not_have_a_set_payment_url(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Payment URL is required to create a result.');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn(['tpay' => ['status' => 'pending']]);
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
 
         $this->createTestSubject()->__invoke(new PayByRedirect(1));
     }
