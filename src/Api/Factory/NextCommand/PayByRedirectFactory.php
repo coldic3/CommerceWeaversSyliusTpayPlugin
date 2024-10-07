@@ -41,12 +41,12 @@ final class PayByRedirectFactory implements NextCommandFactoryInterface
 
         $gatewayConfig = $this->getGatewayConfig($payment);
 
-        if ($gatewayConfig instanceof CryptedInterface) {
-            $gatewayConfig->decrypt($this->cypher);
-        }
-
         if (null === $gatewayConfig) {
             return false;
+        }
+
+        if ($gatewayConfig instanceof CryptedInterface) {
+            $gatewayConfig->decrypt($this->cypher);
         }
 
         $config = $gatewayConfig->getConfig();
