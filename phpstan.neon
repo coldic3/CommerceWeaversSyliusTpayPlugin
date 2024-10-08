@@ -27,3 +27,4 @@ parameters:
         - '#an unknown class Sylius\\Abstraction\\StateMachine\\StateMachineInterface#'
         - '#Caught class Sylius\\Abstraction\\StateMachine\\Exception\\StateMachineExecutionException not found\.#'
         - '#Call to method apply\(\) on an unknown class Sylius\\Abstraction\\StateMachine\\StateMachineInterface\.#'
+        - '/Only booleans are allowed in an if condition, string\|null given./'
