@@ -15,3 +15,6 @@ commerce_weavers_sylius_tpay:
                 expiration_year: 'Rok ważności musi być bieżący lub późniejszy.'
                 number: 'Numer karty musi składać się z 16 cyfr.'
                 name: 'Imię i nazwisko właściciela karty są wymagane.'
+            pay_by_link_channel_id:
+                length: 'Id kanału banku nie może być puste.'
+                required: 'Id kanału banku jest wymagane.'
