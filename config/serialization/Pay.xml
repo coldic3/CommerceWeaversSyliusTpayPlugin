@@ -31,7 +31,7 @@
         <attribute name="encodedCardData">
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>
-        <attribute name="payByLinkChannelId">
+        <attribute name="tpayChannelId">
             <group>commerce_weavers_tpay:shop:order:pay</group>
         </attribute>
     </class>
