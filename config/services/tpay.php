@@ -13,6 +13,8 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\CachedTpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
@@ -28,8 +30,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Checksu
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifier;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 
 return static function(ContainerConfigurator $container): void {
     $services = $container->services();
@@ -57,10 +57,8 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload', CreateRedirectBasedPaymentPayloadFactory::class)
         ->args([
-            service('router'),
+            service('commerce_weavers_sylius_tpay.tpay.routing.generator.callback_url'),
             service('translator'),
-            param('commerce_weavers_sylius_tpay.payum.create_transaction.success_route'),
-            param('commerce_weavers_sylius_tpay.payum.create_transaction.error_route'),
         ])
         ->alias(CreateRedirectBasedPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload')
     ;

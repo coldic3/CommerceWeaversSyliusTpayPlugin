@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Routing\Generator\CallbackUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -13,8 +14,6 @@ use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\InvalidArgumentException;
 
@@ -23,13 +22,14 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
     use ProphecyTrait;
 
     private const TRANSLATED_DESCRIPTION = 'Zamówienie #000000001';
-    private RouterInterface|ObjectProphecy $router;
+
+    private CallbackUrlGeneratorInterface|ObjectProphecy $callbackUrlGenerator;
 
     private TranslatorInterface|ObjectProphecy $translator;
 
     protected function setUp(): void
     {
-        $this->router = $this->prophesize(RouterInterface::class);
+        $this->callbackUrlGenerator = $this->prophesize(CallbackUrlGeneratorInterface::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
         $this->translator->trans(
@@ -56,12 +56,12 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
         $payment->getOrder()->willReturn($order);
         $payment->getAmount()->willReturn(1050);
 
-        $this->router
-            ->generate('cw_success', ['_locale' => 'pl_PL'], UrlGeneratorInterface::ABSOLUTE_URL)
+        $this->callbackUrlGenerator
+            ->generateSuccessUrl($payment, 'pl_PL')
             ->willReturn('https://cw.org/success')
         ;
-        $this->router
-            ->generate('cw_error', ['_locale' => 'pl_PL'], UrlGeneratorInterface::ABSOLUTE_URL)
+        $this->callbackUrlGenerator
+            ->generateFailureUrl($payment, 'pl_PL')
             ->willReturn('https://cw.org/error')
         ;
 
@@ -145,10 +145,8 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
     private function createTestSubject(): CreateRedirectBasedPaymentPayloadFactoryInterface
     {
         return new CreateRedirectBasedPaymentPayloadFactory(
-            $this->router->reveal(),
+            $this->callbackUrlGenerator->reveal(),
             $this->translator->reveal(),
-            'cw_success',
-            'cw_error',
         );
     }
 }

@@ -1,0 +1,25 @@
+{% extends '@SyliusShop/layout.html.twig' %}
+
+{% block title %}{{ 'commerce_weavers_sylius_tpay.shop.payment_failed.title'|trans }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="ui hidden divider"></div>
+    <div class="ui grid">
+        <div class="center aligned sixteen wide column">
+            <h1 class="ui icon header">
+                <i class="circular close icon"></i>
+                <div class="content">
+                    {{ 'commerce_weavers_sylius_tpay.shop.payment_failed.title'|trans }}
+                    <div class="sub header">{{ 'commerce_weavers_sylius_tpay.shop.payment_failed.subtitle'|trans }}</div>
+                </div>
+            </h1>
+
+            <div class="ui hidden divider"></div>
+
+            <form action="{{ path(constant('CommerceWeavers\\SyliusTpayPlugin\\Routing::SHOP_RETRY_PAYMENT'), {'orderToken': order.tokenValue}) }}" method="post" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token(order.tokenValue) }}" />
+                <button type="submit" class="ui large blue button"><i class="undo icon"></i> {{ 'commerce_weavers_sylius_tpay.shop.payment_failed.retry_payment'|trans }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

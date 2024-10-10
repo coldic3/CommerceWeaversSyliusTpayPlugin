@@ -42,6 +42,10 @@ commerce_weavers_sylius_tpay:
                     year_placeholder: 'Wybierz rok'
                 holder_name: 'Imię i nazwisko właściciela'
                 number: 'Numer'
+        payment_failed:
+            retry_payment: 'Ponów płatność'
+            subtitle: 'Nie byliśmy w stanie jej pomyślnie przetworzyć'
+            title: 'Twoja płatność się nie powiodła'
         waiting_for_payment:
             title: 'Oczekiwanie na płatność'
             we_are_waiting_for_payment: 'Oczekujemy na potwierdzenie płatności'

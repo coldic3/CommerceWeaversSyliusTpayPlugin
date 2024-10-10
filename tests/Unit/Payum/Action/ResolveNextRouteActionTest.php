@@ -59,12 +59,17 @@ final class ResolveNextRouteActionTest extends TestCase
 
     public function test_it_sets_the_next_route_to_thank_you_page_once_payment_is_completed(): void
     {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getTokenValue()->willReturn('order_token');
+
         $this->model->getState()->willReturn(PaymentInterface::STATE_COMPLETED);
+        $this->model->getOrder()->willReturn($order);
 
         $action = $this->createTestSubject();
         $action->execute($this->request->reveal());
 
-        $this->request->setRouteName('sylius_shop_order_thank_you')->shouldHaveBeenCalled();
+        $this->request->setRouteName(Routing::SHOP_THANK_YOU)->shouldHaveBeenCalled();
+        $this->request->setRouteParameters(['orderToken' => 'order_token']);
     }
 
     public function test_it_sets_the_next_route_to_waiting_for_payment_page_once_payment_is_processing(): void
@@ -95,6 +100,22 @@ final class ResolveNextRouteActionTest extends TestCase
 
         $this->request->setRouteName('commerce_weavers_sylius_tpay_waiting_for_payment')->shouldHaveBeenCalled();
         $this->request->setRouteParameters(['payum_token' => 'token_hash'])->shouldHaveBeenCalled();
+    }
+
+    public function test_it_sets_the_next_route_to_payment_failed_page_once_payment_is_failed(): void
+    {
+        $this->model->getState()->willReturn(PaymentInterface::STATE_FAILED);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getTokenValue()->willReturn('order_token');
+
+        $this->model->getOrder()->willReturn($order);
+
+        $action = $this->createTestSubject();
+        $action->execute($this->request->reveal());
+
+        $this->request->setRouteName(Routing::SHOP_PAYMENT_FAILED)->shouldHaveBeenCalled();
+        $this->request->setRouteParameters(['orderToken' => 'order_token'])->shouldHaveBeenCalled();
     }
 
     public function test_it_sets_the_next_route_to_order_show_page_once_payment_is_not_completed(): void
