@@ -33,7 +33,7 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
         $this->translator->trans(
-            'commerce_weavers_sylius_tpay.shop.api.description.order',
+            'commerce_weavers_sylius_tpay.tpay.transaction_description',
             ['%orderNumber%' => '000000001']
         )->willReturn(self::TRANSLATED_DESCRIPTION);
     }
