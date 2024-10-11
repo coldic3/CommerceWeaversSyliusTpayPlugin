@@ -1,5 +1,7 @@
 import * as JSEncrypt from './jsencrypt.min';
 
+const MAX_CARD_NUMBER_LENGTH = 16;
+
 export class CardForm {
   #form;
   #cardHolderName;
@@ -39,7 +41,7 @@ export class CardForm {
     this.#cardNumber.addEventListener('keypress', (event) => {
       const value = event.target.value.replace(/\s/g, '');
 
-      if (value.length >= 16) {
+      if (value.length >= MAX_CARD_NUMBER_LENGTH) {
         event.preventDefault();
         event.stopPropagation();
       }
@@ -51,7 +53,7 @@ export class CardForm {
 
       const value = event.target.value.replace(/\s/g, '');
 
-      const parts = value.slice(0, 16).match(/\d{1,4}/g) || [];
+      const parts = value.slice(0, MAX_CARD_NUMBER_LENGTH).match(/\d{1,4}/g) || [];
 
       event.target.value = parts.join(' ');
 
