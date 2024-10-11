@@ -20,24 +20,26 @@ final class PaymentCancellationPossibilityCheckerTest extends TestCase
 {
     use ProphecyTrait;
 
-    private StateMachineInterface|ObjectProphecy $stateMachine;
-
     private FactoryInterface|ObjectProphecy $stateMachineFactory;
 
     protected function setUp(): void
     {
-        $this->stateMachine = $this->prophesize(StateMachineInterface::class);
         $this->stateMachineFactory = $this->prophesize(FactoryInterface::class);
     }
 
     public function test_it_returns_if_a__payment_using_new_state_machine_if_present(): void
     {
+        if (!class_exists(StateMachineInterface::class)) {
+            $this->markTestSkipped('This test requires Sylius 1.13');
+        }
+
+        $stateMachine = $this->prophesize(StateMachineInterface::class);
         $payment = $this->prophesize(PaymentInterface::class);
 
-        $this->stateMachine->can($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL)->shouldBeCalled()->willReturn(true);
+        $stateMachine->can($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL)->shouldBeCalled()->willReturn(true);
         $this->stateMachineFactory->get(Argument::cetera())->shouldNotBeCalled();
 
-        $this->createTestSubject()->canBeCancelled($payment->reveal());
+        $this->createTestSubject($stateMachine->reveal())->canBeCancelled($payment->reveal());
     }
 
     public function test_it_fallbacks_to_the_winzou_state_machine_while_checking_if_a_payment_can_be_cancelled(): void
@@ -54,8 +56,8 @@ final class PaymentCancellationPossibilityCheckerTest extends TestCase
         $canceller->canBeCancelled($payment->reveal());
     }
 
-    private function createTestSubject(): PaymentCancellationPossibilityCheckerInterface
+    private function createTestSubject(?StateMachineInterface $stateMachine = null): PaymentCancellationPossibilityCheckerInterface
     {
-        return new PaymentCancellationPossibilityChecker($this->stateMachine->reveal(), $this->stateMachineFactory->reveal());
+        return new PaymentCancellationPossibilityChecker($stateMachine, $this->stateMachineFactory->reveal());
     }
 }
