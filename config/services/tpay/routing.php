@@ -13,8 +13,8 @@ return static function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.tpay.routing.generator.callback_url', CallbackUrlGenerator::class)
         ->args([
             service('router'),
-            param('commerce_weavers_tpay.payum.create_transaction.success_route'),
-            param('commerce_weavers_tpay.payum.create_transaction.failure_route'),
+            param('commerce_weavers_sylius_tpay.payum.create_transaction.success_route'),
+            param('commerce_weavers_sylius_tpay.payum.create_transaction.failure_route'),
         ])
         ->alias(CallbackUrlGeneratorInterface::class, 'commerce_weavers_sylius_tpay.tpay.routing.generator.callback_url')
     ;
