@@ -6,7 +6,6 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payment\Checker;
 
 use SM\Factory\FactoryInterface;
 use Sylius\Abstraction\StateMachine\StateMachineInterface;
-use Sylius\Abstraction\StateMachine\WinzouStateMachineAdapter;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 
@@ -20,15 +19,18 @@ final class PaymentCancellationPossibilityChecker implements PaymentCancellation
 
     public function canBeCancelled(PaymentInterface $payment): bool
     {
-        return $this->getStateMachine()->can($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL);
+        return $this->can($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL);
     }
 
-    private function getStateMachine(): StateMachineInterface
-    {
+    private function can(
+        PaymentInterface $payment,
+        string $graph,
+        string $transition,
+    ): bool {
         if (null !== $this->stateMachine) {
-            return $this->stateMachine;
+            return $this->stateMachine->can($payment, $graph, $transition);
         }
 
-        return new WinzouStateMachineAdapter($this->stateMachineFactory);
+        return $this->stateMachineFactory->get($payment, $graph)->can($transition);
     }
 }

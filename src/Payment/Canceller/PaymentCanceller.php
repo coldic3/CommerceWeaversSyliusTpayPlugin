@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Payment\Exception\PaymentCannotBeCancelledE
 use SM\Factory\FactoryInterface;
 use Sylius\Abstraction\StateMachine\Exception\StateMachineExecutionException;
 use Sylius\Abstraction\StateMachine\StateMachineInterface;
-use Sylius\Abstraction\StateMachine\WinzouStateMachineAdapter;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 
@@ -23,18 +22,23 @@ final class PaymentCanceller implements PaymentCancellerInterface
     public function cancel(PaymentInterface $payment): void
     {
         try {
-            $this->getStateMachine()->apply($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL);
+            $this->apply($payment, PaymentTransitions::GRAPH, PaymentTransitions::TRANSITION_CANCEL);
         } catch (StateMachineExecutionException) {
             throw new PaymentCannotBeCancelledException($payment);
         }
     }
 
-    private function getStateMachine(): StateMachineInterface
-    {
+    private function apply(
+        PaymentInterface $payment,
+        string $graph,
+        string $transition,
+    ): void {
         if (null !== $this->stateMachine) {
-            return $this->stateMachine;
+            $this->stateMachine->apply($payment, $graph, $transition);
+
+            return;
         }
 
-        return new WinzouStateMachineAdapter($this->stateMachineFactory);
+        $this->stateMachineFactory->get($payment, $graph)->apply($transition);
     }
 }
