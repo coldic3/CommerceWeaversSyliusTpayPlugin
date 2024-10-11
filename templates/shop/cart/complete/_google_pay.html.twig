@@ -244,10 +244,14 @@
         const paymentToken = btoa(paymentData.paymentMethodData.tokenizationData.token);
         const checkoutCompleteForm = document.querySelector('[name=sylius_checkout_complete]');
         const googlePayTokenInput = document.querySelector('[name="sylius_checkout_complete[tpay][google_pay_token]"]')
+        const googlePayButton = document.getElementById('cw-tpay-google-pay-container').getElementsByTagName('button')[0];
+
+        if (googlePayButton !== undefined) {
+            googlePayButton.disabled = true;
+        }
 
         googlePayTokenInput.value = paymentToken;
         checkoutCompleteForm.submit();
-
     }
 </script>
 <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
