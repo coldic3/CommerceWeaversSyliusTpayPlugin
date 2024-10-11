@@ -42,7 +42,7 @@ return function(ContainerConfigurator $container): void {
     $services->set(CreateGooglePayTransactionAction::class)
         ->args([
             service('commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload'),
-            service('commerce_weavers_tpay.payum.factory.token.notify'),
+            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_google_pay_transaction'])
     ;
