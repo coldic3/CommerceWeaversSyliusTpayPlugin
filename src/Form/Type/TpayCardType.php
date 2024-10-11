@@ -13,6 +13,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class TpayCardType extends AbstractType
 {
+    private const PREDICTED_MAX_CARD_VALIDITY_YEARS = 10;
+
     public function __construct(
         private DataTransformerInterface $cardTypeDataTransformer,
     ) {
@@ -92,7 +94,7 @@ final class TpayCardType extends AbstractType
         $result = [];
         $currentYear = (int) date('Y');
 
-        foreach (range($currentYear, $currentYear + 10) as $year) {
+        foreach (range($currentYear, $currentYear + self::PREDICTED_MAX_CARD_VALIDITY_YEARS) as $year) {
             $result[$year] = $year;
         }
 

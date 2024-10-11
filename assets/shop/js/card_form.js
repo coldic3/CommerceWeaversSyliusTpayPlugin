@@ -79,7 +79,7 @@ export class CardForm {
   }
 
   isCardNumberValid() {
-    const regex = new RegExp(/^\d{16}$/);
+    const regex = new RegExp(`^\\d{${MAX_CARD_NUMBER_LENGTH}}$`);
 
     return regex.test(this.getCardNumber());
   }
