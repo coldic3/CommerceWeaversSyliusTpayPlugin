@@ -53,8 +53,8 @@ return function(ContainerConfigurator $container): void {
         ->tag('messenger.message_handler')
     ;
 
-    $services->set('commerce_weavers_tpay.api.command.pay_by_link_handler', PayByLinkHandler::class)
-        ->parent('commerce_weavers_tpay.api.command.abstract_pay_by_handler')
+    $services->set('commerce_weavers_sylius_tpay.api.command.pay_by_link_handler', PayByLinkHandler::class)
+        ->parent('commerce_weavers_sylius_tpay.api.command.abstract_pay_by_handler')
         ->tag('messenger.message_handler')
     ;
 };

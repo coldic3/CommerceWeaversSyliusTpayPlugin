@@ -128,12 +128,12 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set('commerce_weavers_sylius_tpay.tpay.provider.tpay_api_channel_list', TpayApiChannelListProvider::class)
         ->args([
-            service('commerce_weavers_tpay.tpay.resolver.tpay_transaction_channel_resolver'),
+            service('commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver'),
         ])
         ->alias(TpayApiChannelListProviderInterface::class, 'commerce_weavers_sylius_tpay.provider.tpay_api_channel_list')
     ;
 
-    $services->set('commerce_weavers_tpay.tpay.resolver.tpay_transaction_channel_resolver', TpayTransactionChannelResolver::class)
+    $services->set('commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver', TpayTransactionChannelResolver::class)
         ->args([
             service('payum'),
         ])

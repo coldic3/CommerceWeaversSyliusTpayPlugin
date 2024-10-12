@@ -32,7 +32,7 @@
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>
         <attribute name="tpayChannelId">
-            <group>commerce_weavers_tpay:shop:order:pay</group>
+            <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>
     </class>
 </serializer>

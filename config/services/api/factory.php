@@ -41,7 +41,7 @@ return function(ContainerConfigurator $container): void {
         ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
     ;
 
-    $services->set('commerce_weavers_tpay.api.factory.next_command.pay_by_link', PayByLinkFactory::class)
-        ->tag('commerce_weavers_tpay.api.factory.next_command')
+    $services->set('commerce_weavers_sylius_tpay.api.factory.next_command.pay_by_link', PayByLinkFactory::class)
+        ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
     ;
 };

@@ -21,7 +21,7 @@ final class TpayChannelCollectionDataProvider implements ContextAwareCollectionD
         $transactionChannels = $this->apiBankListProvider->provide();
 
         foreach ($transactionChannels as $transactionChannel) {
-            yield TpayChannel::FromArray($transactionChannel);
+            yield TpayChannel::fromArray($transactionChannel);
         }
     }
 

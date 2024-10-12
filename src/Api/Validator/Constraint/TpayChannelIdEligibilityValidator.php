@@ -38,7 +38,7 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
 
         foreach ($apiChannels as $apiChannel) {
             if ((int) $apiChannel['id'] === (int) $channelId) {
-                $channel = TpayChannel::FromArray($apiChannel);
+                $channel = TpayChannel::fromArray($apiChannel);
 
                 break;
             }

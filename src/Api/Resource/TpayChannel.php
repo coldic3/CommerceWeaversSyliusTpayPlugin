@@ -109,7 +109,7 @@ class TpayChannel
         $this->constraints = $constraints;
     }
 
-    public static function FromArray(array $data): self
+    public static function fromArray(array $data): self
     {
         return new self(
             $data['id'] ?? null,

@@ -23,7 +23,7 @@ final class TpayChannelItemDataProvider implements ItemDataProviderInterface, Re
         /** @var array $transactionChannel */
         foreach ($transactionChannels as $transactionChannel) {
             if ($transactionChannel['id'] === $id) {
-                return TpayChannel::FromArray($transactionChannel);
+                return TpayChannel::fromArray($transactionChannel);
             }
         }
 
