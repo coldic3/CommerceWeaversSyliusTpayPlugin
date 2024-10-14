@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\AbstractPayByHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\CancelLastPaymentHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlikHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCardHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePayHandler;
@@ -13,6 +14,15 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set('commerce_weavers_sylius_tpay.api.command.cancel_last_payment_handler', CancelLastPaymentHandler::class)
+        ->args([
+            service('sylius.repository.order'),
+            service('commerce_weavers_sylius_tpay.payment.checker.payment_cancellation_possibility'),
+            service('commerce_weavers_sylius_tpay.payment.canceller.payment'),
+        ])
+        ->tag('messenger.message_handler')
+    ;
 
     $services->set('commerce_weavers_sylius_tpay.api.command.pay_handler', PayHandler::class)
         ->args([
