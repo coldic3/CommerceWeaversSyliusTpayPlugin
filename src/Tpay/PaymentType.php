@@ -13,4 +13,6 @@ class PaymentType
     public const PAY_BY_LINK = 'pay-by-link';
 
     public const REDIRECT = 'redirect';
+
+    public const GOOGLE_PAY = 'google_pay';
 }

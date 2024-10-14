@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Symfony\Config\SyliusFixturesConfig;
 
 return function(SyliusFixturesConfig $fixtures): void {
@@ -61,7 +62,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
                         'cards_api' => '%env(string:TPAY_CARDS_API)%',
                         'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
-                        'type' => 'redirect',
+                        'type' => PaymentType::REDIRECT,
                         'production_mode' => false,
                     ],
                     'channels' => [
@@ -79,7 +80,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
                         'cards_api' => '%env(string:TPAY_CARDS_API)%',
                         'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
-                        'type' => 'card',
+                        'type' => PaymentType::CARD,
                         'production_mode' => false,
                     ],
                     'channels' => [
@@ -95,7 +96,7 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
-                        'type' => 'blik',
+                        'type' => PaymentType::BLIK,
                         'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
                         'production_mode' => false,
                     ],
@@ -112,8 +113,27 @@ return function(SyliusFixturesConfig $fixtures): void {
                     'gatewayConfig' => [
                         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
                         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
-                        'type' => 'pay-by-link',
+                        'type' => PaymentType::PAY_BY_LINK,
                         'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
+                        'production_mode' => false,
+                    ],
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
+                'google_pay' => [
+                    'code' => 'tpay_google_pay',
+                    'name' => 'Google Pay (Tpay)',
+                    'gatewayFactory' => 'tpay',
+                    'gatewayName' => 'tpay',
+                    'gatewayConfig' => [
+                        'client_id' => '%env(string:TPAY_CLIENT_ID)%',
+                        'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
+                        'merchant_id' => '%env(string:TPAY_MERCHANT_ID)%',
+                        'google_merchant_id' => '%env(string:TPAY_GOOGLE_MERCHANT_ID)%',
+                        'type' => PaymentType::GOOGLE_PAY,
                         'production_mode' => false,
                     ],
                     'channels' => [

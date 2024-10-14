@@ -18,9 +18,9 @@ use Symfony\Component\Form\FormEvents;
 final class TpayGatewayConfigurationType extends AbstractType
 {
     public function __construct(
-        private DecryptGatewayConfigListenerInterface $decryptGatewayConfigListener,
-        private EncryptGatewayConfigListenerInterface $encryptGatewayConfigListener,
-        private PreventSavingEmptyPasswordFieldsListener $preventSavingEmptyClientSecretListener,
+        private readonly DecryptGatewayConfigListenerInterface $decryptGatewayConfigListener,
+        private readonly EncryptGatewayConfigListenerInterface $encryptGatewayConfigListener,
+        private readonly PreventSavingEmptyPasswordFieldsListener $preventSavingEmptyClientSecretListener,
     ) {
     }
 
@@ -63,7 +63,22 @@ final class TpayGatewayConfigurationType extends AbstractType
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.card' => PaymentType::CARD,
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.blik' => PaymentType::BLIK,
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.pay_by_link' => PaymentType::PAY_BY_LINK,
+                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.google_pay' => PaymentType::GOOGLE_PAY,
                     ],
+                ],
+            )
+            ->add(
+                'merchant_id',
+                TextType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.merchant_id',
+                ],
+            )
+            ->add(
+                'google_merchant_id',
+                TextType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.google_merchant_id',
                 ],
             )
             ->add(
