@@ -31,7 +31,7 @@ trait OrderPlacerTrait
     final public function setUpOrderPlacer(): void
     {
         $this->commandBus = self::getContainer()->get('sylius.command_bus');
-        $this->orderRepository = $this->get('sylius.repository.order');
+        $this->orderRepository =self::getContainer()->get('sylius.repository.order');
 
         $this->isSetUpOrderPlacerCalled = true;
     }
@@ -141,12 +141,12 @@ trait OrderPlacerTrait
 
     protected function cancelOrder(string $tokenValue): void
     {
-        $objectManager = $this->get('doctrine.orm.entity_manager');
+        $objectManager = self::getContainer()->get('doctrine.orm.entity_manager');
 
         $order = $this->orderRepository->findOneByTokenValue($tokenValue);
         Assert::notNull($order);
 
-        $stateMachineFactory = $this->get('sm.factory');
+        $stateMachineFactory = self::getContainer()->get('sm.factory');
 
         $stateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
         $stateMachine->apply(OrderTransitions::TRANSITION_CANCEL);
@@ -156,9 +156,9 @@ trait OrderPlacerTrait
 
     protected function payOrder(OrderInterface $order): OrderInterface
     {
-        $objectManager = $this->get('doctrine.orm.entity_manager');
+        $objectManager = self::getContainer()->get('doctrine.orm.entity_manager');
 
-        $stateMachineFactory = $this->get('sm.factory');
+        $stateMachineFactory = self::getContainer()->get('sm.factory');
 
         $orderStateMachine = $stateMachineFactory->get($order, OrderPaymentTransitions::GRAPH);
         $orderStateMachine->apply(OrderPaymentTransitions::TRANSITION_PAY);
@@ -176,7 +176,7 @@ trait OrderPlacerTrait
         ?\DateTimeImmutable $checkoutCompletedAt,
     ): OrderInterface
     {
-        $objectManager = $this->get('doctrine.orm.entity_manager');
+        $objectManager = self::getContainer()->get('doctrine.orm.entity_manager');
 
         $order->setCheckoutCompletedAt($checkoutCompletedAt);
 
