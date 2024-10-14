@@ -6,8 +6,8 @@ class CommerceWeaversSyliusTpay {
     Encore
       .setOutputPath('public/build/commerce-weavers/tpay/shop')
       .setPublicPath('/build/commerce-weavers/tpay/shop')
-      .addEntry('commerce-weavers-tpay-sylius-shop-checkout-complete-entry', path.resolve(__dirname, 'assets/shop/checkout_complete_entrypoint.js'))
-      .addEntry('commerce-weavers-tpay-sylius-shop-order-show-entry', path.resolve(__dirname, 'assets/shop/order_show_entrypoint.js'))
+      .addEntry('commerce-weavers-sylius-tpay-shop-checkout-complete-entry', path.resolve(__dirname, 'assets/shop/checkout_complete_entrypoint.js'))
+      .addEntry('commerce-weavers-sylius-tpay-shop-order-show-entry', path.resolve(__dirname, 'assets/shop/order_show_entrypoint.js'))
       .disableSingleRuntimeChunk()
       .cleanupOutputBeforeBuild()
       .enableSourceMaps(!Encore.isProduction())
