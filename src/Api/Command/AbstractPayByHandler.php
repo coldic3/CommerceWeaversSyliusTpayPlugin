@@ -52,13 +52,13 @@ abstract class AbstractPayByHandler
         return $paymentMethod?->getGatewayConfig()?->getGatewayName() ?? throw new \InvalidArgumentException('Gateway name cannot be determined.');
     }
 
-    protected function createResultFrom(PaymentInterface $payment, bool $isRedirected = true): PayResult
+    protected function createResultFrom(PaymentInterface $payment, bool $isRedirectedBased = true): PayResult
     {
         $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
 
         Assert::notNull($paymentDetails->getStatus(), 'Payment status is required to create a result.');
 
-        if ($isRedirected) {
+        if ($isRedirectedBased) {
             Assert::notNull($paymentDetails->getPaymentUrl(), 'Payment URL is required to create a result.');
         }
 

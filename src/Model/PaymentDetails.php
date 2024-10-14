@@ -127,23 +127,13 @@ class PaymentDetails
 
     public function getType(): string
     {
-        if ($this->getEncodedCardData()) {
-            return PaymentType::CARD;
-        }
-
-        if ($this->getBlikToken()) {
-            return PaymentType::BLIK;
-        }
-
-        if ($this->getTpayChannelId()) {
-            return PaymentType::PAY_BY_LINK;
-        }
-
-        if ($this->getGooglePayToken()) {
-            return PaymentType::GOOGLE_PAY;
-        }
-
-        return PaymentType::REDIRECT;
+        return match (true) {
+            (bool) $this->getEncodedCardData() => PaymentType::CARD,
+            (bool) $this->getBlikToken() => PaymentType::BLIK,
+            (bool) $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
+            (bool) $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
+            default => PaymentType::REDIRECT,
+        };
     }
 
     public function clearSensitiveData(): void

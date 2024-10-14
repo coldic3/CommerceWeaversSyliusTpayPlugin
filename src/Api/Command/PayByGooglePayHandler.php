@@ -18,7 +18,7 @@ final class PayByGooglePayHandler extends AbstractPayByHandler
         $this->setTransactionData($payment, $command->googlePayToken);
         $this->createTransaction($payment);
 
-        return $this->createResultFrom($payment, false);
+        return $this->createResultFrom($payment, isRedirectedBased: false);
     }
 
     private function setTransactionData(PaymentInterface $payment, string $googlePayToken): void

@@ -23,7 +23,6 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
     public function validate(mixed $value, Constraint $constraint): void
     {
         Assert::isInstanceOf($value, Pay::class);
-        /** @var TpayChannelIdEligibility $constraint */
         Assert::isInstanceOf($constraint, TpayChannelIdEligibility::class);
 
         if (null === $value->tpayChannelId) {
@@ -71,7 +70,7 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
             return;
         }
 
-        $this->context->buildViolation($constraint->notABankMessage)
+        $this->context->buildViolation($constraint->notBankMessage)
             ->atPath(self::TPAY_CHANNEL_ID_FIELD_NAME)
             ->setCode($constraint::TPAY_CHANNEL_ID_AVAILABLE_ERROR)
             ->addViolation()

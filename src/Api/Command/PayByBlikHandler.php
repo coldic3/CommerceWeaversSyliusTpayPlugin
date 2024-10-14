@@ -18,7 +18,7 @@ final class PayByBlikHandler extends AbstractPayByHandler
         $this->setTransactionData($payment, $command->blikToken);
         $this->createTransaction($payment);
 
-        return $this->createResultFrom($payment, false);
+        return $this->createResultFrom($payment, isRedirectedBased: false);
     }
 
     private function setTransactionData(PaymentInterface $payment, string $blikToken): void
