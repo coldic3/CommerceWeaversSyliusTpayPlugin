@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateGooglePayPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -67,9 +68,9 @@ final class CreateGooglePayTransactionAction extends AbstractCreateTransactionAc
             return false;
         }
 
-        $details = $model->getDetails();
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        return isset($details['tpay']['google_pay_token']);
+        return $paymentDetails->getType() === PaymentType::GOOGLE_PAY;
     }
 
     private function is3dSecureRedirectRequired(PaymentDetails $paymentDetails): bool

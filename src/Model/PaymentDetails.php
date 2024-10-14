@@ -139,6 +139,10 @@ class PaymentDetails
             return PaymentType::PAY_BY_LINK;
         }
 
+        if ($this->getGooglePayToken()) {
+            return PaymentType::GOOGLE_PAY;
+        }
+
         return PaymentType::REDIRECT;
     }
 

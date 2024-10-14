@@ -241,7 +241,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
         return [
             [['tpay' => ['card' => 'some_value']]],
             [['tpay' => ['blik_token' => 'some_value']]],
-            [['tpay' => ['pay_by_link_channel_id' => 'some_value']]],
+            [['tpay' => ['tpay_channel_id' => 'some_value']]],
             [['tpay' => ['google_pay_token' => 'some_value']]],
         ];
     }
