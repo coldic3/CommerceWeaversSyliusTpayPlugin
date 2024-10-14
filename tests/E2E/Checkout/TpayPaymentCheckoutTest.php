@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Checkout;
 
-use Facebook\WebDriver\WebDriverBy;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Account\LoginShopUserTrait;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Order\CartTrait;
@@ -22,16 +21,7 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
     {
         parent::setUp();
 
-        $this->loadFixtures([
-            'addressed_cart.yaml',
-            'channel.yaml',
-            'country.yaml',
-            'customer.yaml',
-            'payment_method.yaml',
-            'shipping_category.yaml',
-            'shipping_method.yaml',
-            'tax_category.yaml',
-        ]);
+        $this->loadFixtures(['addressed_cart.yaml']);
 
         $this->loginShopUser('tony@nonexisting.cw', 'sylius');
         // the cart is already addressed, so we go straight to selecting a shipping method

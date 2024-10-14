@@ -36,6 +36,7 @@ final class TpayPaymentDetailsType extends AbstractType
                 'blik_token',
                 TextType::class,
                 [
+                    'data' => null,
                     'property_path' => '[blik_token]',
                     'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.blik.token',
                     'validation_groups' => ['sylius_checkout_complete'],

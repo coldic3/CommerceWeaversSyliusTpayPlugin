@@ -115,13 +115,17 @@ Sylius\Component\Product\Model\ProductOptionValueTranslation:
         translatable: '@product_option_value_color_red'
 
 App\Entity\Order:
-    addressed_cart:
+    unpaid_order:
+        number: '000000001'
+        tokenValue: 'tokenValue1'
         channel: '@channel_web'
         currencyCode: 'USD'
         localeCode: 'en_US'
         customer: '@customer_tony'
-        state: 'cart'
-        checkoutState: 'addressed'
+        state: 'new'
+        checkoutState: 'completed'
+        paymentState: 'awaiting_payment'
+        shippingState: 'ready'
         createdByGuest: false
         shippingAddress: '@address_tony'
         billingAddress: '@address_tony'
@@ -135,3 +139,13 @@ Sylius\Component\Core\Model\OrderItem:
 Sylius\Component\Core\Model\OrderItemUnit:
     order_item_unit:
         __construct: ['@order_item']
+        
+Sylius\Component\Core\Model\Payment:
+    unpaid_order_payment_tpay_card:
+        method: '@tpay_card'
+        order: '@unpaid_order'
+        currency_code: 'USD'
+        amount: 100
+        state: new
+        details: '[]'
+    
