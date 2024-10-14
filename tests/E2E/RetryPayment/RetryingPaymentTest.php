@@ -19,16 +19,7 @@ final class RetryingPaymentTest extends E2ETestCase
 
         $this->setUpOrderPlacer();
 
-        $this->loadFixtures([
-            'addressed_cart.yaml',
-            'channel.yaml',
-            'country.yaml',
-            'customer.yaml',
-            'payment_method.yaml',
-            'shipping_category.yaml',
-            'shipping_method.yaml',
-            'tax_category.yaml',
-        ]);
+        $this->loadFixtures(['addressed_cart.yaml']);
     }
 
     public function test_it_retries_payment(): void

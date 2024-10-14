@@ -14,7 +14,7 @@ use Sylius\Component\Payment\PaymentTransitions;
 final class PaymentCanceller implements PaymentCancellerInterface
 {
     public function __construct(
-        private readonly StateMachineInterface|null $stateMachine,
+        private readonly ?StateMachineInterface $stateMachine,
         private readonly FactoryInterface $stateMachineFactory,
     ) {
     }

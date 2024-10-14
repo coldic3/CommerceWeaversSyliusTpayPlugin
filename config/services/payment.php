@@ -9,7 +9,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payment\Canceller\PaymentCancellerInterface
 use CommerceWeavers\SyliusTpayPlugin\Payment\Checker\PaymentCancellationPossibilityChecker;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Checker\PaymentCancellationPossibilityCheckerInterface;
 
-return function(ContainerConfigurator $container): void {
+return static function(ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set('commerce_weavers_sylius_tpay.payment.canceller.payment', PaymentCanceller::class)

@@ -10,7 +10,7 @@ class PaymentCannotBeCancelledException extends \RuntimeException
 {
     public function __construct(
         PaymentInterface $payment,
-        string $message = 'Payment with id "%d" cannot be cancelled.',
+        string $message = 'Payment with ID "%d" cannot be cancelled.',
         int $code = 0,
         ?\Throwable $previous = null,
     ) {
