@@ -17,6 +17,18 @@ final class TpayApiBankListProvider implements TpayApiBankListProviderInterface
     {
         $result = $this->channelResolver->resolve();
 
+        /** @phpstan-var array{
+         * id: string,
+         * name: string,
+         * fullName: string,
+         * image: object,
+         * available: bool,
+         * onlinePayment: bool,
+         * instantRedirection: bool,
+         * groups: array,
+         * constraints: array
+         * }
+         */
         return array_filter($result, static function (array $channel) {
             return
                 ($channel['instantRedirection'] ?? false) === true &&
