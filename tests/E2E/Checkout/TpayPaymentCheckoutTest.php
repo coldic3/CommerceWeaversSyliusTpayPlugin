@@ -15,6 +15,8 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
     use TpayTrait;
     use LoginShopUserTrait;
 
+    private const FORM_ID = 'sylius_checkout_complete';
+
     private const CARD_NUMBER = '4012 0010 3714 1112';
 
     protected function setUp(): void
@@ -40,7 +42,7 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
     public function test_it_completes_the_checkout_using_credit_card(): void
     {
         $this->processWithPaymentMethod('tpay_card');
-        $this->fillCardData('John Doe', self::CARD_NUMBER, '123', '01', '2029');
+        $this->fillCardData(self::FORM_ID, 'John Doe', self::CARD_NUMBER, '123', '01', '2029');
         $this->placeOrder();
 
         $this->assertPageTitleContains('Thank you!');
@@ -49,7 +51,7 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
     public function test_it_completes_the_checkout_using_blik(): void
     {
         $this->processWithPaymentMethod('tpay_blik');
-        $this->fillBlikToken('777123');
+        $this->fillBlikToken(self::FORM_ID, '777123');
         $this->placeOrder();
 
         $this->assertPageTitleContains('Waiting for payment');
