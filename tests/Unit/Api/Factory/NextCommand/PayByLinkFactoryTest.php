@@ -16,7 +16,7 @@ final class PayByLinkFactoryTest extends TestCase
 {
     use ProphecyTrait;
 
-    public function test_it_does_not_support_a_command_without_a_pay_by_link_channel_id(): void
+    public function test_it_does_not_support_a_command_without_a_tpay_channel_id(): void
     {
         $factory = $this->createTestSubject();
 

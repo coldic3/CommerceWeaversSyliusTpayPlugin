@@ -7,24 +7,21 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\DataProvider;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Api\Resource\TpayChannel;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolverInterface;
 
 final class TpayChannelItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        private readonly TpayApiBankListProviderInterface $apiBankListProvider,
+        private readonly TpayTransactionChannelResolverInterface $tpayTransactionChannelResolver,
     ) {
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?TpayChannel
     {
-        $transactionChannels = $this->apiBankListProvider->provide();
+        $transactionChannels = $this->tpayTransactionChannelResolver->resolve();
 
-        /** @var array $transactionChannel */
-        foreach ($transactionChannels as $transactionChannel) {
-            if ($transactionChannel['id'] === $id) {
-                return TpayChannel::fromArray($transactionChannel);
-            }
+        if (array_key_exists($id, $transactionChannels)) {
+            return TpayChannel::fromArray($transactionChannels[$id]);
         }
 
         return null;

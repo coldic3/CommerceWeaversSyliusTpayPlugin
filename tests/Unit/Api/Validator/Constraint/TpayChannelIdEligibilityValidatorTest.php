@@ -8,6 +8,8 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\TpayChannelIdEligibility;
 use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\TpayChannelIdEligibilityValidator;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiChannelListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolverInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
@@ -22,22 +24,26 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
     use ProphecyTrait;
 
     private const EXAMPLE_RETURN = [
-        'not a bank channel' => [
+        //
+        '1' => [
             'id' => '1',
+            'name' => 'not a bank channel',
             'available' => true,
             'onlinePayment' => true,
             'instantRedirection' => false,
             'data' => 'some data'
         ],
-        'unavailable channel' => [
+        '2' => [
             'id' => '2',
+            'name' => 'unavailable channel',
             'available' => false,
             'onlinePayment' => true,
             'instantRedirection' => true,
             'data' => 'some data'
         ],
-        'good channel' => [
+        '3' => [
             'id' => '3',
+            'name' => 'good channel',
             'available' => true,
             'onlinePayment' => true,
             'instantRedirection' => true,
@@ -45,11 +51,11 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         ]
     ];
 
-    private TpayApiChannelListProviderInterface|ObjectProphecy $tpayApiChannelListProvider;
+    private TpayTransactionChannelResolverInterface|ObjectProphecy $tpayTransactionChannelResolver;
 
     protected function setUp(): void
     {
-        $this->tpayApiChannelListProvider = $this->prophesize(TpayApiChannelListProviderInterface::class);
+        $this->tpayTransactionChannelResolver = $this->prophesize(TpayTransactionChannelResolverInterface::class);
 
         parent::setUp();
     }
@@ -82,7 +88,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         );
     }
 
-    public function test_it_builds_violation_if_pay_by_link_channel_id_does_not_exist(): void
+    public function test_it_builds_violation_if_tpay_channel_id_does_not_exist(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $gatewayConfig->getConfig()->willReturn(['type' => 'pay-by-link']);
@@ -93,7 +99,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod->reveal());
 
-        $this->tpayApiChannelListProvider->provide()->willReturn(self::EXAMPLE_RETURN);
+        $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
         $this->validator->validate(
             new Pay(
@@ -112,7 +118,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         ;
     }
 
-    public function test_it_builds_violation_if_pay_by_link_channel_id_is_not_available(): void
+    public function test_it_builds_violation_if_tpay_channel_id_is_not_available(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $gatewayConfig->getConfig()->willReturn(['type' => 'pay-by-link']);
@@ -123,7 +129,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod->reveal());
 
-        $this->tpayApiChannelListProvider->provide()->willReturn(self::EXAMPLE_RETURN);
+        $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
         $this->validator->validate(
             new Pay(
@@ -135,14 +141,14 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
             new TpayChannelIdEligibility(),
         );
 
-        $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.tpay_channel_id.available')
+        $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.tpay_channel_id.not_available')
             ->atPath('property.path.tpayChannelId')
             ->setCode('f2a42e4d-21e4-4728-a745-b49d1bf12138')
             ->assertRaised()
         ;
     }
 
-    public function test_it_builds_violation_if_pay_by_link_channel_id_is_not_a_bank(): void
+    public function test_it_builds_violation_if_tpay_channel_id_is_not_a_bank(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $gatewayConfig->getConfig()->willReturn(['type' => 'pay-by-link']);
@@ -153,7 +159,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod->reveal());
 
-        $this->tpayApiChannelListProvider->provide()->willReturn(self::EXAMPLE_RETURN);
+        $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
         $this->validator->validate(
             new Pay(
@@ -172,7 +178,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         ;
     }
 
-    public function test_it_does_nothing_if_pay_by_link_channel_id_is_not_provided(): void
+    public function test_it_does_nothing_if_tpay_channel_id_is_not_provided(): void
     {
         $this->validator->validate(
             new Pay(
@@ -186,7 +192,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function test_it_does_nothing_if_pay_by_link_channel_id_is_eligible(): void
+    public function test_it_does_nothing_if_tpay_channel_id_is_eligible(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $gatewayConfig->getConfig()->willReturn(['type' => 'pay-by-link']);
@@ -197,7 +203,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod->reveal());
 
-        $this->tpayApiChannelListProvider->provide()->willReturn(self::EXAMPLE_RETURN);
+        $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
         $this->validator->validate(
             new Pay(
@@ -214,7 +220,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
     protected function createValidator(): TpayChannelIdEligibilityValidator
     {
         return new TpayChannelIdEligibilityValidator(
-            $this->tpayApiChannelListProvider->reveal(),
+            $this->tpayTransactionChannelResolver->reveal(),
         );
     }
 }

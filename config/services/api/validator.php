@@ -20,7 +20,7 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set('commerce_weavers_sylius_tpay.api.validator.constraint.tpay_channel_id_eligibility_validator', TpayChannelIdEligibilityValidator::class)
         ->args([
-            service('commerce_weavers_sylius_tpay.tpay.provider.tpay_api_channel_list'),
+            service('commerce_weavers_sylius_tpay.tpay.resolver.cached_tpay_transaction_channel_resolver'),
         ])
         ->tag('validator.constraint_validator')
     ;

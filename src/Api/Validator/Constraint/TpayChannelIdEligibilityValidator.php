@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Resource\TpayChannel;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiChannelListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolverInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Webmozart\Assert\Assert;
@@ -16,7 +16,7 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
     public const TPAY_CHANNEL_ID_FIELD_NAME = 'tpayChannelId';
 
     public function __construct(
-        private readonly TpayApiChannelListProviderInterface $tpayApiChannelListProvider,
+        private readonly TpayTransactionChannelResolverInterface $tpayTransactionChannelResolver,
     ) {
     }
 
@@ -31,16 +31,12 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
 
         $channelId = $value->tpayChannelId;
 
-        $apiChannels = $this->tpayApiChannelListProvider->provide();
+        $apiChannels = $this->tpayTransactionChannelResolver->resolve();
 
         $channel = null;
 
-        foreach ($apiChannels as $apiChannel) {
-            if ((int) $apiChannel['id'] === (int) $channelId) {
-                $channel = TpayChannel::fromArray($apiChannel);
-
-                break;
-            }
+        if (array_key_exists($channelId, $apiChannels)) {
+            $channel = TpayChannel::fromArray($apiChannels[$channelId]);
         }
 
         if (null === $channel) {

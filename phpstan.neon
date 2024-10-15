@@ -32,3 +32,4 @@ parameters:
         -
             message: '/Only booleans are allowed in an if condition, string\|null given./'
             path: src/Model/PaymentDetails.php
+        - '#Parameter \#1 \$key of function array_key_exists expects int\|string, array\|int\|object\|string given\.#'
