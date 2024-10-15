@@ -12,7 +12,7 @@ parameters:
 
     ignoreErrors:
         -
-            identifier: missingType.iterableValue
+            identifier: missingType.iterableValue # replaces deprecated key "checkMissingIterableValueType: false"
         -
             identifier: missingType.generics # ignore missing type generics, as it is complicated when supported for Sylius 1.12 and 1.13 is required
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'

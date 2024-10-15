@@ -128,10 +128,10 @@ class PaymentDetails
     public function getType(): string
     {
         return match (true) {
-            (bool) $this->getEncodedCardData() => PaymentType::CARD,
-            (bool) $this->getBlikToken() => PaymentType::BLIK,
-            (bool) $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
-            (bool) $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
+            null !== $this->getEncodedCardData() => PaymentType::CARD,
+            null !== $this->getBlikToken() => PaymentType::BLIK,
+            null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
+            null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
             default => PaymentType::REDIRECT,
         };
     }

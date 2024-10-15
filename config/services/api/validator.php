@@ -10,7 +10,7 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\TpayChannelIdEligi
 return static function(ContainerConfigurator $container): void {
     $services = $container->services();
 
-    $services->set('commerce_weavers_tpay.api.validator.constraint.not_blank_if_payment_method_type_equals', NotBlankIfGatewayConfigTypeEqualsValidator::class)
+    $services->set('commerce_weavers_sylius_tpay.api.validator.constraint.not_blank_if_payment_method_type_equals', NotBlankIfGatewayConfigTypeEqualsValidator::class)
         ->args([
             service('sylius.repository.order'),
             service('payum.dynamic_gateways.cypher'),

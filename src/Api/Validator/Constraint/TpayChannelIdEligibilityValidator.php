@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Resource\TpayChannel;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolverInterface;
 use Symfony\Component\Validator\Constraint;
@@ -13,8 +12,6 @@ use Webmozart\Assert\Assert;
 
 final class TpayChannelIdEligibilityValidator extends ConstraintValidator
 {
-    public const TPAY_CHANNEL_ID_FIELD_NAME = 'tpayChannelId';
-
     public function __construct(
         private readonly TpayTransactionChannelResolverInterface $tpayTransactionChannelResolver,
     ) {
@@ -22,27 +19,25 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
 
     public function validate(mixed $value, Constraint $constraint): void
     {
-        Assert::isInstanceOf($value, Pay::class);
         Assert::isInstanceOf($constraint, TpayChannelIdEligibility::class);
 
-        if (null === $value->tpayChannelId) {
+        if (null === $value) {
             return;
         }
 
-        $channelId = $value->tpayChannelId;
+        Assert::string($value);
 
         $apiChannels = $this->tpayTransactionChannelResolver->resolve();
 
         $channel = null;
 
-        if (array_key_exists($channelId, $apiChannels)) {
-            $channel = TpayChannel::fromArray($apiChannels[$channelId]);
+        if (array_key_exists($value, $apiChannels)) {
+            $channel = TpayChannel::fromArray($apiChannels[$value]);
         }
 
         if (null === $channel) {
             $this->context->buildViolation($constraint->doesNotExistMessage)
-                ->atPath(self::TPAY_CHANNEL_ID_FIELD_NAME)
-                ->setCode($constraint::TPAY_CHANNEL_ID_AVAILABLE_ERROR)
+                ->setCode($constraint::TPAY_CHANNEL_ID_DOES_NOT_EXIST_ERROR)
                 ->addViolation()
             ;
 
@@ -51,7 +46,6 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
 
         if (false === $channel->getAvailable()) {
             $this->context->buildViolation($constraint->availableMessage)
-                ->atPath(self::TPAY_CHANNEL_ID_FIELD_NAME)
                 ->setCode($constraint::TPAY_CHANNEL_ID_AVAILABLE_ERROR)
                 ->addViolation()
             ;
@@ -67,8 +61,7 @@ final class TpayChannelIdEligibilityValidator extends ConstraintValidator
         }
 
         $this->context->buildViolation($constraint->notBankMessage)
-            ->atPath(self::TPAY_CHANNEL_ID_FIELD_NAME)
-            ->setCode($constraint::TPAY_CHANNEL_ID_AVAILABLE_ERROR)
+            ->setCode($constraint::TPAY_CHANNEL_ID_NOT_BANK_ERROR)
             ->addViolation()
         ;
     }

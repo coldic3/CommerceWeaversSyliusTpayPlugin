@@ -60,18 +60,18 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    public function test_it_throws_an_exception_if_a_value_is_not_an_object(): void
+    public function test_it_throws_an_exception_if_a_value_is_not_a_string(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->validator->validate('not_an_object', new TpayChannelIdEligibility());
+        $this->validator->validate(new \stdClass(), new TpayChannelIdEligibility());
     }
 
     public function test_it_throws_an_exception_if_a_value_has_an_invalid_type(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->validator->validate(new \stdClass(), new TpayChannelIdEligibility());
+        $this->validator->validate(1, new TpayChannelIdEligibility());
     }
 
     public function test_it_throws_an_exception_if_a_constraint_has_an_invalid_type(): void
@@ -79,11 +79,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $this->expectException(InvalidArgumentException::class);
 
         $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: '11'),
+            '11',
             $this->prophesize(Constraint::class)->reveal(),
         );
     }
@@ -102,18 +98,12 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
         $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
         $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: '111'
-            ),
+            '111',
             new TpayChannelIdEligibility(),
         );
 
         $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.tpay_channel_id.does_not_exist')
-            ->atPath('property.path.tpayChannelId')
-            ->setCode('f2a42e4d-21e4-4728-a745-b49d1bf12138')
+            ->setCode('f51e4f12-121a-4a1f-9cac-9862cf54732f')
             ->assertRaised()
         ;
     }
@@ -131,18 +121,9 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
 
         $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
-        $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: '2'
-            ),
-            new TpayChannelIdEligibility(),
-        );
+        $this->validator->validate('2', new TpayChannelIdEligibility());
 
         $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.tpay_channel_id.not_available')
-            ->atPath('property.path.tpayChannelId')
             ->setCode('f2a42e4d-21e4-4728-a745-b49d1bf12138')
             ->assertRaised()
         ;
@@ -161,33 +142,17 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
 
         $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
-        $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: '1'
-            ),
-            new TpayChannelIdEligibility(),
-        );
+        $this->validator->validate('1', new TpayChannelIdEligibility());
 
         $this->buildViolation('commerce_weavers_sylius_tpay.shop.pay.tpay_channel_id.not_a_bank')
-            ->atPath('property.path.tpayChannelId')
-            ->setCode('f2a42e4d-21e4-4728-a745-b49d1bf12138')
+            ->setCode('2ecd8f05-0500-489e-93ca-701167e07768')
             ->assertRaised()
         ;
     }
 
     public function test_it_does_nothing_if_tpay_channel_id_is_not_provided(): void
     {
-        $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: null),
-            new TpayChannelIdEligibility(),
-        );
+        $this->validator->validate(null, new TpayChannelIdEligibility());
 
         $this->assertNoViolation();
     }
@@ -205,14 +170,7 @@ class TpayChannelIdEligibilityValidatorTest extends ConstraintValidatorTestCase
 
         $this->tpayTransactionChannelResolver->resolve()->willReturn(self::EXAMPLE_RETURN);
 
-        $this->validator->validate(
-            new Pay(
-                'order_token',
-                'https://cw.nonexisting/success',
-                'https://cw.nonexisting/failure',
-                tpayChannelId: '3'),
-            new TpayChannelIdEligibility(),
-        );
+        $this->validator->validate('3', new TpayChannelIdEligibility());
 
         $this->assertNoViolation();
     }
