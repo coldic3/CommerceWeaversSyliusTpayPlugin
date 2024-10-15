@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Command;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\CancelLastPayment;
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\CancelLastPaymentHandler;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPayment;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPaymentHandler;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Canceller\PaymentCancellerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Checker\PaymentCancellationPossibilityCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Exception\PaymentCannotBeCancelledException;

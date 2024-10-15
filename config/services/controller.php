@@ -52,11 +52,9 @@ return function(ContainerConfigurator $container): void {
     $services->set(RetryPaymentAction::class)
         ->args([
             service('security.csrf.token_manager'),
+            service('sylius.command_bus'),
             service('sylius.repository.order'),
-            service('commerce_weavers_sylius_tpay.payment.checker.payment_cancellation_possibility'),
-            service('commerce_weavers_sylius_tpay.payment.canceller.payment'),
             service('router'),
-            service('sylius.manager.payment'),
             service('request_stack'),
         ])
         ->tag('controller.service_arguments')

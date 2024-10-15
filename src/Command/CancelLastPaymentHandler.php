@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
+namespace CommerceWeavers\SyliusTpayPlugin\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Payment\Canceller\PaymentCancellerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Checker\PaymentCancellationPossibilityCheckerInterface;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPayment;
 use Symfony\Config\FrameworkConfig;
 
 if (!defined('COMMERCE_WEAVERS_SYLIUS_TPAY_SYNC_TRANSPORT')) {
@@ -17,4 +18,5 @@ return function(FrameworkConfig $framework): void {
     $messenger->transport(COMMERCE_WEAVERS_SYLIUS_TPAY_SYNC_TRANSPORT)->dsn('sync://');
 
     $messenger->routing(PayByBlik::class)->senders([COMMERCE_WEAVERS_SYLIUS_TPAY_SYNC_TRANSPORT]);
+    $messenger->routing(CancelLastPayment::class)->senders([COMMERCE_WEAVERS_SYLIUS_TPAY_SYNC_TRANSPORT]);
 };

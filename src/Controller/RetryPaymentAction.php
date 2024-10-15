@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Controller;
 
-use CommerceWeavers\SyliusTpayPlugin\Payment\Canceller\PaymentCancellerInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payment\Checker\PaymentCancellationPossibilityCheckerInterface;
-use Doctrine\Persistence\ObjectManager;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPayment;
+use CommerceWeavers\SyliusTpayPlugin\Payment\Exception\PaymentCannotBeCancelledException;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -16,9 +15,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Webmozart\Assert\Assert;
 
 final class RetryPaymentAction
 {
@@ -28,11 +30,9 @@ final class RetryPaymentAction
 
     public function __construct(
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly MessageBusInterface $messageBus,
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly PaymentCancellationPossibilityCheckerInterface $paymentCancellationPossibilityChecker,
-        private readonly PaymentCancellerInterface $paymentCancellationProcessor,
         private readonly RouterInterface $router,
-        private readonly ObjectManager $paymentOrderManager,
         private readonly RequestStack $requestStack,
     ) {
     }
@@ -47,20 +47,21 @@ final class RetryPaymentAction
         }
 
         $order = $this->findOrderOr404($orderToken);
-        $payment = $order->getLastPayment();
+        Assert::notNull($order->getTokenValue());
 
-        if (null === $payment || !$this->paymentCancellationPossibilityChecker->canBeCancelled($payment)) {
-            $this->addFlashMessage(self::ERROR_FLASH_TYPE, 'commerce_weavers_sylius_tpay.shop.retry_payment.cannot_be_retried');
+        try {
+            $this->messageBus->dispatch(new CancelLastPayment($order->getTokenValue()));
+        } catch (HandlerFailedException $exception) {
+            if ($exception->getPrevious() instanceof PaymentCannotBeCancelledException) {
+                $this->addFlashMessage(self::ERROR_FLASH_TYPE, 'commerce_weavers_sylius_tpay.shop.retry_payment.cannot_be_retried');
 
-            return new RedirectResponse(
-                $this->router->generate('sylius_shop_homepage'),
-            );
+                return new RedirectResponse(
+                    $this->router->generate('sylius_shop_homepage'),
+                );
+            }
+
+            throw $exception;
         }
-
-        $this->paymentCancellationProcessor->cancel($payment);
-
-        $this->paymentOrderManager->persist($payment);
-        $this->paymentOrderManager->flush();
 
         $this->addFlashMessage(self::INFO_FLASH_TYPE, 'commerce_weavers_sylius_tpay.shop.retry_payment.previous_payment_cancelled');
 

@@ -20,7 +20,7 @@
             method: 'PATCH'
             path: '/shop/orders/{tokenValue}/cancel-last-payment'
             messenger: 'input'
-            input: 'CommerceWeavers\SyliusTpayPlugin\Api\Command\CancelLastPayment'
+            input: 'CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPayment'
             status: 200
             denormalization_context:
                 groups:

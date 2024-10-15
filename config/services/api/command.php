@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\AbstractPayByHandler;
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\CancelLastPaymentHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlikHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCardHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirectHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPaymentHandler;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
