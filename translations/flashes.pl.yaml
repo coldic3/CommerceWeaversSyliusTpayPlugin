@@ -1,0 +1,5 @@
+commerce_weavers_sylius_tpay:
+    shop:
+        retry_payment:
+            cannot_be_retried: 'Wybrana płatność nie może być ponowiona'
+            previous_payment_cancelled: 'Poprzednia płatność została anulowana'

@@ -42,6 +42,10 @@ commerce_weavers_sylius_tpay:
                     year_placeholder: 'Choose a year'
                 holder_name: 'Cardholder name'
                 number: 'Number'
+        payment_failed:
+            retry_payment: 'Retry payment'
+            subtitle: 'We were unable to process it successfully'
+            title: 'Something went wrong with your payment'
         waiting_for_payment:
             title: 'Waiting for payment'
             we_are_waiting_for_payment: 'We are waiting for payment confirmation'

@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Routing\Generator\CallbackUrlGeneratorInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBasedPaymentPayloadFactoryInterface
 {
     public function __construct(
-        private readonly RouterInterface $router,
+        private readonly CallbackUrlGeneratorInterface $callbackUrlGenerator,
         private readonly TranslatorInterface $translator,
-        private readonly string $successRoute,
-        private readonly string $errorRoute,
     ) {
     }
 
@@ -47,43 +43,13 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
             ],
             'callbacks' => [
                 'payerUrls' => [
-                    'success' => $this->getSuccessUrl($payment, $localeCode),
-                    'error' => $this->getFailureUrl($payment, $localeCode),
+                    'success' => $this->callbackUrlGenerator->generateSuccessUrl($payment, $localeCode),
+                    'error' => $this->callbackUrlGenerator->generateFailureUrl($payment, $localeCode),
                 ],
                 'notification' => [
                     'url' => $notifyUrl,
                 ],
             ],
         ];
-    }
-
-    private function getSuccessUrl(PaymentInterface $payment, string $localeCode): string
-    {
-        $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
-
-        if ($paymentDetails->getSuccessUrl() === null) {
-            return $this->router->generate(
-                $this->successRoute,
-                ['_locale' => $localeCode],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            );
-        }
-
-        return $paymentDetails->getSuccessUrl();
-    }
-
-    private function getFailureUrl(PaymentInterface $payment, string $localeCode): string
-    {
-        $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
-
-        if ($paymentDetails->getFailureUrl() === null) {
-            return $this->router->generate(
-                $this->errorRoute,
-                ['_locale' => $localeCode],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            );
-        }
-
-        return $paymentDetails->getFailureUrl();
     }
 }

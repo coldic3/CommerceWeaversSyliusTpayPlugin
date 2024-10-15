@@ -9,6 +9,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareInterface;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Bundle\PayumBundle\Request\ResolveNextRoute;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Webmozart\Assert\Assert;
@@ -25,8 +26,14 @@ final class ResolveNextRouteAction implements ActionInterface, GenericTokenFacto
         /** @var PaymentInterface $model */
         $model = $request->getModel();
 
+        /** @var OrderInterface $order */
+        $order = $model->getOrder();
+
         if ($model->getState() === PaymentInterface::STATE_COMPLETED) {
-            $request->setRouteName('sylius_shop_order_thank_you');
+            $request->setRouteName(Routing::SHOP_THANK_YOU);
+            $request->setRouteParameters([
+                'orderToken' => $order->getTokenValue(),
+            ]);
 
             return;
         }
@@ -43,12 +50,17 @@ final class ResolveNextRouteAction implements ActionInterface, GenericTokenFacto
             return;
         }
 
-        $orderToken = $model->getOrder()?->getTokenValue();
+        if ($model->getState() === PaymentInterface::STATE_FAILED) {
+            $request->setRouteName(Routing::SHOP_PAYMENT_FAILED);
+            $request->setRouteParameters([
+                'orderToken' => $order->getTokenValue(),
+            ]);
 
-        Assert::notNull($orderToken, 'Order token must be present.');
+            return;
+        }
 
         $request->setRouteName('sylius_shop_order_show');
-        $request->setRouteParameters(['tokenValue' => $orderToken]);
+        $request->setRouteParameters(['tokenValue' => $order->getTokenValue()]);
     }
 
     private function createTokenForRoute(PaymentInterface $payment, string $route): string

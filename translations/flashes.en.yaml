@@ -1,0 +1,5 @@
+commerce_weavers_sylius_tpay:
+    shop:
+        retry_payment:
+            cannot_be_retried: 'This payment cannot be retried'
+            previous_payment_cancelled: 'The previous payment has been cancelled'

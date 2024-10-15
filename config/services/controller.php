@@ -4,11 +4,30 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayPaymentFailedPageAction;
+use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayThankYouPageAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayWaitingForPaymentPage;
 use CommerceWeavers\SyliusTpayPlugin\Controller\PaymentNotificationAction;
+use CommerceWeavers\SyliusTpayPlugin\Controller\RetryPaymentAction;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set(DisplayPaymentFailedPageAction::class)
+        ->args([
+            service('twig'),
+            service('sylius.repository.order'),
+        ])
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(DisplayThankYouPageAction::class)
+        ->args([
+            service('twig'),
+            service('sylius.repository.order'),
+        ])
+        ->tag('controller.service_arguments')
+    ;
 
     $services->set(DisplayWaitingForPaymentPage::class)
         ->args([
@@ -26,6 +45,19 @@ return function(ContainerConfigurator $container): void {
             service('payum'),
             service('commerce_weavers_sylius_tpay.payum.factory.notify'),
             service('commerce_weavers_sylius_tpay.payum.factory.notify_data'),
+        ])
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(RetryPaymentAction::class)
+        ->args([
+            service('security.csrf.token_manager'),
+            service('sylius.repository.order'),
+            service('commerce_weavers_sylius_tpay.payment.checker.payment_cancellation_possibility'),
+            service('commerce_weavers_sylius_tpay.payment.canceller.payment'),
+            service('router'),
+            service('sylius.manager.payment'),
+            service('request_stack'),
         ])
         ->tag('controller.service_arguments')
     ;
