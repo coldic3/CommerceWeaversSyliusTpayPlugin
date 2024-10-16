@@ -10,6 +10,7 @@ commerce_weavers_sylius_tpay:
             merchant_id: 'ID sprzedawcy'
             notification_security_code: 'Kod bezpieczeństwa (Powiadomienia)'
             type:
+                apple_pay: 'Apple Pay'
                 blik: 'BLIK'
                 card: 'Karta (na stronie)'
                 google_pay: 'Google Pay'
