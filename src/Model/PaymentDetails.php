@@ -150,6 +150,7 @@ class PaymentDetails
 
     public function clearSensitiveData(): void
     {
+        $this->applePayToken = null;
         $this->blikToken = null;
         $this->googlePayToken = null;
         $this->encodedCardData = null;
