@@ -27,6 +27,13 @@ Sylius\Component\Core\Model\PaymentMethod:
         translations:
             - '@tpay_google_pay_payment_method_translation'
         channels: ['@channel_web']
+    tpay_pbl:
+        code: 'tpay_pbl'
+        enabled: true
+        gatewayConfig: '@gateway_tpay_pbl'
+        translations:
+            - '@tpay_pbl_payment_method_translation'
+        channels: [ '@channel_web' ]
 
 Sylius\Bundle\PayumBundle\Model\GatewayConfig:
     gateway_tpay:
@@ -65,6 +72,15 @@ Sylius\Bundle\PayumBundle\Model\GatewayConfig:
             type: 'google_pay'
             production_mode: false
             encrypted: true
+    gateway_tpay_pbl:
+        gatewayName: 'tpay'
+        factoryName: 'tpay'
+        config:
+            client_id: 'encrypted_<getenv("TPAY_CLIENT_ID")>'
+            client_secret: 'encrypted_<getenv("TPAY_CLIENT_SECRET")>'
+            type: 'pay-by-link'
+            production_mode: false
+            encrypted: true
 
 Sylius\Component\Payment\Model\PaymentMethodTranslation:
     tpay_payment_method_translation:
@@ -87,3 +103,8 @@ Sylius\Component\Payment\Model\PaymentMethodTranslation:
         locale: 'en_US'
         description: '<paragraph(2)>'
         translatable: '@tpay_google_pay'
+    tpay_pbl_payment_method_translation:
+        name: 'Bank (Tpay)'
+        locale: 'en_US'
+        description: '<paragraph(2)>'
+        translatable: '@tpay_pbl'

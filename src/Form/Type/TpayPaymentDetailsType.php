@@ -58,10 +58,10 @@ final class TpayPaymentDetailsType extends AbstractType
                 ],
             )
             ->add(
-                'pay_by_link_channel_id',
+                'tpay_channel_id',
                 HiddenType::class,
                 [
-                    'property_path' => '[pay_by_link_channel_id]',
+                    'property_path' => '[tpay_channel_id]',
                 ],
             )
         ;

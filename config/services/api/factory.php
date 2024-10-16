@@ -7,6 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByBlikFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByCardFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByGooglePayFactory;
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByLinkFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByRedirectFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
@@ -37,6 +38,10 @@ return function(ContainerConfigurator $container): void {
         ->args([
             service('payum.dynamic_gateways.cypher'),
         ])
+        ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.factory.next_command.pay_by_link', PayByLinkFactory::class)
         ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
     ;
 };

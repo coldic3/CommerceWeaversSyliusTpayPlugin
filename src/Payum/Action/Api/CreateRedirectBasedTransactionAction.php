@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -64,12 +65,8 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
             return false;
         }
 
-        $details = $model->getDetails();
+        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        return !isset($details['tpay']['card']) &&
-            !isset($details['tpay']['blik_token']) &&
-            !isset($details['tpay']['pay_by_link_channel_id']) &&
-            !isset($details['tpay']['google_pay_token'])
-        ;
+        return $paymentDetails->getType() === PaymentType::REDIRECT;
     }
 }

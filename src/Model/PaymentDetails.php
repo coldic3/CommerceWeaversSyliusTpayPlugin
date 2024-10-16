@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Model;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
+
 class PaymentDetails
 {
     public function __construct(
@@ -19,6 +21,7 @@ class PaymentDetails
         private ?string $paymentUrl = null,
         private ?string $successUrl = null,
         private ?string $failureUrl = null,
+        private ?string $tpayChannelId = null,
     ) {
     }
 
@@ -112,6 +115,27 @@ class PaymentDetails
         $this->failureUrl = $failureUrl;
     }
 
+    public function getTpayChannelId(): ?string
+    {
+        return $this->tpayChannelId;
+    }
+
+    public function setTpayChannelId(?string $tpayChannelId): void
+    {
+        $this->tpayChannelId = $tpayChannelId;
+    }
+
+    public function getType(): string
+    {
+        return match (true) {
+            null !== $this->getEncodedCardData() => PaymentType::CARD,
+            null !== $this->getBlikToken() => PaymentType::BLIK,
+            null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
+            null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
+            default => PaymentType::REDIRECT,
+        };
+    }
+
     public function clearSensitiveData(): void
     {
         $this->blikToken = null;
@@ -131,6 +155,7 @@ class PaymentDetails
             $details['tpay']['payment_url'] ?? null,
             $details['tpay']['success_url'] ?? null,
             $details['tpay']['failure_url'] ?? null,
+            $details['tpay']['tpay_channel_id'] ?? null,
         );
     }
 
@@ -147,6 +172,7 @@ class PaymentDetails
                 'payment_url' => $this->paymentUrl,
                 'success_url' => $this->successUrl,
                 'failure_url' => $this->failureUrl,
+                'tpay_channel_id' => $this->tpayChannelId,
             ],
         ];
     }

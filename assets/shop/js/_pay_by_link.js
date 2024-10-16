@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
   const tiles = document.querySelectorAll('.bank-tile');
-  const hiddenInput = document.getElementById('sylius_checkout_complete_tpay_pay_by_link_channel_id');
+  const hiddenInput = document.getElementById('sylius_checkout_complete_tpay_tpay_channel_id');
 
   tiles.forEach(tile => {
     tile.addEventListener('click', function () {

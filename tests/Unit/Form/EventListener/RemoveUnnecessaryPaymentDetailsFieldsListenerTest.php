@@ -19,7 +19,7 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form = $this->prophesize(FormInterface::class);
         $form->remove('card')->shouldBeCalled()->willReturn($form);
         $form->remove('blik_token')->shouldNotBeCalled();
-        $form->remove('pay_by_link_channel_id')->shouldBeCalled()->willReturn($form);
+        $form->remove('tpay_channel_id')->shouldBeCalled()->willReturn($form);
 
         $event = new FormEvent($form->reveal(), ['blik_token' => '123456']);
 
@@ -31,7 +31,7 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form = $this->prophesize(FormInterface::class);
         $form->remove('card')->shouldNotBeCalled();
         $form->remove('blik_token')->shouldBeCalled()->willReturn($form);
-        $form->remove('pay_by_link_channel_id')->shouldBeCalled()->willReturn($form);
+        $form->remove('tpay_channel_id')->shouldBeCalled()->willReturn($form);
 
         $event = new FormEvent($form->reveal(), ['card' => 'h45h']);
 
@@ -43,9 +43,9 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form = $this->prophesize(FormInterface::class);
         $form->remove('card')->shouldBeCalled()->willReturn($form);
         $form->remove('blik_token')->shouldBeCalled()->willReturn($form);
-        $form->remove('pay_by_link_channel_id')->shouldNotBeCalled();
+        $form->remove('tpay_channel_id')->shouldNotBeCalled();
 
-        $event = new FormEvent($form->reveal(), ['pay_by_link_channel_id' => 1]);
+        $event = new FormEvent($form->reveal(), ['tpay_channel_id' => 1]);
 
         $this->createTestSubject()->__invoke($event);
     }
@@ -55,7 +55,7 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form = $this->prophesize(FormInterface::class);
         $form->remove('card')->shouldBeCalled()->willReturn($form);
         $form->remove('blik_token')->shouldBeCalled()->willReturn($form);
-        $form->remove('pay_by_link_channel_id')->shouldBeCalled()->willReturn($form);
+        $form->remove('tpay_channel_id')->shouldBeCalled()->willReturn($form);
 
         $event = new FormEvent($form->reveal(), []);
 
