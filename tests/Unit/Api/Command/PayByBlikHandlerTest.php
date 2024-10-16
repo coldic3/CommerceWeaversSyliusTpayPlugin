@@ -38,7 +38,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123'));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', true));
     }
 
     public function test_it_creates_a_blik_based_transaction(): void
@@ -46,12 +46,12 @@ final class PayByBlikHandlerTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
         $payment->setDetails(
-            $this->getExpectedDetails(blik_token: '777123'),
+            $this->getExpectedDetails(blik_token: '777123', blik_save_alias: true),
         )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123'));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', true));
 
         self::assertSame('success', $result->status);
     }
