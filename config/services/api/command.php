@@ -11,9 +11,19 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByLinkHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirectHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
+use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPaymentHandler;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set('commerce_weavers_sylius_tpay.api.command.cancel_last_payment_handler', CancelLastPaymentHandler::class)
+        ->args([
+            service('sylius.repository.order'),
+            service('commerce_weavers_sylius_tpay.payment.checker.payment_cancellation_possibility'),
+            service('commerce_weavers_sylius_tpay.payment.canceller.payment'),
+        ])
+        ->tag('messenger.message_handler')
+    ;
 
     $services->set('commerce_weavers_sylius_tpay.api.command.pay_handler', PayHandler::class)
         ->args([

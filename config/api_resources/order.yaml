@@ -16,3 +16,16 @@
                 - 'commerce_weavers_sylius_tpay:shop:order:pay'
             openapi_context:
                 summary: 'Pay for the order'
+        shop_cancel_last_payment:
+            method: 'PATCH'
+            path: '/shop/orders/{tokenValue}/cancel-last-payment'
+            messenger: 'input'
+            input: 'CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPayment'
+            status: 200
+            denormalization_context:
+                groups:
+                    - 'commerce_weavers_sylius_tpay:shop:order:cancel_last_payment'
+            validation_groups:
+                - 'commerce_weavers_sylius_tpay:shop:order:cancel_last_payment'
+            openapi_context:
+                summary: 'Cancel the last in-progress payment for the order'

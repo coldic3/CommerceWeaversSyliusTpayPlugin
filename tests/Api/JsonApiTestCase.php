@@ -20,6 +20,8 @@ abstract class JsonApiTestCase extends BaseJsonApiTestCase
 {
     public const CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/ld+json', 'HTTP_ACCEPT' => 'application/ld+json'];
 
+    public const PATCH_CONTENT_TYPE_HEADER = ['CONTENT_TYPE' => 'application/merge-patch+json', 'HTTP_ACCEPT' => 'application/json'];
+
     /**
      * @throws \Exception
      *
