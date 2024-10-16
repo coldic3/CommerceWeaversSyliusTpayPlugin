@@ -74,6 +74,7 @@ final class PayHandlerTest extends TestCase
                 'result' => null,
                 'status' => null,
                 'apple_pay_token' => null,
+                'apple_pay_token' => null,
                 'blik_token' => null,
                 'google_pay_token' => null,
                 'card' => null,

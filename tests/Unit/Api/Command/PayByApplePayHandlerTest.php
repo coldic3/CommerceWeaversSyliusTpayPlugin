@@ -96,6 +96,7 @@ final class PayByApplePayHandlerTest extends TestCase
                 'payment_url' => null,
                 'success_url' => null,
                 'failure_url' => null,
+                'tpay_channel_id' => null,
             ],
         ])->shouldBeCalled();
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
@@ -137,8 +138,10 @@ final class PayByApplePayHandlerTest extends TestCase
                 'payment_url' => null,
                 'success_url' => null,
                 'failure_url' => null,
+                'tpay_channel_id' => null,
             ],
         ])->shouldBeCalled();
+
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
     }
 

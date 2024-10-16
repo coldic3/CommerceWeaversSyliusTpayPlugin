@@ -18,7 +18,7 @@ final class PayByApplePayHandler extends AbstractPayByHandler
         $this->setTransactionData($payment, $command->applePayToken);
         $this->createTransaction($payment);
 
-        return $this->createResultFrom($payment);
+        return $this->createResultFrom($payment, isRedirectedBased: false);
     }
 
     private function setTransactionData(PaymentInterface $payment, string $applePayToken): void
