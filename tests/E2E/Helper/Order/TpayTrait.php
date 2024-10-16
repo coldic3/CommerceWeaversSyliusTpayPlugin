@@ -12,16 +12,17 @@ use Symfony\Component\Panther\Client;
  */
 trait TpayTrait
 {
-    public function fillCardData(string $holderName, string $cardNumber, string $cvv, string $month, string $year): void
+    public function fillCardData(string $formId, string $holderName, string $cardNumber, string $cvv, string $month, string $year): void
     {
-        $this->client->findElement(WebDriverBy::id('sylius_checkout_complete_tpay_card_holder_name'))->sendKeys($holderName);
-        $this->client->findElement(WebDriverBy::id('sylius_checkout_complete_tpay_card_number'))->sendKeys($cardNumber);
-        $this->client->findElement(WebDriverBy::id('sylius_checkout_complete_tpay_card_cvv'))->sendKeys($cvv);
-        $this->client->findElement(WebDriverBy::id('sylius_checkout_complete_tpay_card_expiration_date_year'))->sendKeys($year);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_holder_name', $formId)))->sendKeys($holderName);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_number', $formId)))->sendKeys($cardNumber);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_cvv', $formId)))->sendKeys($cvv);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_expiration_date_month', $formId)))->sendKeys($month);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_expiration_date_year', $formId)))->sendKeys($year);
     }
 
-    public function fillBlikToken(string $blikToken): void
+    public function fillBlikToken(string $formId, string $blikToken): void
     {
-        $this->client->findElement(WebDriverBy::id('sylius_checkout_complete_tpay_blik_token'))->sendKeys($blikToken);
+        $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_blik_token', $formId)))->sendKeys($blikToken);
     }
 }

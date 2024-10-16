@@ -13,6 +13,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_blik.html.twig',
                         'priority' => 10,
                     ],
+                    'card' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_card.html.twig',
+                        'priority' => 10,
+                    ],
                 ],
             ],
             'sylius.shop.checkout.complete.summary' => [

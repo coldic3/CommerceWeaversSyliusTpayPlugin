@@ -30,10 +30,10 @@ final class BasicPaymentFactory implements BasicPaymentFactoryInterface
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
-        /** @var Field $field */
-        $field = $propertyAccessor->getValue($paymentData, $key);
-
         if (property_exists($paymentData, $key)) {
+            /** @var Field $field */
+            $field = $propertyAccessor->getValue($paymentData, $key);
+
             $propertyAccessor->setValue($paymentData, $key, Util::cast($value, $field->getType()));
         }
     }

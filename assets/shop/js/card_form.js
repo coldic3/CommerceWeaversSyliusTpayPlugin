@@ -128,6 +128,15 @@ export class CardForm {
     return [this.#expirationMonth.value, this.#expirationYear.value].join('/');
   }
 
+  #isVisible() {
+    return 0 !== (this.#cardHolderName.offsetHeight
+      + this.#cardNumber.offsetHeight
+      + this.#cardNumber.offsetHeight
+      + this.#cvc.offsetHeight
+      + this.#expirationMonth.offsetHeight
+      + this.#expirationYear.offsetHeight);
+  }
+
   #updateEncryptedCard() {
     const encrypt = new JSEncrypt();
     encrypt.setPublicKey(atob(this.#cardsApi.value.replace(/\s/g, '')));
@@ -151,6 +160,10 @@ export class CardForm {
     this.#expirationYear.addEventListener('change', this.#validateExpirationDate.bind(this));
 
     this.#form.addEventListener('submit', (event) => {
+      if (!this.#isVisible()) {
+        this.#form.submit();
+      }
+
       this.#validateCardHolderName();
       this.#validateCardNumber();
       this.#validateCvc();
@@ -267,7 +280,3 @@ export class CardForm {
     errorContainer.innerHTML = '';
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  new CardForm('[name="sylius_checkout_complete"]');
-});
