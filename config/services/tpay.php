@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateApplePayPaymentPayloadFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateApplePayPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
@@ -35,6 +37,13 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Signatu
 
 return static function(ContainerConfigurator $container): void {
     $services = $container->services();
+
+    $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_apple_pay_payment_payload', CreateApplePayPaymentPayloadFactory::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload'),
+        ])
+        ->alias(CreateApplePayPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_apple_pay_payment_payload')
+    ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_blik_level_zero_payment_payload', CreateBlikLevelZeroPaymentPayloadFactory::class)
         ->args([
