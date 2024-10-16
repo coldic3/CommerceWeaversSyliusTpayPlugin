@@ -144,6 +144,7 @@ class PaymentDetails
             null !== $this->getBlikToken() => PaymentType::BLIK,
             null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
             null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
+            null !== $this->getApplePayToken() => PaymentType::APPLE_PAY,
             default => PaymentType::REDIRECT,
         };
     }
