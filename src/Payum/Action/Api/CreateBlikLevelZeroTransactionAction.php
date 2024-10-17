@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -54,6 +53,6 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
 
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        return $paymentDetails->getType() === PaymentType::BLIK;
+        return $paymentDetails->isBlik();
     }
 }
