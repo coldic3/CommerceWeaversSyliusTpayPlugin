@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePay;
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePayHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByApplePay;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByApplePayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use Payum\Core\GatewayInterface;
@@ -21,7 +21,7 @@ use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webmozart\Assert\InvalidArgumentException;
 
-final class PayByGooglePayHandlerTest extends TestCase
+final class PayByApplePayHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -45,34 +45,39 @@ final class PayByGooglePayHandlerTest extends TestCase
         $this->expectException(NotFoundHttpException::class);
         $this->expectExceptionMessage('Payment with id "1" cannot be found.');
 
-        $this->createTestSubject()->__invoke(new PayByGooglePay(1, 't00k33n'));
+        $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
     }
 
     public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Gateway name cannot be determined.');
+
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getDetails()->willReturn([]);
         $payment->getMethod()->willReturn(null);
-        $this->paymentRepository->find(1)->willReturn($payment);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Gateway name cannot be determined.');
         $payment->setDetails(Argument::any())->shouldBeCalled();
 
-        $this->createTestSubject()->__invoke(new PayByGooglePay(1, 't00k33n'));
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
     }
 
     public function test_it_throws_an_exception_if_a_payment_status_is_null(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $createTransaction = $this->prophesize(CreateTransaction::class);
-        $gateway = $this->prophesize(GatewayInterface::class);
         $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getDetails()->willReturn([], ['tpay' => []]);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+        $gateway = $this->prophesize(GatewayInterface::class);
+
         $this->paymentRepository->find(1)->willReturn($payment);
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
         $this->payum->getGateway('tpay')->willReturn($gateway);
@@ -84,9 +89,9 @@ final class PayByGooglePayHandlerTest extends TestCase
                 'transaction_id' => null,
                 'result' => null,
                 'status' => null,
-                'apple_pay_token' => null,
+                'apple_pay_token' => 't00k33n',
                 'blik_token' => null,
-                'google_pay_token' => 't00k33n',
+                'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,
                 'success_url' => null,
@@ -96,25 +101,29 @@ final class PayByGooglePayHandlerTest extends TestCase
         ])->shouldBeCalled();
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
 
-        $this->createTestSubject()->__invoke(new PayByGooglePay(1, 't00k33n'));
+        $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
     }
 
-    public function test_it_creates_a_google_pay_based_transaction(): void
+    public function test_it_creates_a_apple_pay_based_transaction(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $createTransaction = $this->prophesize(CreateTransaction::class);
-        $gateway = $this->prophesize(GatewayInterface::class);
         $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending']]);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+        $gateway = $this->prophesize(GatewayInterface::class);
+
         $this->paymentRepository->find(1)->willReturn($payment);
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByGooglePay(1, 't00k33n'));
+        $result = $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
 
         self::assertSame('pending', $result->status);
         $payment->setDetails([
@@ -122,9 +131,9 @@ final class PayByGooglePayHandlerTest extends TestCase
                 'transaction_id' => null,
                 'result' => null,
                 'status' => null,
-                'apple_pay_token' => null,
+                'apple_pay_token' => 't00k33n',
                 'blik_token' => null,
-                'google_pay_token' => 't00k33n',
+                'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,
                 'success_url' => null,
@@ -132,12 +141,13 @@ final class PayByGooglePayHandlerTest extends TestCase
                 'tpay_channel_id' => null,
             ],
         ])->shouldBeCalled();
+
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
     }
 
-    private function createTestSubject(): PayByGooglePayHandler
+    private function createTestSubject(): PayByApplePayHandler
     {
-        return new PayByGooglePayHandler(
+        return new PayByApplePayHandler(
             $this->paymentRepository->reveal(),
             $this->payum->reveal(),
             $this->createTransactionFactory->reveal(),

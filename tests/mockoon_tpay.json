@@ -122,6 +122,33 @@
           "default": false,
           "crudKey": "id",
           "callbacks": []
+        },
+        {
+          "uuid": "428a1e8a-d75f-4f30-a614-f259cc6e4e36",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"apple_pay://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Apple Pay",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "75",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
         }
       ],
       "responseMode": null
@@ -193,7 +220,7 @@
       "responses": [
         {
           "uuid": "924f9fab-d6ab-4365-b84b-e8ab13514143",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"c36e286ceb64a95b8858\",\n  \"language\": \"pl\",\n  \"currency\": \"PLN\",\n  \"channels\": [\n    {\n      \"id\": \"1\",\n      \"name\": \"BNP Paribas\",\n      \"fullName\": \"BNP Paribas Bank Polska SA\",\n      \"image\": {\n        \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/1/normal-white-bg-e.png\"\n      },\n      \"available\": true,\n      \"onlinePayment\": true,\n      \"instantRedirection\": true,\n      \"groups\": [\n        {\n          \"id\": \"133\",\n          \"name\": \"BNP Paribas Bank Polska SA\",\n          \"image\": {\n            \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/133/normal-white-bg.png\"\n          }\n        }\n      ],\n      \"constraints\": []\n    },\n    {\n      \"id\": \"2\",\n      \"name\": \"Not a bank\",\n      \"fullName\": \"Not a bank\",\n      \"image\": {\n        \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/2/normal-white-bg-e.png\"\n      },\n      \"available\": true,\n      \"onlinePayment\": true,\n      \"instantRedirection\": false,\n      \"groups\": [\n        {\n          \"id\": \"114\",\n          \"name\": \"Bank Millennium SA\",\n          \"image\": {\n            \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/114/normal-white-bg.png\"\n          }\n        }\n      ],\n      \"constraints\": []\n    },\n    {\n      \"id\": \"3\",\n      \"name\": \"Unavailable\",\n      \"fullName\": \"Unavailable\",\n      \"image\": {\n        \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/4/normal-white-bg-e.png\"\n      },\n      \"available\": false,\n      \"onlinePayment\": true,\n      \"instantRedirection\": true,\n      \"groups\": [\n        {\n          \"id\": \"102\",\n          \"name\": \"Bank Pekao SA\",\n          \"image\": {\n            \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/102/normal-white-bg.png\"\n          }\n        }\n      ],\n      \"constraints\": []\n    }\n  ]\n}",
+          "body": "{\n \"result\": \"success\",\n \"requestId\": \"c36e286ceb64a95b8858\",\n \"language\": \"pl\",\n \"currency\": \"PLN\",\n \"channels\": [\n {\n \"id\": \"1\",\n \"name\": \"BNP Paribas\",\n \"fullName\": \"BNP Paribas Bank Polska SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/1/normal-white-bg-e.png\"\n },\n \"available\": true,\n \"onlinePayment\": true,\n \"instantRedirection\": true,\n \"groups\": [\n {\n \"id\": \"133\",\n \"name\": \"BNP Paribas Bank Polska SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/133/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n },\n {\n \"id\": \"2\",\n \"name\": \"Not a bank\",\n \"fullName\": \"Not a bank\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/2/normal-white-bg-e.png\"\n },\n \"available\": true,\n \"onlinePayment\": true,\n \"instantRedirection\": false,\n \"groups\": [\n {\n \"id\": \"114\",\n \"name\": \"Bank Millennium SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/114/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n },\n {\n \"id\": \"3\",\n \"name\": \"Unavailable\",\n \"fullName\": \"Unavailable\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/4/normal-white-bg-e.png\"\n },\n \"available\": false,\n \"onlinePayment\": true,\n \"instantRedirection\": true,\n \"groups\": [\n {\n \"id\": \"102\",\n \"name\": \"Bank Pekao SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/102/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n }\n ]\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",

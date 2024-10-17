@@ -141,6 +141,24 @@ return function(SyliusFixturesConfig $fixtures): void {
                     ],
                     'enabled' => true,
                 ],
+                'apple_pay' => [
+                    'code' => 'tpay_apple_pay',
+                    'name' => 'Apple Pay (Tpay)',
+                    'gatewayFactory' => 'tpay',
+                    'gatewayName' => 'tpay',
+                    'gatewayConfig' => [
+                        'client_id' => '%env(string:TPAY_CLIENT_ID)%',
+                        'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
+                        'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
+                        'merchant_id' => '%env(string:TPAY_MERCHANT_ID)%',
+                        'type' => PaymentType::APPLE_PAY,
+                        'production_mode' => false,
+                    ],
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
             ],
         ],
     ]);

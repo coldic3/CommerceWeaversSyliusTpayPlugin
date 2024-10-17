@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByApplePayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByBlikFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByCardFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByGooglePayFactory;
@@ -20,6 +21,10 @@ return function(ContainerConfigurator $container): void {
             tagged_iterator('commerce_weavers_sylius_tpay.api.factory.next_command'),
         ])
         ->alias(NextCommandFactoryInterface::class, 'commerce_weavers_sylius_tpay.api.factory.next_command')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.factory.next_command.pay_by_apple_pay', PayByApplePayFactory::class)
+        ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.api.factory.next_command.pay_by_blik', PayByBlikFactory::class)

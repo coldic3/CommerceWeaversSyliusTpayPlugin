@@ -126,6 +126,7 @@ final class CreatePayByLinkTransactionActionTest extends TestCase
                 'transaction_id' => 'tr4ns4ct!0n_id',
                 'result' => null,
                 'status' => 'pending',
+                'apple_pay_token' => null,
                 'blik_token' => null,
                 'google_pay_token' => null,
                 'card' => null,

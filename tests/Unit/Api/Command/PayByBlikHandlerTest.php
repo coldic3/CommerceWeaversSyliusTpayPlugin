@@ -78,6 +78,7 @@ final class PayByBlikHandlerTest extends TestCase
                 'transaction_id' => null,
                 'result' => null,
                 'status' => null,
+                'apple_pay_token' => null,
                 'blik_token' => '777123',
                 'google_pay_token' => null,
                 'card' => null,

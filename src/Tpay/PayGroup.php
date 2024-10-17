@@ -10,6 +10,8 @@ class PayGroup
 
     public const CARD = 103;
 
+    public const APPLE_PAY = 75;
+
     public const GOOGLE_PAY = 166;
 
     public const VISA_MOBILE = 171;

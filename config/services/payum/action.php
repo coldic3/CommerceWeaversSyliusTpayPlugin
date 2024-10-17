@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateApplePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateCardTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
@@ -37,6 +38,14 @@ return function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_card_transaction'])
+    ;
+
+    $services->set(CreateApplePayTransactionAction::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.tpay.factory.create_apple_pay_payment_payload'),
+            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
+        ])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_apple_pay_transaction'])
     ;
 
     $services->set(CreateGooglePayTransactionAction::class)

@@ -13,6 +13,8 @@ class PaymentDetails
         private ?string $result = null,
         private ?string $status = null,
         #[\SensitiveParameter]
+        private ?string $applePayToken = null,
+        #[\SensitiveParameter]
         private ?string $blikToken = null,
         #[\SensitiveParameter]
         private ?string $googlePayToken = null,
@@ -53,6 +55,16 @@ class PaymentDetails
     public function setStatus(string $status): void
     {
         $this->status = $status;
+    }
+
+    public function getApplePayToken(): ?string
+    {
+        return $this->applePayToken;
+    }
+
+    public function setApplePayToken(string $applePayToken): void
+    {
+        $this->applePayToken = $applePayToken;
     }
 
     public function getBlikToken(): ?string
@@ -132,12 +144,14 @@ class PaymentDetails
             null !== $this->getBlikToken() => PaymentType::BLIK,
             null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
             null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
+            null !== $this->getApplePayToken() => PaymentType::APPLE_PAY,
             default => PaymentType::REDIRECT,
         };
     }
 
     public function clearSensitiveData(): void
     {
+        $this->applePayToken = null;
         $this->blikToken = null;
         $this->googlePayToken = null;
         $this->encodedCardData = null;
@@ -149,6 +163,7 @@ class PaymentDetails
             $details['tpay']['transaction_id'] ?? null,
             $details['tpay']['result'] ?? null,
             $details['tpay']['status'] ?? null,
+            $details['tpay']['apple_pay_token'] ?? null,
             $details['tpay']['blik_token'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
@@ -166,6 +181,7 @@ class PaymentDetails
                 'transaction_id' => $this->transactionId,
                 'result' => $this->result,
                 'status' => $this->status,
+                'apple_pay_token' => $this->applePayToken,
                 'blik_token' => $this->blikToken,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,

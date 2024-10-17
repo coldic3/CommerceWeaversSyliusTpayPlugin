@@ -1,6 +1,8 @@
 commerce_weavers_sylius_tpay:
     shop:
         pay:
+            apple_pay_token:
+                required: 'The Apple Pay token is required.'
             blik_token:
                 length: 'The BLIK token must have exactly {{ limit }} characters.'
                 required: 'The BLIK token is required.'

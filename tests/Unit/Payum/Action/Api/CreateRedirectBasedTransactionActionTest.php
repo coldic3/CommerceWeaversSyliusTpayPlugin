@@ -137,6 +137,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
                 'transaction_id' => 'tr4ns4ct!0n_id',
                 'result' => null,
                 'status' => 'pending',
+                'apple_pay_token' => null,
                 'blik_token' => null,
                 'google_pay_token' => null,
                 'card' => null,
@@ -204,6 +205,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
                 'transaction_id' => 'tr4ns4ct!0n_id',
                 'result' => null,
                 'status' => 'pending',
+                'apple_pay_token' => null,
                 'blik_token' => null,
                 'google_pay_token' => null,
                 'card' => null,
@@ -243,6 +245,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
             [['tpay' => ['blik_token' => 'some_value']]],
             [['tpay' => ['tpay_channel_id' => 'some_value']]],
             [['tpay' => ['google_pay_token' => 'some_value']]],
+            [['tpay' => ['apple_pay_token' => 'some_value']]],
         ];
     }
 

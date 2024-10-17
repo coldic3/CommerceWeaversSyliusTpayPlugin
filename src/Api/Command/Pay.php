@@ -12,6 +12,7 @@ final class Pay implements OrderTokenAwareInterface
         public readonly string $orderToken,
         public readonly string $successUrl,
         public readonly string $failureUrl,
+        public readonly ?string $applePayToken = null,
         public readonly ?string $blikToken = null,
         public readonly ?string $googlePayToken = null,
         public readonly ?string $encodedCardData = null,

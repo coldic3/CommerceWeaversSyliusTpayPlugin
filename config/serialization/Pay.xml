@@ -22,6 +22,9 @@
         <attribute name="failureUrl">
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>
+        <attribute name="applePayToken">
+            <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
+        </attribute>
         <attribute name="blikToken">
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>

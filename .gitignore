@@ -1,10 +1,11 @@
-/vendor/
+/cert/
 /node_modules/
 /composer.lock
 
 /etc/build/*
 !/etc/build/.gitkeep
 
+/tests/Application/public/.well-known/
 /tests/Application/yarn.lock
 
 /.phpunit.result.cache
@@ -16,6 +17,7 @@
 # Symfony CLI https://symfony.com/doc/current/setup/symfony_server.html#different-php-settings-per-project
 /.php-version
 /php.ini
+
 
 ###> symfony/framework-bundle ###
 /.env.local
