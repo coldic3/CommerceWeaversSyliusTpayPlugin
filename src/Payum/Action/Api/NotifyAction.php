@@ -7,8 +7,6 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\NotifyTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
@@ -21,8 +19,6 @@ final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareI
     use GatewayAwareTrait;
 
     public function __construct(
-        private readonly BasicPaymentFactoryInterface $basicPaymentFactory,
-        private readonly ChecksumVerifierInterface $checksumVerifier,
         private readonly SignatureVerifierInterface $signatureVerifier,
     ) {
         parent::__construct();
@@ -35,24 +31,13 @@ final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareI
     {
         $requestData = $request->getData();
 
-        $paymentData = $this->basicPaymentFactory->createFromArray($requestData->requestParameters);
-        $isChecksumValid = $this->checksumVerifier->verify(
-            $paymentData,
-            $this->api->getNotificationSecretCode() ?? throw new \RuntimeException('Notification secret code is not set'),
-        );
-        $isSignatureValid = $this->signatureVerifier->verify($requestData->jws, $requestData->requestContent);
-
-        if (!$isChecksumValid) {
-            throw new HttpResponse('FALSE - Invalid checksum', 400);
-        }
-
-        if (!$isSignatureValid) {
+        if (!$this->signatureVerifier->verify($requestData->jws, $requestData->requestContent)) {
             throw new HttpResponse('FALSE - Invalid signature', 400);
         }
 
         $model->setDetails($paymentDetails->toArray());
 
-        $this->gateway->execute(new NotifyTransaction($model, $paymentData));
+        $this->gateway->execute(new NotifyTransaction($model, $requestData));
     }
 
     public function supports($request): bool

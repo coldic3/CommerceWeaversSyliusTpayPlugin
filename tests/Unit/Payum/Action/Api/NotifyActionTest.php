@@ -32,17 +32,12 @@ final class NotifyActionTest extends TestCase
 
     private PaymentInterface|ObjectProphecy $model;
 
-    private TpayApi|ObjectProphecy $api;
-
-    private BasicPaymentFactoryInterface|ObjectProphecy $basicPaymentFactory;
-
-    private ChecksumVerifierInterface|ObjectProphecy $checksumVerifier;
-
     private SignatureVerifierInterface|ObjectProphecy $signatureVerifier;
 
     protected function setUp(): void
     {
         $this->request = $this->prophesize(Notify::class);
+        $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
         $this->basicPaymentFactory = $this->prophesize(BasicPaymentFactoryInterface::class);
         $this->checksumVerifier = $this->prophesize(ChecksumVerifierInterface::class);
@@ -87,11 +82,6 @@ final class NotifyActionTest extends TestCase
             ],
         ));
 
-        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
-
-        $this->basicPaymentFactory->createFromArray(['tr_status' => 'anything'])->willReturn($basicPayment = new BasicPayment());
-
-        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
         $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
 
         $this->model->getDetails()->willReturn([]);
@@ -145,12 +135,6 @@ final class NotifyActionTest extends TestCase
             ],
         ));
 
-        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
-
-        $this->basicPaymentFactory->createFromArray(['tr_status' => 'TRUE'])->willReturn($basicPayment = new BasicPayment());
-        $basicPayment->tr_status = 'TRUE';
-
-        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
         $this->signatureVerifier->verify('jws', 'content')->willReturn(false);
 
         $this->expectException(HttpResponse::class);
@@ -166,12 +150,9 @@ final class NotifyActionTest extends TestCase
     private function createTestSubject(): NotifyAction
     {
         $action = new NotifyAction(
-            $this->basicPaymentFactory->reveal(),
-            $this->checksumVerifier->reveal(),
             $this->signatureVerifier->reveal(),
         );
 
-        $action->setApi($this->api->reveal());
         $action->setGateway($this->gateway->reveal());
 
         return $action;
