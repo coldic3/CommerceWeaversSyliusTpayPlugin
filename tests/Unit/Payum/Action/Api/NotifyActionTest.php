@@ -77,30 +77,26 @@ final class NotifyActionTest extends TestCase
         $this->assertTrue($action->supports(new Notify($this->model->reveal(), $this->createNotifyDataObject())));
     }
 
-    /**
-     * @dataProvider data_provider_it_converts_tpay_notification_status
-     */
-    public function test_it_converts_tpay_notification_status(string $status, string $expectedStatus): void
+    public function test_it_executes_notify_transaction_request(): void
     {
         $this->request->getData()->willReturn(new NotifyData(
             'jws',
             'content',
             [
-                'tr_status' => $status,
+                'tr_status' => 'anything',
             ],
         ));
 
         $this->api->getNotificationSecretCode()->willReturn('merchant_code');
 
-        $this->basicPaymentFactory->createFromArray(['tr_status' => $status])->willReturn($basicPayment = new BasicPayment());
-        $basicPayment->tr_status = $status;
+        $this->basicPaymentFactory->createFromArray(['tr_status' => 'anything'])->willReturn($basicPayment = new BasicPayment());
 
         $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
         $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
 
         $this->model->getDetails()->willReturn([]);
         $this->model->setDetails(
-            $this->getExpectedDetails(status: $expectedStatus),
+            $this->getExpectedDetails(),
         )->shouldBeCalled();
 
         $this->createTestSubject()->execute($this->request->reveal());
@@ -162,13 +158,6 @@ final class NotifyActionTest extends TestCase
         $this->createTestSubject()->execute($this->request->reveal());
     }
 
-    public static function data_provider_it_converts_tpay_notification_status(): iterable
-    {
-        yield 'status containing the `TRUE` word' => ['TRUE', PaymentInterface::STATE_COMPLETED];
-        yield 'status containing the other than `TRUE` word' => ['FALSE', PaymentInterface::STATE_FAILED];
-        yield 'status containing the `CHARGEBACK` word' => ['CHARGEBACK', PaymentInterface::STATE_REFUNDED];
-    }
-
     private function createNotifyDataObject(string $jws = 'jws', string $content = 'content', array $parameters = []): NotifyData
     {
         return new NotifyData($jws, $content, $parameters);
@@ -183,6 +172,7 @@ final class NotifyActionTest extends TestCase
         );
 
         $action->setApi($this->api->reveal());
+        $action->setGateway($this->gateway->reveal());
 
         return $action;
     }
