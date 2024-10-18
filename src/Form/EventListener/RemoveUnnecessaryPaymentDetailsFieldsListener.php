@@ -22,6 +22,10 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListener
             $form->remove('blik_token');
         }
 
+        if (!isset($data['google_pay_token'])) {
+            $form->remove('google_pay_token');
+        }
+
         if (!isset($data['tpay_channel_id'])) {
             $form->remove('tpay_channel_id');
         }
