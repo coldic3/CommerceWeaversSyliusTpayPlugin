@@ -60,6 +60,15 @@ final class TpayPaymentDetailsType extends AbstractType
                 ],
             )
             ->add(
+                'apple_pay_token',
+                HiddenType::class,
+                [
+                    'property_path' => '[apple_pay_token]',
+                    'label' => false,
+                    'validation_groups' => ['sylius_checkout_complete'],
+                ],
+            )
+            ->add(
                 'tpay_channel_id',
                 HiddenType::class,
                 [
