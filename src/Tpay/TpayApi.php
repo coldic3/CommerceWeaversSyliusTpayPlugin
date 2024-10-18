@@ -60,7 +60,6 @@ class TpayApi extends BaseTpayApi
      */
     private function authorize(): void
     {
-        /** @phpstan-ignore-next-line */
         if (
             $this->token instanceof Token &&
             time() <= $this->token->issued_at->getValue() + $this->token->expires_in->getValue()
