@@ -19,6 +19,7 @@ trait PaymentDetailsHelperTrait
                 'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
+                'saveCreditCardForLater' => false,
                 'apple_pay_session' => null,
                 'payment_url' => null,
                 'success_url' => null,

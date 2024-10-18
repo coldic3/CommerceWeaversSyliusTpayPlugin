@@ -23,6 +23,7 @@ class PaymentDetails
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
+        private ?bool $saveCreditCardForLater = null,
         #[\SensitiveParameter]
         private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
@@ -123,6 +124,16 @@ class PaymentDetails
     public function setEncodedCardData(string $encodedCardData): void
     {
         $this->encodedCardData = $encodedCardData;
+    }
+
+    public function isSaveCreditCardForLater(): ?bool
+    {
+        return $this->saveCreditCardForLater;
+    }
+
+    public function setSaveCreditCardForLater(?bool $saveCreditCardForLater): void
+    {
+        $this->saveCreditCardForLater = $saveCreditCardForLater;
     }
 
     public function getApplePaySession(): ?string
@@ -233,6 +244,7 @@ class PaymentDetails
             $details['tpay']['blik_alias_application_code'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
+                $details['tpay']['saveCreditCardForLater'] ?? false,
             $details['tpay']['apple_pay_session'] ?? null,
             $details['tpay']['payment_url'] ?? null,
             $details['tpay']['success_url'] ?? null,
@@ -256,6 +268,7 @@ class PaymentDetails
                 'blik_alias_application_code' => $this->blikAliasApplicationCode,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
+                'saveCreditCardForLater' => $this->saveCreditCardForLater,
                 'apple_pay_session' => $this->applePaySession,
                 'payment_url' => $this->paymentUrl,
                 'success_url' => $this->successUrl,

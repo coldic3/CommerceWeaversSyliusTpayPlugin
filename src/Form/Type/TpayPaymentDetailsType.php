@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,6 +34,11 @@ final class TpayPaymentDetailsType extends AbstractType
                 [
                     'property_path' => '[card]',
                 ],
+            )
+            ->add('saveCreditCardForLater', CheckboxType::class,
+                [
+                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.save_credit_card_for_later.label',
+                ]
             )
             ->add(
                 'blik_token',

@@ -44,6 +44,8 @@ commerce_weavers_sylius_tpay:
                     year_placeholder: 'Wybierz rok'
                 holder_name: 'Imię i nazwisko właściciela'
                 number: 'Numer'
+                save_credit_card_for_later:
+                    label: 'Zapisz kartę na później'
             visa_mobile:
                 placeholder: 'Numer telefonu'
         payment_failed:
