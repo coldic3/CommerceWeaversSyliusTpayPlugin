@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
-use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\VisaMobilePhoneDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -74,11 +73,11 @@ final class TpayPaymentDetailsType extends AbstractType
                     'property_path' => '[visa_mobile_phone_number]',
                     'attr' => [
                         'placeholder' => 'commerce_weavers_sylius_tpay.shop.order_summary.visa_mobile.placeholder',
-                        'maxLength' => 9,
+                        'maxLength' => 15,
                     ],
                     'validation_groups' => ['sylius_checkout_complete'],
                     'constraints' => [
-                        new Length(min: 9, groups: ['sylius_checkout_complete']),
+                        new Length(min: 7, max: 15, groups: ['sylius_checkout_complete']),
                         new Regex(
                             '/^\d+$/',
                             message: 'commerce_weavers_sylius_tpay.shop.pay.visa_mobile.regex',
@@ -87,8 +86,6 @@ final class TpayPaymentDetailsType extends AbstractType
                     ],
                 ],
             );
-
-        $builder->get('visa_mobile_phone_number')->addModelTransformer(new VisaMobilePhoneDataTransformer());
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,

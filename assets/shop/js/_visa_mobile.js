@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const COUNTRY_CODED_MOBILE_PHONE_LENGTH = 11;
+  const MOBILE_PHONE_MIN_LENGTH = 7;
+  const MOBILE_PHONE_MAX_LENGTH = 15;
 
   let form = document.querySelector('[name="sylius_checkout_complete"]');
-  let phoneNumber = form.querySelector('[data-visa-mobile-phone-number]');
+  let phoneNumber = form.querySelector('#sylius_checkout_complete_tpay_visa_mobile_phone_number');
 
   if (null === phoneNumber) {
     return;
@@ -29,15 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function validateVisaMobilePhoneNumber(field) {
       let fieldLength = field.value.length;
 
-      if (fieldLength === COUNTRY_CODED_MOBILE_PHONE_LENGTH) {
+      if (MOBILE_PHONE_MIN_LENGTH <= fieldLength && fieldLength <= MOBILE_PHONE_MAX_LENGTH) {
         clearErrors(phoneNumber);
         return;
       }
 
       if (fieldLength === 0) {
-        addError(phoneNumber, 'validationErrorRequired');
+        addError(phoneNumber);
         return;
       }
+
+      if (fieldLength < MOBILE_PHONE_MIN_LENGTH) {
+        addError(phoneNumber, 'validationErrorMinLength');
+        return;
+      }
+
+    if (fieldLength > MOBILE_PHONE_MAX_LENGTH) {
+      addError(phoneNumber, 'validationErrorMaxLength');
+      return;
+    }
 
       addError(phoneNumber);
   }
@@ -49,14 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
     errorContainer.innerHTML = '';
   }
 
-  function addError(field, validationErrorName = 'validationErrorLength') {
+  function addError(field, validationErrorName = 'validationErrorRequired') {
     const tpayField = field.closest('[data-tpay-field]');
     const errorContainer = tpayField.querySelector('[data-tpay-error-container]');
 
     errorContainer.innerHTML = createErrorElement(field, validationErrorName);
   }
 
-  function createErrorElement(field, validationErrorName = 'validationErrorLength') {
+  function createErrorElement(field, validationErrorName = 'validationErrorRequired') {
     const errorMessage = field.dataset[validationErrorName];
 
     return `

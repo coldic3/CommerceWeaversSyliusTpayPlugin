@@ -77,7 +77,7 @@ final class PayingForOrdersByVisaMobileTest extends JsonApiTestCase
             ],
             [
                 'propertyPath' => 'visaMobilePhoneNumber',
-                'message' => 'The mobile phone must be composed minimum of 9 digits.',
+                'message' => 'The mobile phone must be composed minimum of 7 digits.',
             ],
         ]);
     }
@@ -104,7 +104,34 @@ final class PayingForOrdersByVisaMobileTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => 'visaMobilePhoneNumber',
-                'message' => 'The mobile phone must be composed minimum of 9 digits.',
+                'message' => 'The mobile phone must be composed minimum of 7 digits.',
+            ],
+        ]);
+    }
+
+    public function test_it_returns_violation_if_phone_number_is_too_long(): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_visa_mobile');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'visaMobilePhoneNumber' => '1234567890123456789',
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseViolations($response, [
+            [
+                'propertyPath' => 'visaMobilePhoneNumber',
+                'message' => 'The mobile phone must be composed maximum of 15 digits.',
             ],
         ]);
     }

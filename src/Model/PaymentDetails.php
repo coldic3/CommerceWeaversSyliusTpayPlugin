@@ -24,6 +24,7 @@ class PaymentDetails
         private ?string $successUrl = null,
         private ?string $failureUrl = null,
         private ?string $tpayChannelId = null,
+        #[\SensitiveParameter]
         private ?string $visaMobilePhoneNumber = null,
     ) {
     }

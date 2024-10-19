@@ -25,5 +25,6 @@ commerce_weavers_sylius_tpay:
                 name: 'Imię i nazwisko właściciela karty są wymagane.'
             visa_mobile:
                 required: 'Numer telefonu jest wymagany.'
-                min_length: 'Numer telefonu musi składać się z minimum 9 cyfr.'
+                min_length: 'Numer telefonu musi składać się z minimum 7 cyfr.'
+                max_length: 'Numer telefonu musi składać się z maksimum 15 cyfr.'
                 regex: 'Numer telefonu musi składać się tylko z cyfr.'

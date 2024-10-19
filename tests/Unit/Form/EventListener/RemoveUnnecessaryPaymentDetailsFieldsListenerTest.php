@@ -35,6 +35,8 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form->remove('blik_token')->shouldBeCalled()->willReturn($form);
         $form->remove('google_pay_token')->shouldNotBeCalled();
         $form->remove('tpay_channel_id')->shouldBeCalled()->willReturn($form);
+        $form->remove('visa_mobile_phone_number')->shouldBeCalled()->willReturn($form);
+
 
         $event = new FormEvent($form->reveal(), ['google_pay_token' => '123456']);
 
@@ -74,6 +76,7 @@ final class RemoveUnnecessaryPaymentDetailsFieldsListenerTest extends TestCase
         $form = $this->prophesize(FormInterface::class);
         $form->remove('card')->shouldBeCalled()->willReturn($form);
         $form->remove('blik_token')->shouldBeCalled()->willReturn($form);
+        $form->remove('google_pay_token')->shouldBeCalled()->willReturn($form);
         $form->remove('tpay_channel_id')->shouldBeCalled()->willReturn($form);
         $form->remove('visa_mobile_phone_number')->shouldNotBeCalled();
 
