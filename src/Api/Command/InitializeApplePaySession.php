@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Contract\OrderTokenAwareInterface;
-use CommerceWeavers\SyliusTpayPlugin\Api\Command\Contract\PaymentIdAwareInterface;
 
-final class InitializeApplePaySession implements OrderTokenAwareInterface, PaymentIdAwareInterface
+final class InitializeApplePaySession implements OrderTokenAwareInterface
 {
     public function __construct (
         public readonly string $orderToken,
-        public readonly int $paymentId,
         public readonly string $domainName,
         public readonly string $displayName,
         public readonly string $validationUrl,
@@ -21,10 +19,5 @@ final class InitializeApplePaySession implements OrderTokenAwareInterface, Payme
     public static function getOrderTokenPropertyName(): string
     {
         return 'orderToken';
-    }
-
-    public static function getPaymentIdPropertyName(): string
-    {
-        return 'paymentId';
     }
 }

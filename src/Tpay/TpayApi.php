@@ -24,7 +24,7 @@ class TpayApi extends BaseTpayApi
         private readonly string $clientSecret,
         private readonly bool $productionMode = false,
         private readonly string $scope = 'read',
-        ?string $apiUrlOverride = null,
+        private readonly ?string $apiUrlOverride = null,
         private readonly ?string $clientName = null,
         private readonly ?string $notificationSecretCode = null,
     ) {
@@ -45,7 +45,7 @@ class TpayApi extends BaseTpayApi
             Assert::notNull($this->token);
 
             $this->applePayApi = (new ApplePayApi($this->token, $this->productionMode))
-                ->overrideApiUrl($this->apiUrl);
+                ->overrideApiUrl($this->apiUrlOverride);
 
             if ($this->clientName) {
                 $this->applePayApi->setClientName($this->clientName);
