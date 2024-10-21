@@ -33,3 +33,5 @@ parameters:
             message: '/Only booleans are allowed in an if condition, string\|null given./'
             path: src/Model/PaymentDetails.php
         - '#Parameter \#1 \$key of function array_key_exists expects int\|string, array\|int\|object\|string given\.#'
+        - '#Trying to invoke array\{class-string, string\} but it might not be a callable\.#'
+        - '#Comparison operation "<=" between int<1, max> and \(array\|float\|int\) results in an error\.#'
