@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
+use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\VisaMobilePhoneDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyPasswordFieldsListener;
