@@ -23,6 +23,17 @@ final class TpayRuntimeTest extends TestCase
         $this->cypher = $this->prophesize(CypherInterface::class);
     }
 
+    public function test_it_converts_minor_to_major_currency(): void
+    {
+        $result = $this->createTestSubject()->convertMinorToMajorCurrency(100);
+
+        $this->assertEquals(1.0, $result);
+
+        $result = $this->createTestSubject()->convertMinorToMajorCurrency(1000, 3);
+
+        $this->assertEquals(1.0, $result);
+    }
+
     public function test_it_returns_an_unencrypted_config_value(): void
     {
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);

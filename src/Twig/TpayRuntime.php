@@ -16,6 +16,11 @@ final class TpayRuntime implements RuntimeExtensionInterface
     ) {
     }
 
+    public function convertMinorToMajorCurrency(int $amount, int $currencyDecimals = 2): float
+    {
+        return $amount / 10 ** $currencyDecimals;
+    }
+
     public function getConfigValue(GatewayConfigInterface $gatewayConfig, string $key): mixed
     {
         if ($gatewayConfig instanceof CryptedInterface) {
