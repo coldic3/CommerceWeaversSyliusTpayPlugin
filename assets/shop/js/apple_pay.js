@@ -48,7 +48,6 @@ const handleApplePay = async () => {
       "shippingType": "shipping"
     };
 
-
     const request = new PaymentRequest(paymentMethodData, paymentDetails, paymentOptions);
 
     request.onmerchantvalidation = async event => {
