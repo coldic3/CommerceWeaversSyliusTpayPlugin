@@ -138,7 +138,34 @@
             {
               "target": "body",
               "modifier": "pay.groupId",
-              "value": "75",
+              "value": "170",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "d2f19d3e-0b46-4e25-b1b9-9abb41aecca0",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"apple_pay://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Visa Mobile",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "171",
               "invert": false,
               "operator": "equals"
             }

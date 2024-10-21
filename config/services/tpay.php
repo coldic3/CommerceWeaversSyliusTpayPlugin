@@ -11,14 +11,16 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayl
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateGooglePayPaymentPayloadFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\CachedTpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
@@ -64,6 +66,10 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload'),
         ])
         ->alias(CreateGooglePayPaymentPayloadFactory::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload', CreateInitializeApplePayPaymentPayloadFactory::class)
+        ->alias(CreateInitializeApplePayPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_visa_mobile_payment_payload', CreateVisaMobilePaymentPayloadFactory::class)

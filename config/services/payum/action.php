@@ -12,6 +12,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreatePayByLinkTransaction
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\GetTpayTransactionsChannelsAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\InitializeApplePayPaymentAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
@@ -104,6 +105,13 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set(GetTpayTransactionsChannelsAction::class)
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_transactions_channels'])
+    ;
+
+    $services->set(InitializeApplePayPaymentAction::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload'),
+        ])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.initialize_apple_pay_payment'])
     ;
 
     $services->set(CreatePayByLinkTransactionAction::class)
