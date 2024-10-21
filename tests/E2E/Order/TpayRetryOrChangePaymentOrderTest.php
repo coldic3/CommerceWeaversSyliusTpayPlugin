@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Order;
 
 use Facebook\WebDriver\WebDriverBy;
-use Facebook\WebDriver\WebDriverDimension;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Account\LoginShopUserTrait;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Order\TpayTrait;
