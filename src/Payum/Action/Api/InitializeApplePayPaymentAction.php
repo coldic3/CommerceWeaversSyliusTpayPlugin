@@ -14,7 +14,7 @@ final class InitializeApplePayPaymentAction extends AbstractCreateTransactionAct
 {
     use GenericTokenFactoryAwareTrait;
 
-    public function __construct (
+    public function __construct(
         private readonly CreateInitializeApplePayPaymentPayloadFactoryInterface $createInitializeApplePayPaymentPayloadFactory,
     ) {
         parent::__construct();
