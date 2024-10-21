@@ -66,6 +66,10 @@ return static function(ContainerConfigurator $container): void {
         ->alias(CreateGooglePayPaymentPayloadFactory::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload')
     ;
 
+    $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload', CreateApplePayPaymentPayloadFactory::class)
+        ->alias(CreateApplePayPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload')
+    ;
+
     $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_visa_mobile_payment_payload', CreateVisaMobilePaymentPayloadFactory::class)
         ->args([
             service('commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload'),

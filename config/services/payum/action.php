@@ -108,6 +108,9 @@ return static function(ContainerConfigurator $container): void {
     ;
 
     $services->set(InitializeApplePayPaymentAction::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload'),
+        ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.initialize_apple_pay_payment'])
     ;
 
