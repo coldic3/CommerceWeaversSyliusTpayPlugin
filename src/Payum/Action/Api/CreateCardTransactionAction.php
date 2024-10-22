@@ -36,7 +36,7 @@ final class CreateCardTransactionAction extends BasePaymentAwareAction implement
 
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
-                $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode, $paymentDetails->isSaveCreditCardForLater()),
+                $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
             ),
             onSuccess: function (array $response) use ($paymentDetails) {
                 $paymentDetails->setTransactionId($response['transactionId']);

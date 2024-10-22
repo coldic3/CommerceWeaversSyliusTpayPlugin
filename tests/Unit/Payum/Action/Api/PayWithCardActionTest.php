@@ -59,7 +59,6 @@ final class PayWithCardActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-
     public function test_it_redirects_a_customer_to_3ds_verification_once_a_transaction_status_is_pending(): void
     {
         $this->expectException(HttpRedirect::class);
@@ -146,6 +145,63 @@ final class PayWithCardActionTest extends TestCase
         $paymentModel->setDetails(
             $this->getExpectedDetails(status: 'failed', transaction_id: 'abcd')
         )->shouldBeCalled();
+
+        $subject = $this->createTestSubject();
+
+        $subject->execute($request->reveal());
+    }
+
+    public function test_it_redirects_a_customer_to_3ds_verification_and_save_a_card(): void
+    {
+        $this->expectException(HttpRedirect::class);
+
+        $request = $this->prophesize(PayWithCard::class);
+        $paymentModel = $this->prophesize(PaymentInterface::class);
+        $details = [
+            'tpay' => [
+                'card' => 'test-card',
+                'transaction_id' => 'abcd',
+                'saveCreditCardForLater' => true,
+            ],
+        ];
+
+        $response = [
+            'result' => 'success',
+            'status' => 'pending',
+            'transactionPaymentUrl' => 'http://example.com',
+        ];
+
+        $request->getModel()->willReturn($paymentModel->reveal());
+        $paymentModel->getDetails()->willReturn($details);
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createPaymentByTransactionId([
+            'groupId' => 103,
+            'cardPaymentData' => [
+                'card' => $details['tpay']['card'],
+                'save' => true,
+            ],
+        ], $details['tpay']['transaction_id'])->willReturn($response);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $paymentModel->setDetails([
+            'tpay' => [
+                'transaction_id' => 'abcd',
+                'result' => 'success',
+                'status' => 'pending',
+                'apple_pay_token' => null,
+                'blik_token' => null,
+                'google_pay_token' => null,
+                'card' => null,
+                'saveCreditCardForLater' => true,
+                'payment_url' => 'http://example.com',
+                'success_url' => null,
+                'failure_url' => null,
+                'tpay_channel_id' => null,
+                'visa_mobile_phone_number' => null,
+            ],
+        ])->shouldBeCalled();
 
         $subject = $this->createTestSubject();
 

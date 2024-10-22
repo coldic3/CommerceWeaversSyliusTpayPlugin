@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Factory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -34,26 +35,7 @@ final class CreateCardPaymentPayloadFactoryTest extends TestCase
         $this->assertSame([
             'some' => 'data',
             'pay' => [
-                'groupId' => 103,
-            ],
-        ], $payload);
-    }
-
-    public function test_it_adds_card_related_data_with_tokenization_request_to_a_basic_create_payment_payload_output(): void
-    {
-        $payment = $this->prophesize(PaymentInterface::class);
-
-        $this->createRedirectBasedPaymentPayloadFactory->createFrom($payment, 'https://cw.org/notify', 'pl_PL')->willReturn(['some' => 'data']);
-
-        $payload = $this->createTestSubject()->createFrom($payment->reveal(), 'https://cw.org/notify', 'pl_PL', true);
-
-        $this->assertSame([
-            'some' => 'data',
-            'pay' => [
-                'groupId' => 103,
-                'cardPaymentData' => [
-                    'save' => 1,
-                ],
+                'groupId' => PayGroup::CARD,
             ],
         ], $payload);
     }

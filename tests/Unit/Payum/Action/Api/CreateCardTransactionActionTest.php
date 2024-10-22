@@ -130,109 +130,14 @@ final class CreateCardTransactionActionTest extends TestCase
 
         $this->api->transactions()->willReturn($transactions);
 
-<<<<<<< HEAD
         $payment->setDetails(
             $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', payment_url: 'https://tpay.org/pay'),
         )->shouldBeCalled();
-||||||| parent of 99e1d52 ([Cards] Saving credit cards during checkout)
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
-=======
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                "saveCreditCardForLater" => false,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
->>>>>>> 99e1d52 ([Cards] Saving credit cards during checkout)
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
         $this->createCardPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL', false)
-            ->willReturn(['factored' => 'payload'])
-            ->shouldBeCalled()
-        ;
-
-        $this->gateway->execute(Argument::that(function (PayWithCard $request) use ($token): bool {
-            return $request->getToken() === $token->reveal();
-        }))->shouldBeCalled();
-
-        $this->createTestSubject()->execute($request->reveal());
-    }
-
-    public function test_it_creates_a_payment_and_requests_paying_it_with_a_provided_card_that_will_be_saved_for_later(): void
-    {
-        $order = $this->prophesize(OrderInterface::class);
-        $order->getLocaleCode()->willReturn('pl_PL');
-
-        $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn(['tpay' => ['saveCreditCardForLater' => true]]);
-
-        $token = $this->prophesize(TokenInterface::class);
-        $token->getGatewayName()->willReturn('tpay');
-
-        $request = $this->prophesize(CreateTransaction::class);
-        $request->getModel()->willReturn($payment);
-        $request->getToken()->willReturn($token);
-
-        $notifyToken = $this->prophesize(TokenInterface::class);
-        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
-
-        $transactions = $this->prophesize(TransactionsApi::class);
-        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
-            'transactionPaymentUrl' => 'https://tpay.org/pay',
-        ]);
-
-        $this->api->transactions()->willReturn($transactions);
-
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'saveCreditCardForLater' => true,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null
-            ],
-        ])->shouldBeCalled();
-
-        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
-
-        $this->createCardPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL', true)
+            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
             ->shouldBeCalled()
         ;

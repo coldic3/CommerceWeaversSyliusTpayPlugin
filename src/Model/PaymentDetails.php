@@ -23,7 +23,7 @@ class PaymentDetails
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
-        private ?bool $saveCreditCardForLater = null,
+        private bool $saveCreditCardForLater = false,
         #[\SensitiveParameter]
         private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
@@ -126,7 +126,7 @@ class PaymentDetails
         $this->encodedCardData = $encodedCardData;
     }
 
-    public function isSaveCreditCardForLater(): ?bool
+    public function isSaveCreditCardForLater(): bool
     {
         return $this->saveCreditCardForLater;
     }
