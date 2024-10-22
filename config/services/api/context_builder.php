@@ -16,11 +16,4 @@ return function(ContainerConfigurator $container): void {
             service('.inner'),
         ])
     ;
-
-    $services->set('commerce_weavers_sylius_tpay.api.serializer.context_builder.payment_id_aware', PaymentIdAwareContextBuilder::class)
-        ->decorate('api_platform.serializer.context_builder')
-        ->args([
-            service('.inner'),
-        ])
-    ;
 };
