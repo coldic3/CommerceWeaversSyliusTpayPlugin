@@ -12,6 +12,10 @@
             <input type="text" name="apple-pay-merchant-id" placeholder="Apple Merchant Identifier" data-merchant-identifier>
         </div>
         <div class="field">
+            <label>Session token</label>
+            <textarea name="apple-pay-session" data-apple-pay-session-input></textarea>
+        </div>
+        <div class="field">
             <apple-pay-button data-apple-pay-button buttonstyle="black" type="plain" onclick="onApplePayButtonClicked()" locale="pl-PL"></apple-pay-button>
         </div>
         <div class="field">
@@ -47,8 +51,6 @@
                     }
                 }];
 
-                console.log(paymentMethodData);
-
                 // Define PaymentDetails
                 const paymentDetails = {
                     "total": {
@@ -73,7 +75,14 @@
                 const request = new PaymentRequest(paymentMethodData, paymentDetails, paymentOptions);
 
                 request.onmerchantvalidation = async event => {
-                    await fetch('/en_US/tpay/apple-pay/init', {
+                    const session = document.querySelector('[data-apple-pay-session-input]');
+
+                    if (session.value) {
+                        event.complete(JSON.parse(atob(session.value)));
+                        return;
+                    }
+
+                    await fetch('/tpay/apple-pay/init', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
