@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySession;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySessionHandler;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
 use Payum\Core\GatewayInterface;
 use PHPUnit\Framework\TestCase;
@@ -24,10 +25,13 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
 
     private GatewayInterface|ObjectProphecy $gateway;
 
+    private InitializeApplePayPaymentFactoryInterface|ObjectProphecy $initializeApplePayPaymentFactory;
+
     protected function setUp(): void
     {
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
         $this->gateway = $this->prophesize(GatewayInterface::class);
+        $this->initializeApplePayPaymentFactory = $this->prophesize(InitializeApplePayPaymentFactoryInterface::class);
     }
 
     public function test_it_throws_an_exception_if_an_order_with_the_given_token_does_not_exist(): void
@@ -45,6 +49,10 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $this->orderRepository->findOneByTokenValue('t0k3n')->willReturn($order);
+        $this->initializeApplePayPaymentFactory
+            ->createNewWithModelAndOutput(Argument::any(), Argument::any())
+            ->will(fn (array $args) => new InitializeApplePayPayment($args[0], $args[1]))
+        ;
 
         $this->gateway->execute(Argument::that(function (InitializeApplePayPayment $request): bool {
             $request->getOutput()->replace([
@@ -73,6 +81,10 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
 
     private function createTestSubject(): InitializeApplePaySessionHandler
     {
-        return new InitializeApplePaySessionHandler($this->orderRepository->reveal(), $this->gateway->reveal());
+        return new InitializeApplePaySessionHandler(
+            $this->orderRepository->reveal(),
+            $this->gateway->reveal(),
+            $this->initializeApplePayPaymentFactory->reveal(),
+        );
     }
 }
