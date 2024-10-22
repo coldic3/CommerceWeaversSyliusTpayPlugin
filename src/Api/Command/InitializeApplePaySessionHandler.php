@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -18,6 +18,7 @@ final class InitializeApplePaySessionHandler
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly GatewayInterface $gateway,
+        private readonly InitializeApplePayPaymentFactoryInterface $initializeApplePayPaymentFactory,
     ) {
     }
 
@@ -26,7 +27,7 @@ final class InitializeApplePaySessionHandler
         $this->verifyOrderExist($command->orderToken);
 
         $this->gateway->execute(
-            new InitializeApplePayPayment(
+            $this->initializeApplePayPaymentFactory->createNewWithModelAndOutput(
                 new ArrayObject([
                     'domainName' => $command->domainName,
                     'displayName' => $command->displayName,
