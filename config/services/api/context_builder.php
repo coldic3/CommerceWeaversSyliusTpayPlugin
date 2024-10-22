@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Serializer\ContextBuilder\OrderTokenAwareContextBuilder;
-use CommerceWeavers\SyliusTpayPlugin\Api\Serializer\ContextBuilder\PaymentIdAwareContextBuilder;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
