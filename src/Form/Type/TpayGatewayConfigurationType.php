@@ -72,6 +72,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 'merchant_id',
                 TextType::class,
                 [
+                    'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.merchant_id',
                 ],
             )
@@ -79,6 +80,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 'google_merchant_id',
                 TextType::class,
                 [
+                    'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.google_merchant_id',
                 ],
             )
@@ -86,6 +88,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 'apple_pay_merchant_id',
                 TextType::class,
                 [
+                    'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.apple_pay_merchant_id',
                 ],
             )
@@ -93,6 +96,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 'notification_security_code',
                 PasswordType::class,
                 [
+                    'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.notification_security_code',
                 ],
             )
