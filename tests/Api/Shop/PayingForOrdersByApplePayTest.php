@@ -26,10 +26,11 @@ final class PayingForOrdersByApplePayTest extends JsonApiTestCase
     public function test_it_initializes_an_apple_pay_session(): void
     {
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_apple_pay');
+        $payment = $order->getPayments()->last();
 
         $this->client->request(
             Request::METHOD_POST,
-            sprintf('/api/v2/shop/orders/%s/apple-pay-session', $order->getTokenValue()),
+            sprintf('/api/v2/shop/orders/%s/payments/%s/apple-pay-session', $order->getTokenValue(), $payment->getId()),
             server: self::CONTENT_TYPE_HEADER,
             content: json_encode([
                 'successUrl' => 'https://example.com/success',

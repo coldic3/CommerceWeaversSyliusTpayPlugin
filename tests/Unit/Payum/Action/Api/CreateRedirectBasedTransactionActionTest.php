@@ -20,11 +20,14 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class CreateRedirectBasedTransactionActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private TpayApi|ObjectProphecy $api;
 
@@ -133,22 +136,9 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $this->api->transactions()->willReturn($transactions);
 
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'pending',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending', payment_url: 'https://tpay.org/pay'),
+        )->shouldBeCalled();
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
@@ -203,22 +193,9 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $this->api->transactions()->willReturn($transactions);
 
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'pending',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending', payment_url: 'https://tpay.org/pay'),
+        )->shouldBeCalled();
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
@@ -235,8 +212,12 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot determine gateway name for a given payment');
 
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->getMethod()->willReturn(null);
+
         $request = $this->prophesize(CreateTransaction::class);
-        $request->getModel()->willReturn($this->prophesize(PaymentInterface::class)->reveal());
+        $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn(null);
 
         $this->createTestSubject()->execute($request->reveal());

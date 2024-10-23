@@ -20,10 +20,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 
 final class PayHandlerTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private OrderRepositoryInterface|ObjectProphecy $orderRepository;
 
@@ -68,22 +71,9 @@ final class PayHandlerTest extends TestCase
 
         $payment->getId()->willReturn(1);
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'tpay_channel_id' => null,
-                'payment_url' => null,
-                'success_url' => 'https://cw.nonexisting/success',
-                'failure_url' => 'https://cw.nonexisting/failure',
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(success_url: 'https://cw.nonexisting/success', failure_url: 'https://cw.nonexisting/failure'),
+        )->shouldBeCalled();
 
         $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123'));
 

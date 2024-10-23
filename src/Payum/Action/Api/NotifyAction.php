@@ -12,9 +12,10 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Signatu
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpResponse;
-use Sylius\Component\Payment\Model\PaymentInterface;
+use Payum\Core\Request\Generic;
+use Sylius\Component\Core\Model\PaymentInterface;
 
-final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInterface
+final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
@@ -29,12 +30,8 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
     /**
      * @param Notify $request
      */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
         $requestData = $request->getData();
 
         $paymentData = $this->basicPaymentFactory->createFromArray($requestData->requestParameters);
@@ -62,8 +59,6 @@ final class NotifyAction extends BaseApiAwareAction implements GatewayAwareInter
         };
 
         $paymentDetails->setStatus($newPaymentStatus);
-
-        $model->setDetails($paymentDetails->toArray());
     }
 
     public function supports($request): bool

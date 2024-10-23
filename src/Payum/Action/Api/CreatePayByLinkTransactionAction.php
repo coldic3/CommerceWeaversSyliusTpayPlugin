@@ -12,9 +12,10 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
+final class CreatePayByLinkTransactionAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
@@ -25,17 +26,9 @@ final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAc
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
@@ -48,9 +41,10 @@ final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAc
             },
             onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
+    }
 
-        $model->setDetails($paymentDetails->toArray());
-
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
         if ($paymentDetails->getPaymentUrl() !== null) {
             throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }

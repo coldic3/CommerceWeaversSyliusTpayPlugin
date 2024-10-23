@@ -19,11 +19,14 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Webmozart\Assert\InvalidArgumentException;
 
 final class PayByApplePayHandlerTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private PaymentRepositoryInterface|ObjectProphecy $paymentRepository;
 
@@ -84,22 +87,9 @@ final class PayByApplePayHandlerTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Payment status is required to create a result.');
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => 't00k33n',
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(apple_pay_token: 't00k33n')
+        )->shouldBeCalled();
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
 
         $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
@@ -127,22 +117,9 @@ final class PayByApplePayHandlerTest extends TestCase
         $result = $this->createTestSubject()->__invoke(new PayByApplePay(1, 't00k33n'));
 
         self::assertSame('pending', $result->status);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => 't00k33n',
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(apple_pay_token: 't00k33n')
+        )->shouldBeCalled();
 
         $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
     }

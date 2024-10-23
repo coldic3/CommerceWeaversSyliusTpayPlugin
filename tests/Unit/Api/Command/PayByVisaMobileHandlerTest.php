@@ -19,13 +19,14 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Webmozart\Assert\InvalidArgumentException;
 
 final class PayByVisaMobileHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
-    private array $details;
+    use PaymentDetailsHelperTrait;
 
     private PaymentRepositoryInterface|ObjectProphecy $paymentRepository;
 
@@ -38,23 +39,6 @@ final class PayByVisaMobileHandlerTest extends TestCase
         $this->paymentRepository = $this->prophesize(PaymentRepositoryInterface::class);
         $this->payum = $this->prophesize(Payum::class);
         $this->createTransactionFactory = $this->prophesize(CreateTransactionFactoryInterface::class);
-
-        $this->details = [
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'blik_token' => null,
-                'apple_pay_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ];
     }
 
     public function test_it_throw_an_exception_if_a_payment_cannot_be_found(): void
@@ -96,8 +80,8 @@ final class PayByVisaMobileHandlerTest extends TestCase
 
         $payment->getDetails()->willReturn($paymentDetails);
         $payment->setDetails(
-            array_replace_recursive($this->details, $paymentDetails)
-        )->shouldBeCalled();
+            $this->getExpectedDetails(),
+        );
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
@@ -123,7 +107,7 @@ final class PayByVisaMobileHandlerTest extends TestCase
 
         $payment->getDetails()->willReturn($paymentDetails);
         $payment->setDetails(
-            array_replace_recursive($this->details, $paymentDetails)
+            $this->getExpectedDetails(status: 'pending', payment_url: 'https://cw.org/pay', visa_mobile_phone_number: '23456789'),
         )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);
@@ -154,7 +138,7 @@ final class PayByVisaMobileHandlerTest extends TestCase
 
         $payment->getDetails()->willReturn($paymentDetails);
         $payment->setDetails(
-            array_replace_recursive($this->details, $paymentDetails)
+            $this->getExpectedDetails(status: 'pending', payment_url: 'https://cw.org/pay', visa_mobile_phone_number: '44123456789'),
         )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);

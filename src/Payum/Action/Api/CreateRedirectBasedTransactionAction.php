@@ -10,10 +10,11 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionAction
+final class CreateRedirectBasedTransactionAction extends BasePaymentAwareAction
 {
     use GenericTokenFactoryAwareTrait;
 
@@ -24,17 +25,9 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
@@ -47,9 +40,10 @@ class CreateRedirectBasedTransactionAction extends AbstractCreateTransactionActi
             },
             onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
+    }
 
-        $model->setDetails($paymentDetails->toArray());
-
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
         if ($paymentDetails->getPaymentUrl() !== null) {
             throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }

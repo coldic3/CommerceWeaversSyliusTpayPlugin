@@ -5,9 +5,6 @@
             xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd"
 >
     <class name="CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySessionResult">
-        <attribute name="result">
-            <group>commerce_weavers_sylius_tpay:shop:order:payment:initialize_apple_pay_session_result</group>
-        </attribute>
         <attribute name="session">
             <group>commerce_weavers_sylius_tpay:shop:order:payment:initialize_apple_pay_session_result</group>
         </attribute>

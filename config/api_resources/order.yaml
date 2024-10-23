@@ -18,7 +18,7 @@
                 summary: 'Pay for the order'
         shop_initialize_apple_pay_session:
             method: 'POST'
-            path: '/shop/orders/{tokenValue}/apple-pay-session'
+            path: '/shop/orders/{tokenValue}/payments/{paymentId}/apple-pay-session'
             messenger: 'input'
             input: 'CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySession'
             status: 201

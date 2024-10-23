@@ -8,15 +8,20 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class PayWithCardActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private TpayApi|ObjectProphecy $api;
 
@@ -58,8 +63,10 @@ final class PayWithCardActionTest extends TestCase
     {
         $this->expectException(HttpRedirect::class);
 
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
         $request = $this->prophesize(PayWithCard::class);
-        $paymentModel = $this->prophesize(PaymentInterface::class);
         $details = [
             'tpay' => [
                 'card' => 'test-card',
@@ -73,8 +80,16 @@ final class PayWithCardActionTest extends TestCase
             'transactionPaymentUrl' => 'http://example.com',
         ];
 
-        $request->getModel()->willReturn($paymentModel->reveal());
+
+        $paymentModel = $this->prophesize(PaymentInterface::class);
+        $paymentModel->getOrder()->willReturn($order->reveal());
         $paymentModel->getDetails()->willReturn($details);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request->getModel()->willReturn($paymentModel->reveal());
+        $request->getToken()->willReturn($token->reveal());
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createPaymentByTransactionId([
@@ -86,22 +101,9 @@ final class PayWithCardActionTest extends TestCase
 
         $this->api->transactions()->willReturn($transactions);
 
-        $paymentModel->setDetails([
-            'tpay' => [
-                'transaction_id' => 'abcd',
-                'result' => 'success',
-                'status' => 'pending',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'http://example.com',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $paymentModel->setDetails(
+            $this->getExpectedDetails(transaction_id: 'abcd', result: 'success', status: 'pending', payment_url: 'http://example.com')
+        );
 
         $subject = $this->createTestSubject();
 
@@ -110,8 +112,6 @@ final class PayWithCardActionTest extends TestCase
 
     public function test_it_marks_a_payment_status_as_failed_once_a_transaction_status_is_failed(): void
     {
-        $request = $this->prophesize(PayWithCard::class);
-        $paymentModel = $this->prophesize(PaymentInterface::class);
         $details = [
             'tpay' => [
                 'card' => 'test-card',
@@ -119,12 +119,26 @@ final class PayWithCardActionTest extends TestCase
             ],
         ];
 
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $paymentModel = $this->prophesize(PaymentInterface::class);
+        $paymentModel->getOrder()->willReturn($order->reveal());
+        $paymentModel->getDetails()->willReturn($details);
+        $paymentModel->setDetails(
+            $this->getExpectedDetails(transaction_id: 'abcd', status: 'failed'),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(PayWithCard::class);
+        $request->getToken()->willReturn($token->reveal());
+        $request->getModel()->willReturn($paymentModel->reveal());
+
         $response = [
             'result' => 'failed',
         ];
-
-        $request->getModel()->willReturn($paymentModel->reveal());
-        $paymentModel->getDetails()->willReturn($details);
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createPaymentByTransactionId([
@@ -135,23 +149,6 @@ final class PayWithCardActionTest extends TestCase
         ], $details['tpay']['transaction_id'])->willReturn($response);
 
         $this->api->transactions()->willReturn($transactions);
-
-        $paymentModel->setDetails([
-            'tpay' => [
-                'transaction_id' => 'abcd',
-                'result' => null,
-                'status' => 'failed',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
 
         $subject = $this->createTestSubject();
 

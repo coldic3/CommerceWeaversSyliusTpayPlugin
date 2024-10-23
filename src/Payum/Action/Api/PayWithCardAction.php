@@ -8,20 +8,14 @@ use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
-class PayWithCardAction extends BaseApiAwareAction
+class PayWithCardAction extends BasePaymentAwareAction
 {
-    /**
-     * @param PayWithCard $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
         Assert::notNull($paymentDetails->getEncodedCardData(), 'Card data is required to pay with card.');
         Assert::notNull($paymentDetails->getTransactionId(), 'Transaction ID is required to pay with card.');
 
@@ -41,9 +35,10 @@ class PayWithCardAction extends BaseApiAwareAction
         );
 
         $paymentDetails->clearSensitiveData();
+    }
 
-        $model->setDetails($paymentDetails->toArray());
-
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
         if ($paymentDetails->getPaymentUrl() !== null) {
             throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }

@@ -49,6 +49,7 @@ return static function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.api.command.initialize_apple_pay_session_handler', InitializeApplePaySessionHandler::class)
         ->args([
             service('sylius.repository.order'),
+            service('sylius.repository.payment'),
             service('commerce_weavers_sylius_tpay.gateway'),
             service('commerce_weavers_sylius_tpay.payum.factory.initialize_apple_pay_payment'),
         ])

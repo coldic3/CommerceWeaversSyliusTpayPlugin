@@ -9,10 +9,11 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInter
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
+use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class CreateVisaMobileTransactionAction extends AbstractCreateTransactionAction
+final class CreateVisaMobileTransactionAction extends BasePaymentAwareAction
 {
     use GenericTokenFactoryAwareTrait;
 
@@ -23,17 +24,9 @@ final class CreateVisaMobileTransactionAction extends AbstractCreateTransactionA
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
@@ -45,8 +38,6 @@ final class CreateVisaMobileTransactionAction extends AbstractCreateTransactionA
             },
             onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
-
-        $model->setDetails($paymentDetails->toArray());
     }
 
     public function supports($request): bool

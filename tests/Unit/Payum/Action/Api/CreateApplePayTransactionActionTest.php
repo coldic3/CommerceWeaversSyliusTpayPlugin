@@ -18,11 +18,14 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class CreateApplePayTransactionActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private TpayApi|ObjectProphecy $api;
 
@@ -92,22 +95,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'correct',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'correct'),
+        )->shouldBeCalled();
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');
@@ -146,22 +136,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'pending',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending', payment_url: 'https://tpay.org/pay'),
+        )->shouldBeCalled();
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');
@@ -202,6 +179,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending'),
+        )->shouldBeCalled();
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');
@@ -245,22 +225,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'correct',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'correct'),
+        )->shouldBeCalled();
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
@@ -288,8 +255,11 @@ final class CreateApplePayTransactionActionTest extends TestCase
 
     public function test_it_throws_an_exception_when_a_gateway_name_cannot_be_determined(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
         $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->getMethod()->willReturn(null);
+
+        $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn(null);
 
@@ -305,6 +275,8 @@ final class CreateApplePayTransactionActionTest extends TestCase
         $this->expectExceptionMessage('Cannot determine locale code for a given payment');
 
         $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->getOrder()->willReturn(null);
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');

@@ -7,23 +7,30 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Factory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
-use Payum\Core\Bridge\Spl\ArrayObject;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 final class InitializeApplePayPaymentFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function test_it_creates_an_initialize_apple_pay_payment_request(): void
     {
-        $model = new ArrayObject();
-        $output = new ArrayObject();
+        $payment = $this->prophesize(PaymentInterface::class);
 
-        $factory = $this->createTestSubject();
-
-        $request = $factory->createNewWithModelAndOutput($model, $output);
+        $request = $this->createTestSubject()->createNewWithModelAndOutput(
+            $payment->reveal(),
+            'cw.nonexisting',
+            'Commerce Weavers',
+            'https://cw.nonexisting/validate',
+        );
 
         $this->assertInstanceOf(InitializeApplePayPayment::class, $request);
-        $this->assertSame($model, $request->getModel());
-        $this->assertSame($output, $request->getOutput());
+        $this->assertSame($payment->reveal(), $request->getModel());
+        $this->assertSame('cw.nonexisting', $request->getDomainName());
+        $this->assertSame('Commerce Weavers', $request->getDisplayName());
+        $this->assertSame('https://cw.nonexisting/validate', $request->getValidationUrl());
     }
 
     private function createTestSubject(): InitializeApplePayPaymentFactoryInterface

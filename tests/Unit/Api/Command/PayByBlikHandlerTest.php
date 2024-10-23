@@ -19,10 +19,13 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 
 final class PayByBlikHandlerTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private PaymentRepositoryInterface|ObjectProphecy $paymentRepository;
 
@@ -73,22 +76,9 @@ final class PayByBlikHandlerTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => null,
-                'apple_pay_token' => null,
-                'blik_token' => '777123',
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(blik_token: '777123'),
+        )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);
 

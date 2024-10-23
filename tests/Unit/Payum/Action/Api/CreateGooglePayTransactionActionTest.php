@@ -18,11 +18,16 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
 
 final class CreateGooglePayTransactionActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private TpayApi|ObjectProphecy $api;
 
@@ -30,32 +35,45 @@ final class CreateGooglePayTransactionActionTest extends TestCase
 
     private NotifyTokenFactoryInterface|ObjectProphecy $notifyTokenFactory;
 
+    private CreateTransaction|ObjectProphecy $request;
+
+    private PaymentInterface|ObjectProphecy $payment;
+
     protected function setUp(): void
     {
         $this->api = $this->prophesize(TpayApi::class);
         $this->createGooglePayPaymentPayloadFactory = $this->prophesize(CreateGooglePayPaymentPayloadFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $this->payment = $this->prophesize(PaymentInterface::class);
+        $this->payment->getOrder()->willReturn($order);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $this->request = $this->prophesize(CreateTransaction::class);
+        $this->request->getModel()->willReturn($this->payment);
+        $this->request->getToken()->willReturn($token->reveal());
     }
 
     public function test_it_supports_create_transaction_requests_with_a_valid_payment_model(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['tpay' => ['google_pay_token' => 'yolo!']]);
+        $this->payment->getDetails()->willReturn(['tpay' => ['google_pay_token' => 'yolo!']]);
 
-        $isSupported = $this->createTestSubject()->supports($request->reveal());
+        $isSupported = $this->createTestSubject()->supports($this->request->reveal());
 
         $this->assertTrue($isSupported);
     }
 
     public function test_it_does_not_support_requests_with_non_payment_model(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
         $payment = new \stdClass();
-        $request->getModel()->willReturn($payment);
+        $this->request->getModel()->willReturn($payment);
 
-        $isSupported = $this->createTestSubject()->supports($request->reveal());
+        $isSupported = $this->createTestSubject()->supports($this->request->reveal());
 
         $this->assertFalse($isSupported);
     }
@@ -71,82 +89,68 @@ final class CreateGooglePayTransactionActionTest extends TestCase
 
     public function test_it_does_not_support_requests_with_payment_model_not_containing_tpay_google_pay_token(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $request->getModel()->willReturn($payment);
-        $payment->getDetails()->willReturn(['foo' => ['bar' => 'baz']]);
+        $this->payment->getDetails()->willReturn(['foo' => ['bar' => 'baz']]);
 
-        $isSupported = $this->createTestSubject()->supports($request->reveal());
+        $isSupported = $this->createTestSubject()->supports($this->request->reveal());
 
         $this->assertFalse($isSupported);
     }
 
     public function test_it_creates_a_payment_and_requests_paying_it_with_a_provided_google_pay_token(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $token = $this->prophesize(TokenInterface::class);
-        $order = $this->prophesize(OrderInterface::class);
-        $notifyToken = $this->prophesize(TokenInterface::class);
-        $transactions = $this->prophesize(TransactionsApi::class);
-        $request->getModel()->willReturn($payment);
-        $request->getToken()->willReturn($token);
-        $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn([]);
-        $token->getGatewayName()->willReturn('tpay');
-        $order->getLocaleCode()->willReturn('pl_PL');
-        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
-        $this->api->transactions()->willReturn($transactions);
-        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
-        $this->createGooglePayPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
-            ->willReturn(['factored' => 'payload'])
+        $this->payment->getDetails()->willReturn([]);
+        $this->payment
+            ->setDetails(
+                $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'correct')
+            )
+            ->shouldBeCalled()
         ;
+
+        $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
             'result' => 'success',
             'status' => 'correct',
             'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
-        $this->createTestSubject()->execute($request->reveal());
+        $this->api->transactions()->willReturn($transactions);
 
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'correct',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $this->notifyTokenFactory->create($this->payment, 'tpay', 'en_US')->willReturn($notifyToken);
+
+        $this->createGooglePayPaymentPayloadFactory
+            ->createFrom($this->payment, 'https://cw.org/notify', 'en_US')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($this->request->reveal());
     }
 
     public function test_it_redirects_payment_if_3d_secure_authentication_required(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $token = $this->prophesize(TokenInterface::class);
-        $order = $this->prophesize(OrderInterface::class);
-        $notifyToken = $this->prophesize(TokenInterface::class);
+        $this->expectException(HttpRedirect::class);
+
+        $this->payment->getDetails()->willReturn([]);
+        $this->payment
+            ->setDetails(
+                $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending', payment_url: 'https://tpay.org/pay')
+            )
+            ->shouldBeCalled()
+        ;
+
         $transactions = $this->prophesize(TransactionsApi::class);
-        $request->getModel()->willReturn($payment);
-        $request->getToken()->willReturn($token);
-        $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn([]);
-        $token->getGatewayName()->willReturn('tpay');
-        $order->getLocaleCode()->willReturn('pl_PL');
-        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
         $this->api->transactions()->willReturn($transactions);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
         $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $this->notifyTokenFactory->create($this->payment, 'tpay', 'en_US')->willReturn($notifyToken);
+
         $this->createGooglePayPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($this->payment, 'https://cw.org/notify', 'en_US')
             ->willReturn(['factored' => 'payload'])
         ;
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
@@ -156,58 +160,43 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             'transactionPaymentUrl' => 'https://tpay.org/pay'
         ]);
 
-        $this->expectException(HttpRedirect::class);
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'pending',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => 'https://tpay.org/pay',
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
-
-        $this->createTestSubject()->execute($request->reveal());
+        $this->createTestSubject()->execute($this->request->reveal());
     }
 
     public function test_it_throws_exception_if_3d_secure_authentication_required_but_transaction_payment_url_is_missing(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $token = $this->prophesize(TokenInterface::class);
-        $order = $this->prophesize(OrderInterface::class);
-        $notifyToken = $this->prophesize(TokenInterface::class);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.');
+
+        $this->payment->getDetails()->willReturn([]);
+        $this->payment
+            ->setDetails(
+                $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending')
+            )
+            ->shouldBeCalled()
+        ;
+
         $transactions = $this->prophesize(TransactionsApi::class);
-        $request->getModel()->willReturn($payment);
-        $request->getToken()->willReturn($token);
-        $payment->getOrder()->willReturn($order);
-        $payment->getDetails()->willReturn([]);
-        $token->getGatewayName()->willReturn('tpay');
-        $order->getLocaleCode()->willReturn('pl_PL');
-        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
         $this->api->transactions()->willReturn($transactions);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
         $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $this->notifyTokenFactory->create($this->payment, 'tpay', 'en_US')->willReturn($notifyToken);
+
         $this->createGooglePayPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($this->payment, 'https://cw.org/notify', 'en_US')
             ->willReturn(['factored' => 'payload'])
         ;
+
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
             'result' => 'success',
             'status' => 'pending',
             'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.');
-
-        $this->createTestSubject()->execute($request->reveal());
+        $this->createTestSubject()->execute($this->request->reveal());
     }
 
     public function test_it_tries_to_determine_a_gateway_name_by_model_once_token_is_not_present(): void
@@ -242,28 +231,18 @@ final class CreateGooglePayTransactionActionTest extends TestCase
 
         $this->createTestSubject()->execute($request->reveal());
 
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'correct',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'correct'),
+        )->shouldBeCalled();
     }
 
     public function test_it_throws_an_exception_when_a_gateway_name_cannot_be_determined(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
         $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->getMethod()->willReturn(null);
+
+        $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn(null);
 
@@ -275,12 +254,16 @@ final class CreateGooglePayTransactionActionTest extends TestCase
 
     public function test_it_throws_an_exception_when_a_locale_code_cannot_be_determined(): void
     {
-        $request = $this->prophesize(CreateTransaction::class);
         $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->getOrder()->willReturn(null);
+
         $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn($token);
-        $token->getGatewayName()->willReturn('tpay');
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot determine locale code for a given payment');

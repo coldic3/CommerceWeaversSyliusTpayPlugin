@@ -12,10 +12,11 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactor
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
+use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class CreateCardTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
+final class CreateCardTransactionAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
     use GenericTokenFactoryAwareTrait;
     use GatewayAwareTrait;
@@ -27,17 +28,9 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
@@ -49,10 +42,11 @@ final class CreateCardTransactionAction extends AbstractCreateTransactionAction 
             },
             onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
+    }
 
-        $model->setDetails($paymentDetails->toArray());
-
-        $this->gateway->execute(new PayWithCard($request->getToken() ?? $model));
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
+        $this->gateway->execute(new PayWithCard($model));
     }
 
     public function supports($request): bool
