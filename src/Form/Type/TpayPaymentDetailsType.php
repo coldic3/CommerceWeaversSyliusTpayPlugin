@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
+use Sylius\Component\Core\Model\ShopUserInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -12,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Regex;
 
@@ -19,6 +21,7 @@ final class TpayPaymentDetailsType extends AbstractType
 {
     public function __construct(
         private readonly object $removeUnnecessaryPaymentDetailsFieldsListener,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
 
@@ -34,11 +37,6 @@ final class TpayPaymentDetailsType extends AbstractType
                 [
                     'property_path' => '[card]',
                 ],
-            )
-            ->add('saveCreditCardForLater', CheckboxType::class,
-                [
-                    'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.save_credit_card_for_later.label',
-                ]
             )
             ->add(
                 'blik_token',
@@ -107,5 +105,18 @@ final class TpayPaymentDetailsType extends AbstractType
             FormEvents::PRE_SUBMIT,
             [$this->removeUnnecessaryPaymentDetailsFieldsListener, '__invoke'],
         );
+
+        $token = $this->tokenStorage->getToken();
+        $user = $token?->getUser();
+
+        if ($user instanceof ShopUserInterface) {
+            $builder
+                ->add('saveCreditCardForLater', CheckboxType::class,
+                    [
+                        'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.save_credit_card_for_later.label',
+                    ]
+                )
+            ;
+        }
     }
 }

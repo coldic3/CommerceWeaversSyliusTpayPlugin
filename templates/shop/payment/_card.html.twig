@@ -43,10 +43,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="three wide field" data-tpay-save-card>
-                    {{ form_row(form.tpay.saveCreditCardForLater) }}
-                    <div data-tpay-error-container></div>
-                </div>
+                {% if form.tpay.saveCreditCardForLater is defined %}
+                    <div class="three wide field" data-tpay-save-card>
+                        {{ form_row(form.tpay.saveCreditCardForLater) }}
+                        <div data-tpay-error-container></div>
+                    </div>
+                {% endif %}
             </div>
             {{ form_row(form.tpay.card.card, { attr: {'data-tpay-encrypted-card': '' } }) }}
 
