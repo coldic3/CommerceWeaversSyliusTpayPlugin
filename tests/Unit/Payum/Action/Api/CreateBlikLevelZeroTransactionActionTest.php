@@ -113,8 +113,9 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->api->transactions()->willReturn($transactions);
@@ -171,8 +172,9 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->api->transactions()->willReturn($transactions);

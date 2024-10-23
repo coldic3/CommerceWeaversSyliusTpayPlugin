@@ -13,7 +13,6 @@ use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
 final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
 {
@@ -34,25 +33,27 @@ final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAc
         /** @var PaymentInterface $model */
         $model = $request->getModel();
         $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-
-        $response = $this->api->transactions()->createTransaction(
-            $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
-        );
-
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        $paymentDetails->setTransactionId($response['transactionId']);
-        $paymentDetails->setStatus($response['status']);
-        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
+        $this->do(
+            fn () => $this->api->transactions()->createTransaction(
+                $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            ),
+            onSuccess: function (array $response) use ($paymentDetails) {
+                $paymentDetails->setTransactionId($response['transactionId']);
+                $paymentDetails->setStatus($response['status']);
+                $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
+        );
 
         $model->setDetails($paymentDetails->toArray());
 
-        Assert::notNull($paymentUrl = $paymentDetails->getPaymentUrl());
-
-        throw new HttpRedirect($paymentUrl);
+        if ($paymentDetails->getPaymentUrl() !== null) {
+            throw new HttpRedirect($paymentDetails->getPaymentUrl());
+        }
     }
 
     public function supports($request): bool

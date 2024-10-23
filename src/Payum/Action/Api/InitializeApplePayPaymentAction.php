@@ -8,7 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactoryInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
-use Tpay\OpenApi\Utilities\TpayException;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 final class InitializeApplePayPaymentAction extends AbstractCreateTransactionAction
 {
@@ -22,18 +22,17 @@ final class InitializeApplePayPaymentAction extends AbstractCreateTransactionAct
 
     /**
      * @param InitializeApplePayPayment $request
-     *
-     * @throws TpayException
      */
     public function execute($request): void
     {
         /** @var ArrayObject $model */
         $model = $request->getModel();
 
-        /** @var array<string, mixed> $result */
-        $result = $this->api->applePay()->init($this->createInitializeApplePayPaymentPayloadFactory->create($model));
-
-        $request->getOutput()->replace($result);
+        $this->do(
+            fn () => $this->api->applePay()->init($this->createInitializeApplePayPaymentPayloadFactory->create($model)),
+            onSuccess: fn (array $response) => $request->getOutput()->replace($response),
+            onFailure: fn () => $request->getOutput()->replace(['result' => PaymentInterface::STATE_FAILED]),
+        );
     }
 
     public function supports($request): bool

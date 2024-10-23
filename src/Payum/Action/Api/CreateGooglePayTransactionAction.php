@@ -36,18 +36,22 @@ final class CreateGooglePayTransactionAction extends AbstractCreateTransactionAc
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        $response = $this->api->transactions()->createTransaction(
-            $this->createGooglePayPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+        $this->do(
+            fn () => $this->api->transactions()->createTransaction(
+                $this->createGooglePayPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            ),
+            onSuccess: function (array $response) use ($paymentDetails) {
+                $paymentDetails->setTransactionId($response['transactionId']);
+                $paymentDetails->setStatus($response['status']);
+
+                if ($this->is3dSecureRedirectRequired($paymentDetails)) {
+                    $paymentDetails->setPaymentUrl(
+                        $response['transactionPaymentUrl'] ?? throw new \InvalidArgumentException('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.'),
+                    );
+                }
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
-
-        $paymentDetails->setTransactionId($response['transactionId']);
-        $paymentDetails->setStatus($response['status']);
-
-        if ($this->is3dSecureRedirectRequired($paymentDetails)) {
-            $paymentDetails->setPaymentUrl(
-                $response['transactionPaymentUrl'] ?? throw new \InvalidArgumentException('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.'),
-            );
-        }
 
         $model->setDetails($paymentDetails->toArray());
 

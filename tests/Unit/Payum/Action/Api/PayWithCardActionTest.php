@@ -110,8 +110,6 @@ final class PayWithCardActionTest extends TestCase
 
     public function test_it_marks_a_payment_status_as_failed_once_a_transaction_status_is_failed(): void
     {
-        $this->expectException(HttpRedirect::class);
-
         $request = $this->prophesize(PayWithCard::class);
         $paymentModel = $this->prophesize(PaymentInterface::class);
         $details = [
@@ -122,9 +120,7 @@ final class PayWithCardActionTest extends TestCase
         ];
 
         $response = [
-            'status' => 'pending',
             'result' => 'failed',
-            'transactionPaymentUrl' => 'http://example.com',
         ];
 
         $request->getModel()->willReturn($paymentModel->reveal());
@@ -143,13 +139,13 @@ final class PayWithCardActionTest extends TestCase
         $paymentModel->setDetails([
             'tpay' => [
                 'transaction_id' => 'abcd',
-                'result' => 'failed',
-                'status' => 'pending',
+                'result' => null,
+                'status' => 'failed',
                 'apple_pay_token' => null,
                 'blik_token' => null,
                 'google_pay_token' => null,
                 'card' => null,
-                'payment_url' => 'http://example.com',
+                'payment_url' => null,
                 'success_url' => null,
                 'failure_url' => null,
                 'tpay_channel_id' => null,

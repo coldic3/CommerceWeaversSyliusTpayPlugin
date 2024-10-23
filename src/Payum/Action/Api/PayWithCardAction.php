@@ -25,17 +25,22 @@ class PayWithCardAction extends BaseApiAwareAction
         Assert::notNull($paymentDetails->getEncodedCardData(), 'Card data is required to pay with card.');
         Assert::notNull($paymentDetails->getTransactionId(), 'Transaction ID is required to pay with card.');
 
-        $response = $this->api->transactions()->createPaymentByTransactionId([
-            'groupId' => PayGroup::CARD,
-            'cardPaymentData' => [
-                'card' => $paymentDetails->getEncodedCardData(),
-            ],
-        ], $paymentDetails->getTransactionId());
+        $this->do(
+            fn () => $this->api->transactions()->createPaymentByTransactionId([
+                'groupId' => PayGroup::CARD,
+                'cardPaymentData' => [
+                    'card' => $paymentDetails->getEncodedCardData(),
+                ],
+            ], $paymentDetails->getTransactionId()),
+            onSuccess: function ($response) use ($paymentDetails) {
+                $paymentDetails->setResult($response['result']);
+                $paymentDetails->setStatus($response['status']);
+                $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
+        );
 
         $paymentDetails->clearSensitiveData();
-        $paymentDetails->setResult($response['result']);
-        $paymentDetails->setStatus($response['status']);
-        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
 
         $model->setDetails($paymentDetails->toArray());
 

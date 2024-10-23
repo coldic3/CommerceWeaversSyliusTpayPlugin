@@ -121,8 +121,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
@@ -174,8 +175,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'pending',
+            'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay'
         ]);
 
@@ -213,8 +215,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'pending',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->createApplePayPaymentPayloadFactory
@@ -268,8 +271,9 @@ final class CreateApplePayTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);

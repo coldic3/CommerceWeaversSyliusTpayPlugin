@@ -125,6 +125,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'result' => 'success',
             'status' => 'pending',
             'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay',
@@ -194,6 +195,7 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'result' => 'success',
             'status' => 'pending',
             'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay',

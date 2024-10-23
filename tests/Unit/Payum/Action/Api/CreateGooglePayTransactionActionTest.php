@@ -103,8 +103,9 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             ->willReturn(['factored' => 'payload'])
         ;
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->createTestSubject()->execute($request->reveal());
@@ -149,8 +150,9 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             ->willReturn(['factored' => 'payload'])
         ;
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'pending',
+            'transactionId' => 'tr4ns4ct!0n_id',
             'transactionPaymentUrl' => 'https://tpay.org/pay'
         ]);
 
@@ -197,8 +199,9 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             ->willReturn(['factored' => 'payload'])
         ;
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'pending',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -232,8 +235,9 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             ->willReturn(['factored' => 'payload'])
         ;
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->createTestSubject()->execute($request->reveal());

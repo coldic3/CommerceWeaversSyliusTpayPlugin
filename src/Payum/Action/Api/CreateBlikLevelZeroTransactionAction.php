@@ -35,18 +35,20 @@ final class CreateBlikLevelZeroTransactionAction extends AbstractCreateTransacti
         /** @var PaymentInterface $model */
         $model = $request->getModel();
         $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-
         $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
-
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
-        $response = $this->api->transactions()->createTransaction(
-            $this->createBlikLevelZeroPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+        $this->do(
+            fn () => $this->api->transactions()->createTransaction(
+                $this->createBlikLevelZeroPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            ),
+            onSuccess: function (array $response) use ($paymentDetails) {
+                $paymentDetails->setTransactionId($response['transactionId']);
+                $paymentDetails->setStatus($response['status']);
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
-
-        $paymentDetails->setTransactionId($response['transactionId']);
-        $paymentDetails->setStatus($response['status']);
 
         $model->setDetails($paymentDetails->toArray());
     }
