@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
@@ -19,6 +20,7 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
     public function __construct(
         private readonly CreateBlikLevelZeroPaymentPayloadFactoryInterface $createBlikLevelZeroPaymentPayloadFactory,
         private readonly NotifyTokenFactoryInterface $notifyTokenFactory,
+        private readonly BlikAliasRepositoryInterface $blikAliasRepository,
     ) {
         parent::__construct();
     }
@@ -27,9 +29,13 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
     {
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
+        $blikAlias = null !== $paymentDetails->getBlikAliasValue()
+            ? $this->blikAliasRepository->findOneByValue($paymentDetails->getBlikAliasValue())
+            : null;
+
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
-                $this->createBlikLevelZeroPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+                $this->createBlikLevelZeroPaymentPayloadFactory->createFrom($model, $blikAlias, $notifyToken->getTargetUrl(), $localeCode),
             ),
             onSuccess: function (array $response) use ($paymentDetails) {
                 $paymentDetails->setTransactionId($response['transactionId']);

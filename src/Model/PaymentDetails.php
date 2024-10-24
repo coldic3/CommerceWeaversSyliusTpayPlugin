@@ -16,8 +16,8 @@ class PaymentDetails
         private ?string $applePayToken = null,
         #[\SensitiveParameter]
         private ?string $blikToken = null,
-        private ?bool $blikSaveAlias = null,
-        private ?bool $blikUseAlias = null,
+        #[\SensitiveParameter]
+        private ?string $blikAliasValue = null,
         #[\SensitiveParameter]
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
@@ -83,24 +83,14 @@ class PaymentDetails
         $this->blikToken = $blikToken;
     }
 
-    public function isBlikSaveAlias(): ?bool
+    public function getBlikAliasValue(): ?string
     {
-        return $this->blikSaveAlias;
+        return $this->blikAliasValue;
     }
 
-    public function setBlikSaveAlias(bool $saveAlias): void
+    public function setBlikAliasValue(?string $value): void
     {
-        $this->blikSaveAlias = $saveAlias;
-    }
-
-    public function isBlikUseAlias(): ?bool
-    {
-        return $this->blikUseAlias;
-    }
-
-    public function setBlikUseAlias(bool $useAlias): void
-    {
-        $this->blikUseAlias = $useAlias;
+        $this->blikAliasValue = $value;
     }
 
     public function getGooglePayToken(): ?string
@@ -206,7 +196,7 @@ class PaymentDetails
 
     public function isBlik(): bool
     {
-        return null !== $this->blikToken || true === $this->blikUseAlias;
+        return null !== $this->blikToken || null !== $this->blikAliasValue;
     }
 
     public static function fromArray(array $details): self
@@ -217,8 +207,7 @@ class PaymentDetails
             $details['tpay']['status'] ?? null,
             $details['tpay']['apple_pay_token'] ?? null,
             $details['tpay']['blik_token'] ?? null,
-            $details['tpay']['blik_save_alias'] ?? null,
-            $details['tpay']['blik_use_alias'] ?? null,
+            $details['tpay']['blik_alias_value'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
             $details['tpay']['apple_pay_session'] ?? null,
@@ -239,8 +228,7 @@ class PaymentDetails
                 'status' => $this->status,
                 'apple_pay_token' => $this->applePayToken,
                 'blik_token' => $this->blikToken,
-                'blik_save_alias' => $this->blikSaveAlias,
-                'blik_use_alias' => $this->blikUseAlias,
+                'blik_alias_value' => $this->blikAliasValue,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
                 'apple_pay_session' => $this->applePaySession,
