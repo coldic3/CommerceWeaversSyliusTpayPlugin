@@ -6,7 +6,9 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlikHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException as ApiBlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException as PayumBlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolverInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -55,9 +57,78 @@ final class PayByBlikHandlerTest extends TestCase
         $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', true));
     }
 
-    // fixme after resolving conflicts
-    public function test_it_creates_a_blik_based_transaction(): void
+    public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Gateway name cannot be determined.');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(Argument::any());
+        $payment->getMethod()->willReturn(null);
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', false));
+    }
+
+    // fixme after resolving conflicts
+    public function test_it_throws_blik_alias_ambiguous_value_exception_if_blik_alias_value_is_ambiguous(): void
+    {
+        $this->expectException(ApiBlikAliasAmbiguousValueException::class);
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
+        $payment->setDetails([
+            'tpay' => [
+                'transaction_id' => null,
+                'result' => null,
+                'status' => null,
+                'apple_pay_token' => null,
+                'blik_token' => '777123',
+                'blik_alias_value' => null,
+                'google_pay_token' => null,
+                'card' => null,
+                'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
+                'tpay_channel_id' => null,
+                'visa_mobile_phone_number' => null,
+            ],
+        ])->shouldBeCalled();
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+        $gateway->execute($createTransaction, catchReply: true)->willThrow(PayumBlikAliasAmbiguousValueException::class);
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123'));
+    }
+
+    // fixme after resolving conflicts
+    public function test_it_creates_a_blik_based_transaction_with_blik_token_only(): void
+    {
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
         $payment->setDetails(

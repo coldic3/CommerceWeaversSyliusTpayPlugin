@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
@@ -298,6 +299,108 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
         $request->getToken()->willReturn(null);
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_handles_errors_and_throws_exception_if_unexpected_error_occurred(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Unexpected error.');
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'payments' => [
+                'errors' => [
+                    [
+                        'errorCode' => 'yolo',
+                        'errorMessage' => 'I do not know what happened here but it does not work LOL!',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_handles_errors_and_throws_blik_alias_ambiguous_value_exception_if_there_are_alternatives_in_the_response(): void
+    {
+        $this->expectExceptionObject(BlikAliasAmbiguousValueException::create([
+            [
+                'applicationName' => 'Acme Bank',
+                'applicationCode' => '1ec8f352-463c-6334-be44-9fede70e64b8',
+            ],
+        ]));
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'payments' => [
+                'errors' => [
+                    [
+                        'errorCode' => 'payment_failed',
+                        'errorMessage' => 'aliases: Too many aliases found for aliasValue: ambiguous_value',
+                    ],
+                ],
+                'alternatives' => [
+                    [
+                        'applicationName' => 'Acme Bank',
+                        'applicationCode' => '1ec8f352-463c-6334-be44-9fede70e64b8',
+                    ],
+                ]
+            ],
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
 
         $this->createTestSubject()->execute($request->reveal());
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
@@ -40,6 +41,8 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
             onSuccess: function (array $response) use ($paymentDetails) {
                 $paymentDetails->setTransactionId($response['transactionId']);
                 $paymentDetails->setStatus($response['status']);
+
+                $this->handleErrors($response);
             },
             onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
@@ -60,5 +63,21 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
         $paymentDetails = PaymentDetails::fromArray($model->getDetails());
 
         return $paymentDetails->isBlik();
+    }
+
+    private function handleErrors(array $response): void
+    {
+        $responsePayments = $response['payments'] ?? [];
+        $errors = $responsePayments['errors'] ?? [];
+
+        if ([] === $errors) {
+            return;
+        }
+
+        if (isset($responsePayments['alternatives'])) {
+            throw BlikAliasAmbiguousValueException::create($responsePayments['alternatives']);
+        }
+
+        throw new \Exception('Unexpected error.');
     }
 }

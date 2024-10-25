@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\Shop;
 
+use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\ShopUserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\JsonApiTestCase;
@@ -135,8 +137,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, Response::HTTP_BAD_REQUEST);
-        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_using_a_valid_blik_alias_but_registered_in_more_than_one_bank_app');
+        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_using_a_valid_blik_alias_but_registered_in_more_than_one_bank_app', Response::HTTP_BAD_REQUEST);
     }
 
     public function test_paying_using_a_valid_blik_alias_registered_in_different_banks(): void

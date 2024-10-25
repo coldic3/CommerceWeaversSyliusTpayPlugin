@@ -6,6 +6,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentFailedException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Exception\AbstractBadRequestHttpException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnresolvableNextCommandException;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Exception\PaymentCannotBeCancelledException;
 
@@ -16,6 +17,7 @@ return function(ContainerConfigurator $configurator): void {
             PaymentCannotBeCancelledException::class => 400,
             UnresolvableNextCommandException::class => 400,
             PaymentFailedException::class => 424,
+            AbstractBadRequestHttpException::class => 400,
         ],
         'mapping' => [
             'paths' => [
