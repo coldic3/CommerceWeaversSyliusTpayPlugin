@@ -28,6 +28,7 @@ final class CreateBlikLevelZeroPaymentPayloadFactory implements CreateBlikLevelZ
         /** @var array{tpay?: array} $paymentDetails */
         $paymentDetails = $payment->getDetails();
         $blikToken = $paymentDetails['tpay']['blik_token'] ?? null;
+        $blikAliasApplicationCode = $paymentDetails['tpay']['blik_alias_application_code'] ?? null;
 
         $payload['pay']['groupId'] = PayGroup::BLIK;
         $payload['pay']['blikPaymentData'] = [];
@@ -42,6 +43,10 @@ final class CreateBlikLevelZeroPaymentPayloadFactory implements CreateBlikLevelZ
                 'type' => 'UID',
                 'label' => $this->channelContext->getChannel()->getName(),
             ];
+        }
+
+        if (null !== $blikAliasApplicationCode) {
+            $payload['pay']['blikPaymentData']['aliases']['key'] = $blikAliasApplicationCode;
         }
 
         return $payload;

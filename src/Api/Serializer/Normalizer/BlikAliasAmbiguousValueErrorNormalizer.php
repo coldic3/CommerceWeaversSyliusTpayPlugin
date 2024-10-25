@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Serializer\Normalizer;
 
 use ApiPlatform\Api\UrlGeneratorInterface;
@@ -18,6 +17,7 @@ final class BlikAliasAmbiguousValueErrorNormalizer implements NormalizerInterfac
     use ErrorNormalizerTrait;
 
     public const FORMAT = 'jsonld';
+
     public const TITLE = 'title';
 
     public function __construct(
@@ -49,12 +49,12 @@ final class BlikAliasAmbiguousValueErrorNormalizer implements NormalizerInterfac
     public function supportsNormalization($data, ?string $format = null): bool
     {
         return
-            self::FORMAT === $format
-            && (
-                $data instanceof BlikAliasAmbiguousValueException
-                || (
-                    $data instanceof FlattenException
-                    && $data->getClass() === BlikAliasAmbiguousValueException::class
+            self::FORMAT === $format &&
+            (
+                $data instanceof BlikAliasAmbiguousValueException ||
+                (
+                    $data instanceof FlattenException &&
+                    $data->getClass() === BlikAliasAmbiguousValueException::class
                 )
             )
         ;

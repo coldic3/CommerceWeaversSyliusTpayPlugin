@@ -221,6 +221,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
                 'apple_pay_token' => null,
                 'blik_token' => null,
                 'blik_alias_value' => 'i_AM_a_BLIK_alias_VALUE',
+                'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,

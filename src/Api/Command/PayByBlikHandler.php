@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Processor\CreateTransactionProcessorInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException as PayumBlikAliasAmbiguousValueException;
-use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Component\Core\Model\CustomerInterface;
@@ -56,6 +56,7 @@ final class PayByBlikHandler extends AbstractPayByHandler
     {
         $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
         $paymentDetails->setBlikToken($payByBlik->blikToken);
+        $paymentDetails->setBlikAliasApplicationCode($payByBlik->blikAliasApplicationCode);
         $paymentDetails->setBlikAliasValue($blikAlias?->getValue());
 
         $payment->setDetails($paymentDetails->toArray());

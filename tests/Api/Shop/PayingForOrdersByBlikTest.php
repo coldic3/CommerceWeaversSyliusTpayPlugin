@@ -154,7 +154,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
                 'blikUseAlias' => true,
-                'blikApplicationCode' => '1ec8fe63-ea6e-6b48-ac6f-f7f170888d37',
+                'blikAliasApplicationCode' => '1ec8fe63-ea6e-6b48-ac6f-f7f170888d37',
             ]),
         );
 

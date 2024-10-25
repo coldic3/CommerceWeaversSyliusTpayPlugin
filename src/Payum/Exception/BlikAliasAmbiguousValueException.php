@@ -6,9 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Exception;
 
 class BlikAliasAmbiguousValueException extends \Exception
 {
-    /**
-     * @var array<array{applicationName: string, applicationCode: string}>
-     */
+    /** @var array<array{applicationName: string, applicationCode: string}> */
     private array $applications = [];
 
     private function __construct()

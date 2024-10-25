@@ -18,6 +18,7 @@ class PaymentDetails
         private ?string $blikToken = null,
         #[\SensitiveParameter]
         private ?string $blikAliasValue = null,
+        private ?string $blikAliasApplicationCode = null,
         #[\SensitiveParameter]
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
@@ -91,6 +92,16 @@ class PaymentDetails
     public function setBlikAliasValue(?string $value): void
     {
         $this->blikAliasValue = $value;
+    }
+
+    public function getBlikAliasApplicationCode(): ?string
+    {
+        return $this->blikAliasApplicationCode;
+    }
+
+    public function setBlikAliasApplicationCode(?string $applicationCode): void
+    {
+        $this->blikAliasApplicationCode = $applicationCode;
     }
 
     public function getGooglePayToken(): ?string
@@ -208,6 +219,7 @@ class PaymentDetails
             $details['tpay']['apple_pay_token'] ?? null,
             $details['tpay']['blik_token'] ?? null,
             $details['tpay']['blik_alias_value'] ?? null,
+            $details['tpay']['blik_alias_application_code'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
             $details['tpay']['apple_pay_session'] ?? null,
@@ -229,6 +241,7 @@ class PaymentDetails
                 'apple_pay_token' => $this->applePayToken,
                 'blik_token' => $this->blikToken,
                 'blik_alias_value' => $this->blikAliasValue,
+                'blik_alias_application_code' => $this->blikAliasApplicationCode,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
                 'apple_pay_session' => $this->applePaySession,

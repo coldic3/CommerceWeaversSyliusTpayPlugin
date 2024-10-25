@@ -54,7 +54,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', true));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, true));
     }
 
     public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
@@ -69,7 +69,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', false));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, false));
     }
 
     // fixme after resolving conflicts
@@ -94,6 +94,7 @@ final class PayByBlikHandlerTest extends TestCase
                 'apple_pay_token' => null,
                 'blik_token' => '777123',
                 'blik_alias_value' => null,
+                'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,
@@ -115,7 +116,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123'));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null));
     }
 
     // fixme after resolving conflicts
@@ -146,7 +147,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123'));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null));
 
         self::assertSame('success', $result->status);
     }
@@ -177,6 +178,7 @@ final class PayByBlikHandlerTest extends TestCase
                 'apple_pay_token' => null,
                 'blik_token' => '777123',
                 'blik_alias_value' => 'iamablikalias',
+                'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,
@@ -204,7 +206,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', true));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, true));
 
         self::assertSame('success', $result->status);
     }
@@ -235,6 +237,7 @@ final class PayByBlikHandlerTest extends TestCase
                 'apple_pay_token' => null,
                 'blik_token' => null,
                 'blik_alias_value' => 'iamablikalias',
+                'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
                 'payment_url' => null,
@@ -262,7 +265,65 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, false, true));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, null, false, true));
+
+        self::assertSame('success', $result->status);
+    }
+
+    public function test_it_creates_a_blik_based_transaction_using_blik_alias_with_application_code(): void
+    {
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $customer = $this->prophesize(CustomerInterface::class);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getCustomer()->willReturn($customer);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'success']]);
+        $payment->getOrder()->willReturn($order);
+        $payment->setDetails([
+            'tpay' => [
+                'transaction_id' => null,
+                'result' => null,
+                'status' => null,
+                'apple_pay_token' => null,
+                'blik_token' => null,
+                'blik_alias_value' => 'iamablikalias',
+                'blik_alias_application_code' => 'iamablikaliasapplicationcode',
+                'google_pay_token' => null,
+                'card' => null,
+                'payment_url' => null,
+                'success_url' => null,
+                'failure_url' => null,
+                'tpay_channel_id' => null,
+                'visa_mobile_phone_number' => null,
+            ],
+        ])->shouldBeCalled();
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $blikAlias = $this->prophesize(BlikAliasInterface::class);
+        $blikAlias->getValue()->willReturn('iamablikalias');
+        $blikAlias->redefine()->shouldNotBeCalled();
+
+        $this->blikAliasResolver->resolve($customer)->willReturn($blikAlias);
+
+        $createTransaction = $this->prophesize(CreateTransaction::class);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+        $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, 'iamablikaliasapplicationcode', false, true));
 
         self::assertSame('success', $result->status);
     }

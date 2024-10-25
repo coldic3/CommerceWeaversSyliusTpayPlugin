@@ -18,7 +18,7 @@ final class PayByBlikFactory implements NextCommandFactoryInterface
             throw new UnsupportedNextCommandFactory('This factory does not support the given command.');
         }
 
-        return new PayByBlik((int) $payment->getId(), $command->blikToken, $command->blikSaveAlias, $command->blikUseAlias);
+        return new PayByBlik((int) $payment->getId(), $command->blikToken, $command->blikAliasApplicationCode, $command->blikSaveAlias, $command->blikUseAlias);
     }
 
     public function supports(Pay $command, PaymentInterface $payment): bool
