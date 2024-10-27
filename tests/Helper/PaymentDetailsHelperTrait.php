@@ -6,7 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Helper;
 
 trait PaymentDetailsHelperTrait
 {
-    private function getExpectedDetails(...$overriddenDetails): array
+    protected function getExpectedDetails(...$overriddenDetails): array
     {
         $expectedDetails = [
             'tpay' => [

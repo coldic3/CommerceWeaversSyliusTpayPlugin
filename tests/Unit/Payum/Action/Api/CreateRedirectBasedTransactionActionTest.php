@@ -22,6 +22,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
+use Tpay\OpenApi\Utilities\TpayException;
 
 final class CreateRedirectBasedTransactionActionTest extends TestCase
 {
@@ -138,6 +139,44 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
         $payment->setDetails(
             $this->getExpectedDetails(transaction_id: 'tr4ns4ct!0n_id', status: 'pending', payment_url: 'https://tpay.org/pay'),
+        )->shouldBeCalled();
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createRedirectBasedPaymentPayloadFactory
+            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_marks_payment_as_failed_if_tpay_throws_an_exception(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willThrow(new TpayException('Something went wrong'));
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $payment->setDetails(
+            $this->getExpectedDetails(status: 'failed'),
         )->shouldBeCalled();
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);

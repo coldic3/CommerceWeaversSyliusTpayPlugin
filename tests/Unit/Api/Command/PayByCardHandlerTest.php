@@ -6,17 +6,12 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCard;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCardHandler;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use Payum\Core\GatewayInterface;
-use Payum\Core\Model\GatewayConfigInterface;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Processor\CreateTransactionProcessorInterface;
 use Payum\Core\Payum;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
@@ -31,13 +26,12 @@ final class PayByCardHandlerTest extends TestCase
 
     private Payum|ObjectProphecy $payum;
 
-    private CreateTransactionFactoryInterface|ObjectProphecy $createTransactionFactory;
+    private CreateTransactionProcessorInterface|ObjectProphecy $createTransactionProcessor;
 
     protected function setUp(): void
     {
         $this->paymentRepository = $this->prophesize(PaymentRepositoryInterface::class);
-        $this->payum = $this->prophesize(Payum::class);
-        $this->createTransactionFactory = $this->prophesize(CreateTransactionFactoryInterface::class);
+        $this->createTransactionProcessor = $this->prophesize(CreateTransactionProcessorInterface::class);
     }
 
     public function test_it_throw_an_exception_if_a_payment_cannot_be_found(): void
@@ -50,31 +44,9 @@ final class PayByCardHandlerTest extends TestCase
         $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
     }
 
-    public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Gateway name cannot be determined.');
-
-        $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn([]);
-        $payment->setDetails(Argument::any());
-        $payment->getMethod()->willReturn(null);
-
-        $this->paymentRepository->find(1)->willReturn($payment);
-
-        $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
-    }
-
     public function test_it_creates_a_card_based_transaction(): void
     {
-        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $gatewayConfig->getGatewayName()->willReturn('tpay');
-
-        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
-
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getMethod()->willReturn($paymentMethod);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
         $payment->setDetails(
             $this->getExpectedDetails(card: 'encoded_card_data'),
@@ -82,27 +54,17 @@ final class PayByCardHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $createTransaction = $this->prophesize(CreateTransaction::class);
-
-        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
-
-        $gateway = $this->prophesize(GatewayInterface::class);
-        $gateway->execute($createTransaction, catchReply: true)->shouldBeCalled();
-
-        $this->payum->getGateway('tpay')->willReturn($gateway);
-
         $result = $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
 
-        self::assertSame('pending', $result->status);
-        self::assertSame('https://cw.org/pay', $result->transactionPaymentUrl);
+        $this->assertSame('pending', $result->status);
+        $this->assertSame('https://cw.org/pay', $result->transactionPaymentUrl);
     }
 
     private function createTestSubject(): PayByCardHandler
     {
         return new PayByCardHandler(
             $this->paymentRepository->reveal(),
-            $this->payum->reveal(),
-            $this->createTransactionFactory->reveal(),
+            $this->createTransactionProcessor->reveal(),
         );
     }
 }

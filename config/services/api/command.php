@@ -41,8 +41,7 @@ return static function(ContainerConfigurator $container): void {
         ->abstract()
         ->args([
             service('sylius.repository.payment'),
-            service('payum'),
-            service('commerce_weavers_sylius_tpay.payum.factory.create_transaction'),
+            service('commerce_weavers_sylius_tpay.tpay.processor.create_transaction'),
         ])
     ;
 

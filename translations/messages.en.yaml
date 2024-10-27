@@ -47,6 +47,7 @@ commerce_weavers_sylius_tpay:
             visa_mobile:
                 placeholder: 'Phone number'
         payment_failed:
+            error: 'An error occurred while processing your payment. Please try again or contact store support.'
             retry_payment: 'Retry payment'
             subtitle: 'We were unable to process it successfully'
             title: 'Something went wrong with your payment'

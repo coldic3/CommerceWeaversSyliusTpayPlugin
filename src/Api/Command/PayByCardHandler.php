@@ -16,7 +16,7 @@ final class PayByCardHandler extends AbstractPayByHandler
         $payment = $this->findOr404($command->paymentId);
 
         $this->setTransactionData($payment, $command->encodedCardData);
-        $this->createTransaction($payment);
+        $this->createTransactionProcessor->process($payment);
 
         return $this->createResultFrom($payment);
     }

@@ -20,6 +20,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
+use Tpay\OpenApi\Utilities\TpayException;
 
 final class CreateGooglePayTransactionActionTest extends TestCase
 {
@@ -112,6 +113,34 @@ final class CreateGooglePayTransactionActionTest extends TestCase
             'status' => 'correct',
             'transactionId' => 'tr4ns4ct!0n_id',
         ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $this->notifyTokenFactory->create($this->payment, 'tpay', 'en_US')->willReturn($notifyToken);
+
+        $this->createGooglePayPaymentPayloadFactory
+            ->createFrom($this->payment, 'https://cw.org/notify', 'en_US')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($this->request->reveal());
+    }
+
+    public function test_it_marks_payment_as_failed_if_tpay_throws_an_exception(): void
+    {
+        $this->payment->getDetails()->willReturn([]);
+        $this->payment
+            ->setDetails(
+                $this->getExpectedDetails(status: 'failed')
+            )
+            ->shouldBeCalled()
+        ;
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willThrow(new TpayException('Something went wrong.'));
 
         $this->api->transactions()->willReturn($transactions);
 

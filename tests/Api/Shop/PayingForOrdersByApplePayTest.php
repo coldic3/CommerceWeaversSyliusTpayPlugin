@@ -95,4 +95,28 @@ final class PayingForOrdersByApplePayTest extends JsonApiTestCase
             ]
         ]);
     }
+
+    public function test_it_handles_tpay_error_while_paying_with_apple_pay_based_payment_type(): void
+    {
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_apple_pay');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'applePayToken' => 'troublemaker-token',
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseCode($response, 424);
+        $this->assertStringContainsString(
+            'An error occurred while processing your payment. Please try again or contact store support.',
+            $response->getContent(),
+        );
+    }
 }

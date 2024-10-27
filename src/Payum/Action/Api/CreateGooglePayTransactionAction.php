@@ -49,7 +49,7 @@ final class CreateGooglePayTransactionAction extends BasePaymentAwareAction
 
     protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        if ($paymentDetails->getPaymentUrl() !== null) {
+        if ($paymentDetails->getPaymentUrl() !== null && $paymentDetails->getPaymentUrl() !== '') {
             throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }
     }

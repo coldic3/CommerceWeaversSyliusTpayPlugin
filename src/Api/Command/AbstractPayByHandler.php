@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
-use Payum\Core\Payum;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Processor\CreateTransactionProcessorInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webmozart\Assert\Assert;
@@ -17,8 +15,7 @@ abstract class AbstractPayByHandler
 {
     public function __construct(
         protected readonly PaymentRepositoryInterface $paymentRepository,
-        protected readonly Payum $payum,
-        protected readonly CreateTransactionFactoryInterface $createTransactionFactory,
+        protected readonly CreateTransactionProcessorInterface $createTransactionProcessor,
     ) {
     }
 
@@ -32,24 +29,6 @@ abstract class AbstractPayByHandler
         }
 
         return $payment;
-    }
-
-    protected function createTransaction(PaymentInterface $payment): void
-    {
-        $gatewayName = $this->getGatewayName($payment);
-
-        $this->payum->getGateway($gatewayName)->execute(
-            $this->createTransactionFactory->createNewWithModel($payment),
-            catchReply: true,
-        );
-    }
-
-    protected function getGatewayName(PaymentInterface $payment): string
-    {
-        /** @var PaymentMethodInterface|null $paymentMethod */
-        $paymentMethod = $payment->getMethod();
-
-        return $paymentMethod?->getGatewayConfig()?->getGatewayName() ?? throw new \InvalidArgumentException('Gateway name cannot be determined.');
     }
 
     protected function createResultFrom(PaymentInterface $payment, bool $isRedirectedBased = true): PayResult

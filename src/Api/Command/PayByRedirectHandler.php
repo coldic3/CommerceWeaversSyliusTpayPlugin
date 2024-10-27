@@ -13,7 +13,7 @@ final class PayByRedirectHandler extends AbstractPayByHandler
     {
         $payment = $this->findOr404($command->paymentId);
 
-        $this->createTransaction($payment);
+        $this->createTransactionProcessor->process($payment);
 
         return $this->createResultFrom($payment);
     }

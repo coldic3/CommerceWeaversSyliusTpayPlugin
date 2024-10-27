@@ -16,6 +16,7 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use Tpay\OpenApi\Api\Transactions\TransactionsApi;
+use Tpay\OpenApi\Utilities\TpayException;
 
 final class PayWithCardActionTest extends TestCase
 {
@@ -80,7 +81,6 @@ final class PayWithCardActionTest extends TestCase
             'transactionPaymentUrl' => 'http://example.com',
         ];
 
-
         $paymentModel = $this->prophesize(PaymentInterface::class);
         $paymentModel->getOrder()->willReturn($order->reveal());
         $paymentModel->getDetails()->willReturn($details);
@@ -104,6 +104,48 @@ final class PayWithCardActionTest extends TestCase
         $paymentModel->setDetails(
             $this->getExpectedDetails(transaction_id: 'abcd', result: 'success', status: 'pending', payment_url: 'http://example.com')
         );
+
+        $subject = $this->createTestSubject();
+
+        $subject->execute($request->reveal());
+    }
+
+    public function test_it_marks_payment_as_failed_if_tpay_throws_an_exception(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $request = $this->prophesize(PayWithCard::class);
+        $details = [
+            'tpay' => [
+                'card' => 'test-card',
+                'transaction_id' => 'abcd',
+            ],
+        ];
+
+        $paymentModel = $this->prophesize(PaymentInterface::class);
+        $paymentModel->getOrder()->willReturn($order->reveal());
+        $paymentModel->getDetails()->willReturn($details);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request->getModel()->willReturn($paymentModel->reveal());
+        $request->getToken()->willReturn($token->reveal());
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createPaymentByTransactionId([
+            'groupId' => 103,
+            'cardPaymentData' => [
+                'card' => $details['tpay']['card'],
+            ],
+        ], $details['tpay']['transaction_id'])->willThrow(new TpayException('Something went wrong'));
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $paymentModel->setDetails(
+            $this->getExpectedDetails(status: 'failed', transaction_id: 'abcd')
+        )->shouldBeCalled();
 
         $subject = $this->createTestSubject();
 

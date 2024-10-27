@@ -52,7 +52,7 @@ final class TpayRetryOrChangePaymentOrderTest extends E2ETestCase
         $this->fillCardData(self::SELECT_FIRST_PAYMENT_FORM_ID, 'John Doe', self::CARD_NUMBER, self::CARD_CVC, self::CARD_EXPIRATION_DATE_MONTH, self::CARD_EXPIRATION_DATE_YEAR);
         $this->client->submitForm('Pay');
 
-        $this->assertPageTitleContains('Thank you');
+        $this->assertPageTitleContains('Waiting for payment | Web Channel');
     }
 
     public function test_it_changes_payment_to_blik(): void
@@ -82,7 +82,7 @@ final class TpayRetryOrChangePaymentOrderTest extends E2ETestCase
         $this->fillCardData(self::SELECT_FIRST_PAYMENT_FORM_ID, 'John Doe', self::CARD_NUMBER, self::CARD_CVC, self::CARD_EXPIRATION_DATE_MONTH, self::CARD_EXPIRATION_DATE_YEAR);
         $this->client->submitForm('Pay');
 
-        $this->assertPageTitleContains('Thank you');
+        $this->assertPageTitleContains('Waiting for payment | Web Channel');
     }
 
     public function test_it_changes_payment_to_pay_by_link(): void
