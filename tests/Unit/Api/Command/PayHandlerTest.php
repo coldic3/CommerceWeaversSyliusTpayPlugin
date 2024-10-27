@@ -75,7 +75,7 @@ final class PayHandlerTest extends TestCase
             $this->getExpectedDetails(success_url: 'https://cw.nonexisting/success', failure_url: 'https://cw.nonexisting/failure'),
         )->shouldBeCalled();
 
-        $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123', null));
+        $this->nextCommandFactory->create(Argument::type(Pay::class), $payment)->willReturn(new PayByBlik(1, '777123', null, null));
 
         $payResult = new PayResult('success');
         $payResultEnvelope = new Envelope(new \stdClass(), [new HandledStamp($payResult, 'dummy_handler')]);

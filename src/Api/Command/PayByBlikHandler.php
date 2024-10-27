@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Enum\BlikAliasAction;
 use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
@@ -31,9 +32,9 @@ final class PayByBlikHandler extends AbstractPayByHandler
     public function __invoke(PayByBlik $command): PayResult
     {
         $payment = $this->findOr404($command->paymentId);
-        $blikAlias = ($command->blikSaveAlias || $command->blikUseAlias) ? $this->resolveBlikAlias($payment) : null;
+        $blikAlias = null !== $command->blikAliasAction ? $this->resolveBlikAlias($payment) : null;
 
-        if ($command->blikSaveAlias) {
+        if (BlikAliasAction::REGISTER === $command->blikAliasAction) {
             $blikAlias?->redefine();
         }
 

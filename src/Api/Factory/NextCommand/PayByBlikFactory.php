@@ -18,11 +18,11 @@ final class PayByBlikFactory implements NextCommandFactoryInterface
             throw new UnsupportedNextCommandFactory('This factory does not support the given command.');
         }
 
-        return new PayByBlik((int) $payment->getId(), $command->blikToken, $command->blikAliasApplicationCode, $command->blikSaveAlias, $command->blikUseAlias);
+        return new PayByBlik((int) $payment->getId(), $command->blikToken, $command->blikAliasAction, $command->blikAliasApplicationCode);
     }
 
     public function supports(Pay $command, PaymentInterface $payment): bool
     {
-        return ($command->blikToken !== null || $command->blikUseAlias) && $payment->getId() !== null;
+        return (null !== $command->blikToken || null !== $command->blikAliasAction) && null !== $payment->getId();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlikHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Enum\BlikAliasAction;
 use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException as ApiBlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException as PayumBlikAliasAmbiguousValueException;
@@ -54,7 +55,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, true));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, null));
     }
 
     public function test_it_throws_an_exception_if_a_gateway_name_cannot_be_determined(): void
@@ -69,7 +70,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, false));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, null));
     }
 
     // fixme after resolving conflicts
@@ -116,7 +117,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null));
+        $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, null));
     }
 
     // fixme after resolving conflicts
@@ -147,7 +148,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, null));
 
         self::assertSame('success', $result->status);
     }
@@ -206,7 +207,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', null, true));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, '777123', BlikAliasAction::REGISTER, null));
 
         self::assertSame('success', $result->status);
     }
@@ -265,7 +266,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, null, false, true));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, BlikAliasAction::APPLY, null));
 
         self::assertSame('success', $result->status);
     }
@@ -323,7 +324,7 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
 
-        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, 'iamablikaliasapplicationcode', false, true));
+        $result = $this->createTestSubject()->__invoke(new PayByBlik(1, null, BlikAliasAction::APPLY, 'iamablikaliasapplicationcode'));
 
         self::assertSame('success', $result->status);
     }

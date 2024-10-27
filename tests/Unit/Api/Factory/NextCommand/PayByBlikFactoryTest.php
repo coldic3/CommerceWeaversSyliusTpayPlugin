@@ -6,6 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Factory\NextCommand;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByBlik;
+use CommerceWeavers\SyliusTpayPlugin\Api\Enum\BlikAliasAction;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnsupportedNextCommandFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommand\PayByBlikFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
@@ -54,23 +55,23 @@ final class PayByBlikFactoryTest extends TestCase
         $this->assertSame('777123', $command->blikToken);
     }
 
-    public function test_it_creates_a_pay_by_blik_command_with_save_alias(): void
+    public function test_it_creates_a_pay_by_blik_command_with_an_alias_action(): void
     {
-        $command = $this->createTestSubject()->create($this->createCommand(blikToken: '777123', blikSaveAlias: true), $this->createPayment());
+        $command = $this->createTestSubject()->create($this->createCommand(blikToken: '777123', blikAliasAction: BlikAliasAction::REGISTER), $this->createPayment());
 
         $this->assertInstanceOf(PayByBlik::class, $command);
         $this->assertSame('777123', $command->blikToken);
-        $this->assertTrue($command->blikSaveAlias);
+        $this->assertSame(BlikAliasAction::REGISTER, $command->blikAliasAction);
     }
 
-    private function createCommand(?string $token = null, ?string $blikToken = null, bool $blikSaveAlias = false): Pay
+    private function createCommand(?string $token = null, ?string $blikToken = null, ?BlikAliasAction $blikAliasAction = null): Pay
     {
         return new Pay(
             $token ?? 'token',
             'https://cw.nonexisting/success',
             'https://cw.nonexisting/failure',
             blikToken: $blikToken,
-            blikSaveAlias: $blikSaveAlias,
+            blikAliasAction: $blikAliasAction,
         );
     }
 

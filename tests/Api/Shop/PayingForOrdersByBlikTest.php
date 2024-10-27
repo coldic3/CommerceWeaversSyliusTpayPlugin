@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\Shop;
 
-use Sylius\Component\Core\Model\OrderInterface;
-use Sylius\Component\Core\Model\ShopUserInterface;
+use CommerceWeavers\SyliusTpayPlugin\Api\Enum\BlikAliasAction;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\JsonApiTestCase;
@@ -85,7 +84,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
                 'blikToken' => '777123',
-                'blikSaveAlias' => true,
+                'blikAliasAction' => BlikAliasAction::REGISTER->value,
             ]),
         );
 
@@ -108,7 +107,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
-                'blikUseAlias' => true,
+                'blikAliasAction' => BlikAliasAction::APPLY->value,
             ]),
         );
 
@@ -131,7 +130,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
-                'blikUseAlias' => true,
+                'blikAliasAction' => BlikAliasAction::APPLY->value,
             ]),
         );
 
@@ -153,7 +152,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
-                'blikUseAlias' => true,
+                'blikAliasAction' => BlikAliasAction::APPLY->value,
                 'blikAliasApplicationCode' => '1ec8fe63-ea6e-6b48-ac6f-f7f170888d37',
             ]),
         );
