@@ -53,5 +53,8 @@ commerce_weavers_sylius_tpay:
         waiting_for_payment:
             title: 'Waiting for payment'
             we_are_waiting_for_payment: 'We are waiting for payment confirmation'
+        pay:
+            policy: 'Paying, <a href="%url%">you accept the terms and conditions</a>.'
+            regulations: 'The administrator of the personal data is Krajowy Integrator Płatności spółka akcyjna, based in Poznań. <a href="%url%">Read the full content</a>.'
     tpay:
         transaction_description: 'Order #%orderNumber%'

@@ -1,0 +1,23 @@
+{% if cw_tpay_get_gateway_config_value(method.gatewayConfig, 'type') ==
+    constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::APPLE_PAY')
+    and form.vars.value.state != 'cart'
+%}
+    <div class="ui stackable grid" style="display: none;" data-payment-details="apple_pay">
+        <div class="ui stackable grid">
+            <div class="ui column eight wide">
+                <div class="content">
+                    <div class="field">
+                        {{ 'commerce_weavers_sylius_tpay.shop.pay.policy'|trans({
+                            '%url%': tpayPolicyUrl
+                        })|raw }}
+                    </div>
+                    <div class="field">
+                        {{ 'commerce_weavers_sylius_tpay.shop.pay.regulations'|trans({
+                            '%url%': tpayRegulationsUrl
+                        })|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
