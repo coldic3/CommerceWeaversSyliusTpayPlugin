@@ -33,6 +33,14 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_payByLink.html.twig',
                         'priority' => 10,
                     ],
+                    'google_pay' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_google_pay_regulations.html.twig',
+                        'priority' => 5,
+                    ],
+                    'apple_pay' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_apple_pay_regulations.html.twig',
+                        'priority' => 5,
+                    ],
                 ],
             ],
             'sylius.shop.checkout.complete.summary' => [
@@ -52,7 +60,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     'visa_mobile' => [
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/_visaMobile.html.twig',
                         'priority' => 5,
-                    ]
+                    ],
+                    'google_pay' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/_google_pay_regulations.html.twig',
+                        'priority' => 5,
+                    ],
+                    'apple_pay' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/_apple_pay_regulations.html.twig',
+                        'priority' => 5,
+                    ],
                 ],
             ],
             'sylius.shop.layout.javascripts' => [
