@@ -47,6 +47,7 @@ commerce_weavers_sylius_tpay:
             visa_mobile:
                 placeholder: 'Numer telefonu'
         payment_failed:
+            error: 'Podczas przetwarzania Twojej płatności wystąpił błąd. Spróbuj ponownie lub skontaktuj się z obsługą sklepu.'
             retry_payment: 'Ponów płatność'
             subtitle: 'Nie byliśmy w stanie jej pomyślnie przetworzyć'
             title: 'Twoja płatność się nie powiodła'

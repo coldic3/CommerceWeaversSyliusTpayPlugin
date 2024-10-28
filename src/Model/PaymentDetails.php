@@ -20,6 +20,8 @@ class PaymentDetails
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
+        #[\SensitiveParameter]
+        private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
         private ?string $successUrl = null,
         private ?string $failureUrl = null,
@@ -97,6 +99,16 @@ class PaymentDetails
     public function setEncodedCardData(string $encodedCardData): void
     {
         $this->encodedCardData = $encodedCardData;
+    }
+
+    public function getApplePaySession(): ?string
+    {
+        return $this->applePaySession;
+    }
+
+    public function setApplePaySession(?string $applePaySession): void
+    {
+        $this->applePaySession = $applePaySession;
     }
 
     public function getPaymentUrl(): ?string
@@ -180,6 +192,7 @@ class PaymentDetails
             $details['tpay']['blik_token'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
+            $details['tpay']['apple_pay_session'] ?? null,
             $details['tpay']['payment_url'] ?? null,
             $details['tpay']['success_url'] ?? null,
             $details['tpay']['failure_url'] ?? null,
@@ -199,6 +212,7 @@ class PaymentDetails
                 'blik_token' => $this->blikToken,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
+                'apple_pay_session' => $this->applePaySession,
                 'payment_url' => $this->paymentUrl,
                 'success_url' => $this->successUrl,
                 'failure_url' => $this->failureUrl,

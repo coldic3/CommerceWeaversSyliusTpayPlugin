@@ -12,10 +12,10 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Webmozart\Assert\Assert;
 
-final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAction implements GatewayAwareInterface
+final class CreatePayByLinkTransactionAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
     use GatewayAwareTrait;
 
@@ -26,33 +26,28 @@ final class CreatePayByLinkTransactionAction extends AbstractCreateTransactionAc
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
-        $response = $this->api->transactions()->createTransaction(
-            $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+        $this->do(
+            fn () => $this->api->transactions()->createTransaction(
+                $this->createPayByLinkPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            ),
+            onSuccess: function (array $response) use ($paymentDetails) {
+                $paymentDetails->setTransactionId($response['transactionId']);
+                $paymentDetails->setStatus($response['status']);
+                $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
+    }
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
-        $paymentDetails->setTransactionId($response['transactionId']);
-        $paymentDetails->setStatus($response['status']);
-        $paymentDetails->setPaymentUrl($response['transactionPaymentUrl']);
-
-        $model->setDetails($paymentDetails->toArray());
-
-        Assert::notNull($paymentUrl = $paymentDetails->getPaymentUrl());
-
-        throw new HttpRedirect($paymentUrl);
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
+        if ($paymentDetails->getPaymentUrl() !== null) {
+            throw new HttpRedirect($paymentDetails->getPaymentUrl());
+        }
     }
 
     public function supports($request): bool

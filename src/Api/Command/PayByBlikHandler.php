@@ -16,7 +16,7 @@ final class PayByBlikHandler extends AbstractPayByHandler
         $payment = $this->findOr404($command->paymentId);
 
         $this->setTransactionData($payment, $command->blikToken);
-        $this->createTransaction($payment);
+        $this->createTransactionProcessor->process($payment);
 
         return $this->createResultFrom($payment, isRedirectedBased: false);
     }

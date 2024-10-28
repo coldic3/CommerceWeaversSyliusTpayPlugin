@@ -4,18 +4,31 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api;
 
-use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\Generic;
 
 class InitializeApplePayPayment extends Generic
 {
-    public function __construct(ArrayObject $model, private readonly ArrayObject $output)
-    {
+    public function __construct(
+        mixed $model,
+        private readonly string $domainName,
+        private readonly string $displayName,
+        private readonly string $validationUrl,
+    ) {
         parent::__construct($model);
     }
 
-    public function getOutput(): ArrayObject
+    public function getDomainName(): string
     {
-        return $this->output;
+        return $this->domainName;
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->displayName;
+    }
+
+    public function getValidationUrl(): string
+    {
+        return $this->validationUrl;
     }
 }

@@ -35,3 +35,5 @@ parameters:
         - '#Parameter \#1 \$key of function array_key_exists expects int\|string, array\|int\|object\|string given\.#'
         - '#Trying to invoke array\{class-string, string\} but it might not be a callable\.#'
         - '#Comparison operation "<=" between int<1, max> and \(array\|float\|int\) results in an error\.#'
+        - '#Parameter \#1 \$request \(CommerceWeavers\\SyliusTpayPlugin\\Payum\\Request\\Api\\InitializeApplePayPayment\) of method CommerceWeavers\\SyliusTpayPlugin\\Payum\\Action\\Api\\InitializeApplePayPaymentAction::doExecute\(\) should be contravariant with parameter \$request \(Payum\\Core\\Request\\Generic\) of method CommerceWeavers\\SyliusTpayPlugin\\Payum\\Action\\Api\\BasePaymentAwareAction::doExecute\(\)#'
+        - '#Parameter \#1 \$request \(CommerceWeavers\\SyliusTpayPlugin\\Payum\\Request\\Api\\Notify\) of method CommerceWeavers\\SyliusTpayPlugin\\Payum\\Action\\Api\\NotifyAction::doExecute\(\) should be contravariant with parameter \$request \(Payum\\Core\\Request\\Generic\) of method CommerceWeavers\\SyliusTpayPlugin\\Payum\\Action\\Api\\BasePaymentAwareAction::doExecute\(\)#'

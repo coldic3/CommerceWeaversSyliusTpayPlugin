@@ -13,15 +13,20 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Signatu
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Request\Sync;
+use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use tpaySDK\Model\Objects\NotificationBody\BasicPayment;
 
 final class NotifyActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private Notify|ObjectProphecy $request;
 
@@ -38,13 +43,22 @@ final class NotifyActionTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->prophesize(Notify::class);
-        $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
         $this->basicPaymentFactory = $this->prophesize(BasicPaymentFactoryInterface::class);
         $this->checksumVerifier = $this->prophesize(ChecksumVerifierInterface::class);
         $this->signatureVerifier = $this->prophesize(SignatureVerifierInterface::class);
 
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $this->model = $this->prophesize(PaymentInterface::class);
+        $this->model->getOrder()->willReturn($order->reveal());
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
         $this->request->getModel()->willReturn($this->model->reveal());
+        $this->request->getToken()->willReturn($token->reveal());
     }
 
     public function test_it_supports_only_notify_requests(): void
@@ -85,22 +99,9 @@ final class NotifyActionTest extends TestCase
         $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
 
         $this->model->getDetails()->willReturn([]);
-        $this->model->setDetails([
-            'tpay' => [
-                'transaction_id' => null,
-                'result' => null,
-                'status' => $expectedStatus,
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $this->model->setDetails(
+            $this->getExpectedDetails(status: $expectedStatus),
+        )->shouldBeCalled();
 
         $this->createTestSubject()->execute($this->request->reveal());
     }
@@ -108,6 +109,10 @@ final class NotifyActionTest extends TestCase
     public function test_it_throws_false_http_reply_when_checksum_is_invalid(): void
     {
         $this->model->getDetails()->willReturn([]);
+        $this->model->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
+
         $this->request->getData()->willReturn(new NotifyData(
             'jws',
             'content',
@@ -132,6 +137,10 @@ final class NotifyActionTest extends TestCase
     public function test_it_throws_false_http_reply_when_signature_is_invalid(): void
     {
         $this->model->getDetails()->willReturn([]);
+        $this->model->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
+
         $this->request->getData()->willReturn(new NotifyData(
             'jws',
             'content',

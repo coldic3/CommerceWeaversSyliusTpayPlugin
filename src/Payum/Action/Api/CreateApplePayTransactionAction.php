@@ -10,10 +10,11 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateApplePayPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Reply\HttpRedirect;
+use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
 
-final class CreateApplePayTransactionAction extends AbstractCreateTransactionAction
+final class CreateApplePayTransactionAction extends BasePaymentAwareAction
 {
     use GenericTokenFactoryAwareTrait;
 
@@ -24,33 +25,30 @@ final class CreateApplePayTransactionAction extends AbstractCreateTransactionAct
         parent::__construct();
     }
 
-    /**
-     * @param CreateTransaction $request
-     */
-    public function execute($request): void
+    protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        /** @var PaymentInterface $model */
-        $model = $request->getModel();
-        $gatewayName = $request->getToken()?->getGatewayName() ?? $this->getGatewayNameFrom($model);
-        $localeCode = $this->getLocaleCodeFrom($model);
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
-        $response = $this->api->transactions()->createTransaction(
-            $this->createApplePayPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+        $this->do(
+            fn () => $this->api->transactions()->createTransaction(
+                $this->createApplePayPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),
+            ),
+            onSuccess: function (array $response) use ($paymentDetails) {
+                $paymentDetails->setTransactionId($response['transactionId']);
+                $paymentDetails->setStatus($response['status']);
+
+                if ($this->is3dSecureRedirectRequired($paymentDetails)) {
+                    $paymentDetails->setPaymentUrl(
+                        $response['transactionPaymentUrl'] ?? throw new \InvalidArgumentException('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.'),
+                    );
+                }
+            },
+            onFailure: fn () => $paymentDetails->setStatus(PaymentInterface::STATE_FAILED),
         );
+    }
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-        $paymentDetails->setTransactionId($response['transactionId']);
-        $paymentDetails->setStatus($response['status']);
-
-        if ($this->is3dSecureRedirectRequired($paymentDetails)) {
-            $paymentDetails->setPaymentUrl(
-                $response['transactionPaymentUrl'] ?? throw new \InvalidArgumentException('Cannot perform 3DS redirect. Missing transactionPaymentUrl in the response.'),
-            );
-        }
-
-        $model->setDetails($paymentDetails->toArray());
-
+    protected function postExecute(PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
+    {
         if ($paymentDetails->getPaymentUrl() !== null) {
             throw new HttpRedirect($paymentDetails->getPaymentUrl());
         }

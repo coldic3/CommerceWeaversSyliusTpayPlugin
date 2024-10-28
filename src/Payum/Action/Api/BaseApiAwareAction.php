@@ -9,6 +9,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\ApiAwareTrait;
 use Tpay\OpenApi\Utilities\Logger;
+use Tpay\OpenApi\Utilities\TpayException;
 
 /**
  * @property TpayApi $api
@@ -21,5 +22,28 @@ abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
     {
         $this->apiClass = TpayApi::class;
         Logger::setLogPath(dirname(__DIR__, 4) . '/tests/Application/var/log/');
+    }
+
+    protected function do(callable $func, callable $onSuccess, callable $onFailure): void
+    {
+        try {
+            $response = $func();
+        } catch (TpayException $e) {
+            $response = ['result' => 'failed', 'error' => $e->getMessage()];
+        }
+
+        $this->isResponseSuccessful($response) ? $onSuccess($response) : $onFailure($response);
+    }
+
+    /**
+     * @param array<string, mixed> $response
+     */
+    private function isResponseSuccessful(array $response): bool
+    {
+        if (isset($response['result']) && $response['result'] === 'success') {
+            return true;
+        }
+
+        return false;
     }
 }

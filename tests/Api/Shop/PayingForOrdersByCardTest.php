@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\Shop;
 
-use Sylius\Component\Core\Model\OrderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\JsonApiTestCase;
@@ -48,6 +47,32 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
 
         $this->assertResponseCode($response, Response::HTTP_OK);
         $this->assertResponse($response, 'shop/paying_for_orders_by_card/test_paying_with_a_valid_card_for_an_order');
+    }
+
+    public function test_it_handles_tpay_error_while_paying_with_card_based_payment_type(): void
+    {
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'encodedCardData' => 'gimmefail'
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseCode($response, 424);
+        $this->assertStringContainsString(
+            'An error occurred while processing your payment. Please try again or contact store support.',
+            $response->getContent(),
+        );
     }
 
     /**

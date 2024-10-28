@@ -41,14 +41,14 @@ return static function(ContainerConfigurator $container): void {
         ->abstract()
         ->args([
             service('sylius.repository.payment'),
-            service('payum'),
-            service('commerce_weavers_sylius_tpay.payum.factory.create_transaction'),
+            service('commerce_weavers_sylius_tpay.tpay.processor.create_transaction'),
         ])
     ;
 
     $services->set('commerce_weavers_sylius_tpay.api.command.initialize_apple_pay_session_handler', InitializeApplePaySessionHandler::class)
         ->args([
             service('sylius.repository.order'),
+            service('sylius.repository.payment'),
             service('commerce_weavers_sylius_tpay.gateway'),
             service('commerce_weavers_sylius_tpay.payum.factory.initialize_apple_pay_payment'),
         ])

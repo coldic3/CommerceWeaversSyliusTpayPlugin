@@ -5,23 +5,27 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySession;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySessionHandler;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
 use Payum\Core\GatewayInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
+use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 
 final class InitializeApplePaySessionHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
     private OrderRepositoryInterface|ObjectProphecy $orderRepository;
+
+    private PaymentRepositoryInterface|ObjectProphecy $paymentRepository;
 
     private GatewayInterface|ObjectProphecy $gateway;
 
@@ -30,6 +34,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
+        $this->paymentRepository = $this->prophesize(PaymentRepositoryInterface::class);
         $this->gateway = $this->prophesize(GatewayInterface::class);
         $this->initializeApplePayPaymentFactory = $this->prophesize(InitializeApplePayPaymentFactoryInterface::class);
     }
@@ -44,28 +49,41 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
         $this->createTestSubject()($this->createCommand());
     }
 
+    public function test_it_throws_an_exception_if_a_given_payment_does_not_exist(): void
+    {
+        $this->expectException(PaymentCannotBeFoundException::class);
+        $this->expectExceptionMessage('Payment with id "1" cannot be found.');
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $this->orderRepository->findOneByTokenValue('t0k3n')->willReturn($order);
+        $this->paymentRepository->findOneBy(['id' => 1, 'order' => $order])->willReturn(null);
+
+        $this->createTestSubject()($this->createCommand());
+    }
+
     public function test_it_initializes_an_apple_pay_session(): void
     {
         $order = $this->prophesize(OrderInterface::class);
 
         $this->orderRepository->findOneByTokenValue('t0k3n')->willReturn($order);
-        $this->initializeApplePayPaymentFactory
-            ->createNewWithModelAndOutput(Argument::any(), Argument::any())
-            ->will(fn (array $args) => new InitializeApplePayPayment($args[0], $args[1]))
-        ;
 
-        $this->gateway->execute(Argument::that(function (InitializeApplePayPayment $request): bool {
-            $request->getOutput()->replace([
-                'result' => 'result',
-                'session' => 'session',
-            ]);
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn(['tpay' => ['apple_pay_session' => 'session']]);
 
-            return true;
-        }))->shouldBeCalled();
+        $this->paymentRepository->findOneBy(['id' => 1, 'order' => $order])->willReturn($payment);
+
+        $this->initializeApplePayPaymentFactory->createNewWithModelAndOutput(
+            $payment,
+            'cw.nonexisting',
+            'Commerce Weavers',
+            'https://cw.nonexisting/validation',
+        )->willReturn($request = $this->prophesize(InitializeApplePayPayment::class));
+
+        $this->gateway->execute($request)->shouldBeCalled();
 
         $result = $this->createTestSubject()($this->createCommand());
 
-        $this->assertSame('result', $result->result);
         $this->assertSame('session', $result->session);
     }
 
@@ -73,6 +91,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
     {
         return new InitializeApplePaySession(
             orderToken: 't0k3n',
+            paymentId: 1,
             domainName: 'cw.nonexisting',
             displayName: 'Commerce Weavers',
             validationUrl: 'https://cw.nonexisting/validation',
@@ -83,6 +102,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
     {
         return new InitializeApplePaySessionHandler(
             $this->orderRepository->reveal(),
+            $this->paymentRepository->reveal(),
             $this->gateway->reveal(),
             $this->initializeApplePayPaymentFactory->reveal(),
         );

@@ -17,7 +17,7 @@
       "responses": [
         {
           "uuid": "17c69722-7d20-440d-b03c-9539727cb84f",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"d3a9826d92c48cb8c185\",\n  \"transactionId\": \"ta_bKvkJX9Knk9Ol4od\",\n  \"title\": \"TR-CWM-CS7LW1X\",\n  \"posId\": \"ps_e4dkPVDEm4Jg726q\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZWxRLdG1bqY\",\n    \"email\": \"jan.nowak@example.com\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": null,\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"d3a9826d92c48cb8c185\",\n  \"transactionId\": \"ta_bKvkJX9Knk9Ol4od\",\n  \"title\": \"TR-CWM-CS7LW1X\",\n  \"posId\": \"ps_e4dkPVDEm4Jg726q\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Redirect\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZWxRLdG1bqY\",\n    \"email\": \"jan.nowak@example.com\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": null,\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "Redirect",
@@ -33,9 +33,30 @@
               "value": "",
               "invert": false,
               "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "groupId",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.channelId",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "callbacks.payerUrls.error",
+              "value": "https://cw.nonexisting/result-failed-gonna-happen",
+              "invert": true,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true,
@@ -43,8 +64,83 @@
           "callbacks": []
         },
         {
+          "uuid": "2789b6b7-069c-416a-b99f-47a0df147a69",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"d3a9826d92c48cb8c185\",\n  \"transactionId\": \"ta_bKvkJX9Knk9Ol4od\",\n  \"title\": \"TR-CWM-CS7LW1X\",\n  \"posId\": \"ps_e4dkPVDEm4Jg726q\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Pay by Link\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZWxRLdG1bqY\",\n    \"email\": \"jan.nowak@example.com\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": null,\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "PayByLink",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "groupId",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.channelId",
+              "value": "",
+              "invert": true,
+              "operator": "null"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.channelId",
+              "value": "991",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "16c483a1-c682-4bb9-979a-acf7c9af0cee",
+          "body": "{\n  \"result\": \"failed\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "PayByLink (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.channelId",
+              "value": "991",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
           "uuid": "ed30e0d4-13ca-4b92-acb9-65946ef1520d",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"d3a9826d92c48cb8c185\",\n  \"transactionId\": \"ta_bKvkJX9Knk9Ol4od\",\n  \"title\": \"TR-CWM-CS7LW1X\",\n  \"posId\": \"ps_e4dkPVDEm4Jg726q\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZWxRLdG1bqY\",\n    \"email\": \"jan.nowak@example.com\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": null,\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}\n{{setGlobalVar 'callbacks_payers_urls_success' (body 'callbacks.payerUrls.success')}}",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"d3a9826d92c48cb8c185\",\n  \"transactionId\": \"ta_bKvkJX9Knk9Ol4od\",\n  \"title\": \"TR-CWM-CS7LW1X\",\n  \"posId\": \"ps_e4dkPVDEm4Jg726q\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Card\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZWxRLdG1bqY\",\n    \"email\": \"jan.nowak@example.com\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": null,\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}\n{{setGlobalVar 'callbacks_payers_urls_success' (body 'callbacks.payerUrls.success')}}",
           "latency": 0,
           "statusCode": 200,
           "label": "Card",
@@ -56,13 +152,54 @@
           "rules": [
             {
               "target": "body",
-              "modifier": "pay.groupId",
+              "modifier": "groupId",
               "value": "103",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "cardPaymentData",
+              "value": "gimmefail",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "7f565b6b-cff2-4a29-a183-47e06c1020c1",
+          "body": "{\n  \"result\": \"failed\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Card (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "groupId",
+              "value": "103",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "cardPaymentData",
+              "value": "gimmefail",
               "invert": false,
               "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -87,9 +224,50 @@
               "value": "150",
               "invert": false,
               "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.blikPaymentData.blikToken",
+              "value": "999137",
+              "invert": true,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "5f9103c7-dc9b-49ec-8dad-d1e19ebf3c24",
+          "body": "{\n  \"result\": \"failed\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Blik (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "150",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.blikPaymentData.blikToken",
+              "value": "999137",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -98,7 +276,7 @@
         },
         {
           "uuid": "48dff8be-0e9f-481d-be62-8a1b1dc368e5",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}\n",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Google Pay\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"{{body 'callbacks.payerUrls.success'}}\"\n}\n",
           "latency": 0,
           "statusCode": 200,
           "label": "Google Pay",
@@ -114,9 +292,50 @@
               "value": "166",
               "invert": false,
               "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.googlePayPaymentData",
+              "value": "eyJ0b2tlbiI6InRyb3VibGVtYWtlci10b2tlbiJ9",
+              "invert": true,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "dbee264f-b445-4af4-9483-13a75806b3b5",
+          "body": "{\n  \"result\": \"failed\"\n}\n",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Google Pay (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "166",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.googlePayPaymentData",
+              "value": "eyJ0b2tlbiI6InRyb3VibGVtYWtlci10b2tlbiJ9",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -125,7 +344,7 @@
         },
         {
           "uuid": "428a1e8a-d75f-4f30-a614-f259cc6e4e36",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"apple_pay://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Apple Pay\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"apple_pay://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
           "latency": 0,
           "statusCode": 200,
           "label": "Apple Pay",
@@ -141,9 +360,50 @@
               "value": "170",
               "invert": false,
               "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.applePayPaymentData",
+              "value": "troublemaker-token",
+              "invert": true,
+              "operator": "equals"
             }
           ],
-          "rulesOperator": "OR",
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "43cc8a4a-749c-4761-919a-f657953927bd",
+          "body": "{\n  \"result\": \"failed\"\n}\n",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Apple Pay (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "170",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.applePayPaymentData",
+              "value": "troublemaker-token",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": false,
@@ -152,7 +412,7 @@
         },
         {
           "uuid": "d2f19d3e-0b46-4e25-b1b9-9abb41aecca0",
-          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"apple_pay://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"6RNMl0eqw5RDGzD2\",\n  \"transactionId\": \"ta_kXOrjG7abL0Jzx09\",\n  \"title\": \"TR-4FRM-1WFZGX\",\n  \"posId\": \"ps_kXOrjG7A4omJzx09\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-06-12 21:29:35\",\n    \"realization\": null\n  },\n  \"amount\": 0.01,\n  \"currency\": \"PLN\",\n  \"description\": \"Test transaction via Visa Mobile\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_7OMda1l27GQwb8Wn\",\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"visa_mobile://{{body 'callbacks.payerUrls.success'}}\"\n}\n",
           "latency": 0,
           "statusCode": 200,
           "label": "Visa Mobile",
@@ -166,6 +426,74 @@
               "target": "body",
               "modifier": "pay.groupId",
               "value": "171",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "payer.phone",
+              "value": "00123789456",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "03b58855-a37d-4655-bce5-25f0031b22eb",
+          "body": "{\n  \"result\": \"failed\"\n}\n",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Visa Mobile (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "171",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "payer.phone",
+              "value": "00123789456",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "ea600f9a-2a7c-4041-abe4-836920903e4e",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Failing response",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "callbacks.payerUrls.error",
+              "value": "https://cw.nonexisting/result-failed-gonna-happen",
               "invert": false,
               "operator": "equals"
             }
@@ -227,11 +555,46 @@
           "filePath": "",
           "databucketID": "",
           "sendFileAsBody": false,
-          "rules": [],
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "cardPaymentData.card",
+              "value": "gimmefail",
+              "invert": true,
+              "operator": "equals"
+            }
+          ],
           "rulesOperator": "OR",
           "disableTemplating": false,
           "fallbackTo404": false,
           "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "ea3f06d6-fafc-43dd-9ec6-8afcae8981d0",
+          "body": "{\n  \"result\": \"failed\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": " (Failing)",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "cardPaymentData.card",
+              "value": "gimmefail",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
           "crudKey": "id",
           "callbacks": []
         }
@@ -247,7 +610,7 @@
       "responses": [
         {
           "uuid": "924f9fab-d6ab-4365-b84b-e8ab13514143",
-          "body": "{\n \"result\": \"success\",\n \"requestId\": \"c36e286ceb64a95b8858\",\n \"language\": \"pl\",\n \"currency\": \"PLN\",\n \"channels\": [\n {\n \"id\": \"1\",\n \"name\": \"BNP Paribas\",\n \"fullName\": \"BNP Paribas Bank Polska SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/1/normal-white-bg-e.png\"\n },\n \"available\": true,\n \"onlinePayment\": true,\n \"instantRedirection\": true,\n \"groups\": [\n {\n \"id\": \"133\",\n \"name\": \"BNP Paribas Bank Polska SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/133/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n },\n {\n \"id\": \"2\",\n \"name\": \"Not a bank\",\n \"fullName\": \"Not a bank\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/2/normal-white-bg-e.png\"\n },\n \"available\": true,\n \"onlinePayment\": true,\n \"instantRedirection\": false,\n \"groups\": [\n {\n \"id\": \"114\",\n \"name\": \"Bank Millennium SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/114/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n },\n {\n \"id\": \"3\",\n \"name\": \"Unavailable\",\n \"fullName\": \"Unavailable\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/channels/4/normal-white-bg-e.png\"\n },\n \"available\": false,\n \"onlinePayment\": true,\n \"instantRedirection\": true,\n \"groups\": [\n {\n \"id\": \"102\",\n \"name\": \"Bank Pekao SA\",\n \"image\": {\n \"url\": \"https://secure.sandbox.tpay.com/tpay/web/groups/102/normal-white-bg.png\"\n }\n }\n ],\n \"constraints\": []\n }\n ]\n}",
+          "body": "{\n   \"result\":\"success\",\n   \"requestId\":\"c36e286ceb64a95b8858\",\n   \"language\":\"pl\",\n   \"currency\":\"PLN\",\n   \"channels\":[\n      {\n         \"id\":\"1\",\n         \"name\":\"BNP Paribas\",\n         \"fullName\":\"BNP Paribas Bank Polska SA\",\n         \"image\":{\n            \"url\":\"https://secure.sandbox.tpay.com/tpay/web/channels/1/normal-white-bg-e.png\"\n         },\n         \"available\":true,\n         \"onlinePayment\":true,\n         \"instantRedirection\":true,\n         \"groups\":[\n            {\n               \"id\":\"133\",\n               \"name\":\"BNP Paribas Bank Polska SA\",\n               \"image\":{\n                  \"url\":\"https://secure.sandbox.tpay.com/tpay/web/groups/133/normal-white-bg.png\"\n               }\n            }\n         ],\n         \"constraints\":[\n            \n         ]\n      },\n      {\n         \"id\":\"2\",\n         \"name\":\"Not a bank\",\n         \"fullName\":\"Not a bank\",\n         \"image\":{\n            \"url\":\"https://secure.sandbox.tpay.com/tpay/web/channels/2/normal-white-bg-e.png\"\n         },\n         \"available\":true,\n         \"onlinePayment\":true,\n         \"instantRedirection\":false,\n         \"groups\":[\n            {\n               \"id\":\"114\",\n               \"name\":\"Bank Millennium SA\",\n               \"image\":{\n                  \"url\":\"https://secure.sandbox.tpay.com/tpay/web/groups/114/normal-white-bg.png\"\n               }\n            }\n         ],\n         \"constraints\":[\n            \n         ]\n      },\n      {\n         \"id\":\"3\",\n         \"name\":\"Unavailable\",\n         \"fullName\":\"Unavailable\",\n         \"image\":{\n            \"url\":\"https://secure.sandbox.tpay.com/tpay/web/channels/4/normal-white-bg-e.png\"\n         },\n         \"available\":false,\n         \"onlinePayment\":true,\n         \"instantRedirection\":true,\n         \"groups\":[\n            {\n               \"id\":\"102\",\n               \"name\":\"Bank Pekao SA\",\n               \"image\":{\n                  \"url\":\"https://secure.sandbox.tpay.com/tpay/web/groups/102/normal-white-bg.png\"\n               }\n            }\n         ],\n         \"constraints\":[\n            \n         ]\n      },\n      {\n         \"id\":\"991\",\n         \"name\":\"FAIL bank\",\n         \"fullName\":\"FAIL bank SA\",\n         \"image\":{\n            \"url\":\"https://secure.sandbox.tpay.com/tpay/web/channels/1/normal-white-bg-e.png\"\n         },\n         \"available\":true,\n         \"onlinePayment\":true,\n         \"instantRedirection\":true,\n         \"groups\":[\n            {\n               \"id\":\"991\",\n               \"name\":\"FAIL BANK\",\n               \"image\":{\n                  \"url\":\"https://secure.sandbox.tpay.com/tpay/web/groups/133/normal-white-bg.png\"\n               }\n            }\n         ],\n         \"constraints\":[\n            \n         ]\n      }\n   ]\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",

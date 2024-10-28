@@ -16,7 +16,7 @@ final class PayByLinkHandler extends AbstractPayByHandler
         $payment = $this->findOr404($command->paymentId);
 
         $this->setTransactionData($payment, $command->tpayChannelId);
-        $this->createTransaction($payment);
+        $this->createTransactionProcessor->process($payment);
 
         return $this->createResultFrom($payment);
     }

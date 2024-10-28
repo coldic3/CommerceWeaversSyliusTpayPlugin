@@ -10,13 +10,21 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\ApplePayApi;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Bridge\Spl\ArrayObject;
+use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
+use Tpay\OpenApi\Utilities\TpayException;
 
 final class InitializeApplePayPaymentActionTest extends TestCase
 {
     use ProphecyTrait;
+
+    use PaymentDetailsHelperTrait;
 
     private CreateInitializeApplePayPaymentPayloadFactoryInterface|ObjectProphecy $createInitializeApplePayPaymentPayloadFactory;
 
@@ -30,31 +38,92 @@ final class InitializeApplePayPaymentActionTest extends TestCase
 
     public function test_it_initializes_apple_pay_payment(): void
     {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(apple_pay_session: 'apple-pay-session'),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(InitializeApplePayPayment::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+        $request->getDomainName()->willReturn('cw.nonexisting');
+        $request->getDisplayName()->willReturn('Commerce Weavers');
+        $request->getValidationUrl()->willReturn('https://cw.nonexisting/validate');
+
+        $this->createInitializeApplePayPaymentPayloadFactory->create(Argument::that(function (ArrayObject $data): bool {
+            return $data['domainName'] === 'cw.nonexisting' &&
+                $data['displayName'] === 'Commerce Weavers' &&
+                $data['validationUrl'] === 'https://cw.nonexisting/validate'
+            ;
+        }))->willReturn([
+            'domainName' => 'cw.nonexisting',
+            'displayName' => 'Commerce Weavers',
+            'validationUrl' => 'https://cw.nonexisting/validate',
+        ]);
+
         $applePayApi = $this->prophesize(ApplePayApi::class);
         $applePayApi->init([
-            'domainName' => 'example.com',
-            'displayName' => 'Example',
-            'validationUrl' => 'https://example.com/apple-pay-validation-url',
-        ])->shouldBeCalled()->willReturn(['result' => 'success']);
+            'domainName' => 'cw.nonexisting',
+            'displayName' => 'Commerce Weavers',
+            'validationUrl' => 'https://cw.nonexisting/validate',
+        ])->willReturn(['result' => 'success', 'session' => 'apple-pay-session']);
 
         $this->api->applePay()->willReturn($applePayApi);
 
-        $model = new ArrayObject([
-            'domainName' => 'example.com',
-            'displayName' => 'Example',
-            'validationUrl' => 'https://example.com/apple-pay-validation-url',
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_marks_payment_as_failed_if_tpay_throws_an_exception(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('en_US');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(status: 'failed'),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(InitializeApplePayPayment::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+        $request->getDomainName()->willReturn('cw.nonexisting');
+        $request->getDisplayName()->willReturn('Commerce Weavers');
+        $request->getValidationUrl()->willReturn('https://cw.nonexisting/validate');
+
+        $this->createInitializeApplePayPaymentPayloadFactory->create(Argument::that(function (ArrayObject $data): bool {
+            return $data['domainName'] === 'cw.nonexisting' &&
+                $data['displayName'] === 'Commerce Weavers' &&
+                $data['validationUrl'] === 'https://cw.nonexisting/validate'
+                ;
+        }))->willReturn([
+            'domainName' => 'cw.nonexisting',
+            'displayName' => 'Commerce Weavers',
+            'validationUrl' => 'https://cw.nonexisting/validate',
         ]);
-        $output = new ArrayObject();
 
-        $this->createInitializeApplePayPaymentPayloadFactory->create($model)->willReturn([
-            'domainName' => 'example.com',
-            'displayName' => 'Example',
-            'validationUrl' => 'https://example.com/apple-pay-validation-url',
-        ]);
+        $applePayApi = $this->prophesize(ApplePayApi::class);
+        $applePayApi->init([
+            'domainName' => 'cw.nonexisting',
+            'displayName' => 'Commerce Weavers',
+            'validationUrl' => 'https://cw.nonexisting/validate',
+        ])->willThrow(new TpayException('Something went wrong'));
 
-        $this->createTestSubject()->execute(new InitializeApplePayPayment($model, $output));
+        $this->api->applePay()->willReturn($applePayApi);
 
-        $this->assertSame(['result' => 'success'], $output->getArrayCopy());
+        $this->createTestSubject()->execute($request->reveal());
     }
 
     private function createTestSubject(): InitializeApplePayPaymentAction
