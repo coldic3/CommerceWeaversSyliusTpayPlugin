@@ -106,5 +106,4 @@ class BankListContextProviderTest extends TestCase
     {
         return new BankListContextProvider($this->bankListProvider->reveal());
     }
-
 }

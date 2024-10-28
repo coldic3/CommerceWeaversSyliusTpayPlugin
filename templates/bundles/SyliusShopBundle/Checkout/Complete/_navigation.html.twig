@@ -1,10 +1,10 @@
 {% set payment = order.lastCartPayment() %}
 
 {# >>> SyliusTpayPlugin customization #}
-{% if payment is not null %}
-    {% set payment_type = cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') %}
-{% else %}
+{% if payment is null %}
     {% set payment_type = null %}
+{% else %}
+    {% set payment_type = cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') %}
 {% endif %}
 
 {% if payment_type in ['apple_pay', 'google_pay'] %}
