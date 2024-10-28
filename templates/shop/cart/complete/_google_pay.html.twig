@@ -1,4 +1,6 @@
-{% if cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == 'google_pay' %}
+{% if payment is not null and
+    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::GOOGLE_PAY')
+%}
     {% set payment = order.lastCartPayment() %}
     {% set gatewayConfig = payment.method.gatewayConfig %}
     {% set productionMode = gatewayConfig.config['production_mode'] ?? true %}

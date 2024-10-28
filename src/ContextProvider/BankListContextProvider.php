@@ -7,6 +7,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\ContextProvider;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
+use Sylius\Component\Core\Model\OrderInterface;
 
 final class BankListContextProvider implements ContextProviderInterface
 {
@@ -17,6 +18,15 @@ final class BankListContextProvider implements ContextProviderInterface
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
     {
+        if (isset($templateContext['order'])) {
+            /** @var OrderInterface $order */
+            $order = $templateContext['order'];
+
+            if (null === $order->getLastPayment()) {
+                return $templateContext;
+            }
+        }
+
         $templateContext['banks'] = $this->bankListProvider->provide();
 
         return $templateContext;

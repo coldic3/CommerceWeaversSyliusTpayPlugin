@@ -1,6 +1,8 @@
 {% set payment = order.lastCartPayment() %}
 
-{% if cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == 'blik' %}
+{% if payment is not null and
+    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::BLIK')
+%}
     <div class="ui stackable grid">
         {% include '@CommerceWeaversSyliusTpayPlugin/shop/payment/_blik.html.twig' %}
     </div>
