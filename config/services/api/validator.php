@@ -6,6 +6,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfBlikAliasActionIsRegisterValidator;
 use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEqualsValidator;
+use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEqualsValidator;
 use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\TpayChannelIdEligibilityValidator;
 
 return static function(ContainerConfigurator $container): void {
@@ -15,7 +16,15 @@ return static function(ContainerConfigurator $container): void {
         ->tag('validator.constraint_validator')
     ;
 
-    $services->set('commerce_weavers_sylius_tpay.api.validator.constraint.not_blank_if_payment_method_type_equals', NotBlankIfGatewayConfigTypeEqualsValidator::class)
+    $services->set('commerce_weavers_sylius_tpay.api.validator.constraint.not_blank_if_gateway_config_type_equals', NotBlankIfGatewayConfigTypeEqualsValidator::class)
+        ->args([
+            service('sylius.repository.order'),
+            service('payum.dynamic_gateways.cypher'),
+        ])
+        ->tag('validator.constraint_validator')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.validator.constraint.one_of_properties_required_if_gateway_config_type_equals', OneOfPropertiesRequiredIfGatewayConfigTypeEqualsValidator::class)
         ->args([
             service('sylius.repository.order'),
             service('payum.dynamic_gateways.cypher'),

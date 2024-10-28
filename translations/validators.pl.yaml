@@ -3,6 +3,8 @@ commerce_weavers_sylius_tpay:
         pay:
             apple_pay_token:
                 required: 'Token Apple Pay jest wymagany.'
+            blik:
+                required_fields: 'Musisz podać kod BLIK lub użyć aliasu BLIK.'
             blik_token:
                 length: 'Kod BLIK musi mieć dokładnie {{ limit }} znaków.'
                 required: 'Kod BLIK jest wymagany.'

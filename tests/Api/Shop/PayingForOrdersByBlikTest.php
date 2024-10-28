@@ -265,7 +265,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => '',
-                'message' => 'You must provide a Blik token or use an alias to pay with Blik.',
+                'message' => 'You must provide a BLIK token or use an alias to pay with BLIK.',
             ]
         ]);
     }

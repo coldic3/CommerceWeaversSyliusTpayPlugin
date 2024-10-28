@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/services/constraint-mapping-1.0.xsd">
     <class name="CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay">
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals">
+            <option name="paymentMethodType">blik</option>
+            <option name="properties">
+                <value>blikToken</value>
+                <value>blikAliasAction</value>
+            </option>
+            <option name="allFieldsAreBlankErrorMessage">commerce_weavers_sylius_tpay.shop.pay.blik.required_fields</option>
+            <option name="groups">
+                <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
+            </option>
+        </constraint>
         <property name="applePayToken">
             <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
                 <option name="paymentMethodType">apple_pay</option>
