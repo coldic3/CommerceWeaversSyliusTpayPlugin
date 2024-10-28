@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+>
+    <mapped-superclass name="CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard" table="cw_sylius_tpay_credt_card">
+        <id name="id" column="id" type="integer">
+            <generator />
+        </id>
+
+        <field name="token" column="token" />
+        <field name="brand" column="brand" />
+        <field name="tail" column="tail" />
+
+        <field name="expirationDate" column="expiration_date" type="datetime" nullable="true" />
+
+        <many-to-one field="customer" target-entity="Sylius\Component\Core\Model\CustomerInterface">
+            <join-column name="customer_id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
+    </mapped-superclass>
+</doctrine-mapping>

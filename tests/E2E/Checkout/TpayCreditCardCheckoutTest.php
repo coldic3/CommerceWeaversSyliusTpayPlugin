@@ -36,7 +36,7 @@ final class TpayCreditCardCheckoutTest extends E2ETestCase
         $this->loginShopUser('tony@nonexisting.cw', 'sylius');
 
         $this->processWithPaymentMethod('tpay_card');
-        $this->fillCardData(self::FORM_ID, 'John Doe', self::CARD_NUMBER, '123', '01', '2029');
+        $this->fillCardData(self::FORM_ID, self::CARD_NUMBER, '123', '01', '2029');
         $this->placeOrder();
 
         $this->assertPageTitleContains('Thank you!');
@@ -47,7 +47,7 @@ final class TpayCreditCardCheckoutTest extends E2ETestCase
         $this->loginShopUser('tony@nonexisting.cw', 'sylius');
 
         $this->processWithPaymentMethod('tpay_card');
-        $this->fillCardData(self::FORM_ID, 'John Doe', self::CARD_NUMBER, '123', '01', '2029', true);
+        $this->fillCardData(self::FORM_ID, self::CARD_NUMBER, '123', '01', '2029', true);
         $this->placeOrder();
 
         $this->assertPageTitleContains('Thank you!');
@@ -58,6 +58,6 @@ final class TpayCreditCardCheckoutTest extends E2ETestCase
         $this->expectException(NoSuchElementException::class);
 
         $this->processWithPaymentMethod('tpay_card');
-        $this->fillCardData(self::FORM_ID, 'John Doe', self::CARD_NUMBER, '123', '01', '2029', true);
+        $this->fillCardData(self::FORM_ID, self::CARD_NUMBER, '123', '01', '2029', true);
     }
 }

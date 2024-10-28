@@ -32,8 +32,6 @@ final class CreateCardTransactionAction extends BasePaymentAwareAction implement
     {
         $notifyToken = $this->notifyTokenFactory->create($model, $gatewayName, $localeCode);
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
         $this->do(
             fn () => $this->api->transactions()->createTransaction(
                 $this->createCardPaymentPayloadFactory->createFrom($model, $notifyToken->getTargetUrl(), $localeCode),

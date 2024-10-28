@@ -15,6 +15,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
+use function Symfony\Component\Translation\t;
 
 final class PayByCardHandlerTest extends TestCase
 {
@@ -55,6 +56,22 @@ final class PayByCardHandlerTest extends TestCase
         $this->paymentRepository->find(1)->willReturn($payment);
 
         $result = $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data'));
+
+        $this->assertSame('pending', $result->status);
+        $this->assertSame('https://cw.org/pay', $result->transactionPaymentUrl);
+    }
+
+    public function test_it_creates_a_card_based_transaction_with_saving_card_option(): void
+    {
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
+        $payment->setDetails(
+            $this->getExpectedDetails(card: 'encoded_card_data', saveCreditCardForLater: true),
+        )->shouldBeCalled();
+
+        $this->paymentRepository->find(1)->willReturn($payment);
+
+        $result = $this->createTestSubject()->__invoke(new PayByCard(1, 'encoded_card_data', true));
 
         $this->assertSame('pending', $result->status);
         $this->assertSame('https://cw.org/pay', $result->transactionPaymentUrl);

@@ -47,6 +47,15 @@ final class PayByCardFactoryTest extends TestCase
         $this->assertSame('card_data', $command->encodedCardData);
     }
 
+    public function test_it_creates_a_pay_by_card_command_with_save_card_information(): void
+    {
+        $command = $this->createTestSubject()->create($this->createCommand(encodedCardData: 'card_data', saveCard: true), $this->createPayment());
+
+        $this->assertInstanceOf(PayByCard::class, $command);
+        $this->assertSame('card_data', $command->encodedCardData);
+        $this->assertSame(true, $command->saveCard);
+    }
+
     public function test_it_throws_an_exception_when_trying_to_create_a_command_with_unsupported_factory(): void
     {
         $this->expectException(UnsupportedNextCommandFactory::class);
@@ -54,13 +63,14 @@ final class PayByCardFactoryTest extends TestCase
         $this->createTestSubject()->create($this->createCommand(), new Payment());
     }
 
-    private function createCommand(?string $token = null, ?string $encodedCardData = null): Pay
+    private function createCommand(?string $token = null, ?string $encodedCardData = null, bool $saveCard = false): Pay
     {
         return new Pay(
             $token ?? 'token',
             'https://cw.nonexisting/success',
             'https://cw.nonexisting/failure',
             encodedCardData: $encodedCardData,
+            saveCard: $saveCard,
         );
     }
 

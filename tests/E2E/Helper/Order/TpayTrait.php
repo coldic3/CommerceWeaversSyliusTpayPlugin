@@ -13,7 +13,7 @@ use Symfony\Component\Panther\Client;
  */
 trait TpayTrait
 {
-    public function fillCardData(string $formId, string $cardNumber, string $cvv, string $month, string $year, bool $saveCardForLater): void
+    public function fillCardData(string $formId, string $cardNumber, string $cvv, string $month, string $year, bool $saveCardForLater = false): void
     {
         $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_number', $formId)))->sendKeys($cardNumber);
         $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_cvv', $formId)))->sendKeys($cvv);
