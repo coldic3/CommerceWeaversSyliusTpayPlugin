@@ -37,9 +37,15 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
                 'commerce_weavers_sylius_tpay.tpay.transaction_description',
                 ['%orderNumber%' => $order->getNumber()],
             ),
+            'lang' => substr($localeCode, 0, 2),
             'payer' => [
                 'email' => $customer->getEmail(),
                 'name' => $billingAddress->getFullName(),
+                'phone' => $billingAddress->getPhoneNumber() ?? $customer->getPhoneNumber() ?? '',
+                'address' => $billingAddress->getStreet() ?? '',
+                'city' => $billingAddress->getCity() ?? '',
+                'code' => $billingAddress->getPostcode() ?? '',
+                'country' => $billingAddress->getCountryCode() ?? '',
             ],
             'callbacks' => [
                 'payerUrls' => [

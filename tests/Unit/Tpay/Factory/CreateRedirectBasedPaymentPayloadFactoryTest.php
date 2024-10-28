@@ -56,6 +56,12 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
         $payment->getOrder()->willReturn($order);
         $payment->getAmount()->willReturn(1050);
 
+        $billingAddress->getPhoneNumber()->willReturn('123123123');
+        $billingAddress->getStreet()->willReturn('Sesame Street');
+        $billingAddress->getCity()->willReturn('Sesame City');
+        $billingAddress->getPostcode()->willReturn('90 210');
+        $billingAddress->getCountryCode()->willReturn('PL');
+
         $this->callbackUrlGenerator
             ->generateSuccessUrl($payment, 'pl_PL')
             ->willReturn('https://cw.org/success')
@@ -70,9 +76,15 @@ final class CreateRedirectBasedPaymentPayloadFactoryTest extends TestCase
         $this->assertSame([
             'amount' => '10.50',
             'description' => self::TRANSLATED_DESCRIPTION,
+            'lang' => 'pl',
             'payer' => [
                 'email' => 'don.matteo@sandomierz.org',
                 'name' => 'Don Matteo',
+                'phone' => '123123123',
+                'address' => 'Sesame Street',
+                'city' => 'Sesame City',
+                'code' => '90 210',
+                'country' => 'PL',
             ],
             'callbacks' => [
                 'payerUrls' => [
