@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\Shop;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Enum\BlikAliasAction;
+use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfBlikAliasActionIsRegister;
+use CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals;
+use Sylius\Component\Core\Model\ShopUserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\Length;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\JsonApiTestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\Utils\OrderPlacerTrait;
 
@@ -72,14 +76,16 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_with_a_valid_blik_token_and_saving_alias(): void
     {
-        $this->loadFixturesFromFile('shop/blik_payment_method.yml');
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/common/shop_user.yml']);
 
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
@@ -96,14 +102,16 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_and_saving_alias_without_a_blik_token(): void
     {
-        $this->loadFixturesFromFile('shop/blik_payment_method.yml');
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/common/shop_user.yml']);
 
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
@@ -116,6 +124,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => 'blikToken',
+                'code' => NotBlankIfBlikAliasActionIsRegister::FIELD_REQUIRED_ERROR,
                 'message' => 'The BLIK token is required with an alias register action.',
             ]
         ]);
@@ -123,14 +132,16 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_using_a_valid_blik_alias(): void
     {
-        $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_alias.yml']);
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_alias.yml', 'shop/common/shop_user.yml']);
 
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
@@ -146,14 +157,16 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_using_a_valid_blik_alias_but_registered_in_more_than_one_bank_app(): void
     {
-        $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_ambiguous_alias.yml']);
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_ambiguous_alias.yml', 'shop/common/shop_user.yml']);
 
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
@@ -168,14 +181,16 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_paying_using_a_valid_blik_alias_registered_in_different_banks(): void
     {
-        $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_ambiguous_alias.yml']);
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_ambiguous_alias.yml', 'shop/common/shop_user.yml']);
 
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
         $this->client->request(
             Request::METHOD_POST,
             sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
@@ -212,6 +227,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => 'blikToken',
+                'code' => Length::NOT_EQUAL_LENGTH_ERROR,
                 'message' => 'The BLIK token must have exactly 6 characters.',
             ]
         ]);
@@ -239,6 +255,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => 'blikToken',
+                'code' => Length::NOT_EQUAL_LENGTH_ERROR,
                 'message' => 'The BLIK token must have exactly 6 characters.',
             ]
         ]);
@@ -265,6 +282,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponseViolations($response, [
             [
                 'propertyPath' => '',
+                'code' => OneOfPropertiesRequiredIfGatewayConfigTypeEquals::ALL_FIELDS_ARE_BLANK_ERROR,
                 'message' => 'You must provide a BLIK token or use an alias to pay with BLIK.',
             ]
         ]);

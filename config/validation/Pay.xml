@@ -37,6 +37,13 @@
                 </option>
             </constraint>
         </property>
+        <property name="blikAliasAction">
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ForAuthorizedUserOnly">
+                <option name="groups">
+                    <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
+                </option>
+            </constraint>
+        </property>
         <property name="googlePayToken">
             <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
                 <option name="paymentMethodType">google_pay</option>
