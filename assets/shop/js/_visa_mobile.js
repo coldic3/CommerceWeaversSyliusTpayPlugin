@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const MOBILE_PHONE_MAX_LENGTH = 15;
 
   let form = document.querySelector('[name="sylius_checkout_complete"]');
-  let phoneNumber = form.querySelector('#sylius_checkout_complete_tpay_visa_mobile_phone_number');
+  let phoneNumber = form.querySelector('#sylius_checkout_complete_tpay_visa_mobile_phone_number') ??
+    document.querySelector("[id^='sylius_checkout_select_payment_payments_'][id$='_tpay_visa_mobile_phone_number']");
 
   if (null === phoneNumber) {
     return;

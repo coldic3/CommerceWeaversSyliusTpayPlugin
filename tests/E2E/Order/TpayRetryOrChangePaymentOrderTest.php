@@ -99,4 +99,19 @@ final class TpayRetryOrChangePaymentOrderTest extends E2ETestCase
 
         self::assertPageTitleContains('Thank you');
     }
+
+    public function test_it_changes_payment_to_visa_mobile(): void
+    {
+        $this->loadFixtures(['visa_mobile_unpaid_order.yaml']);
+
+        $this->loginShopUser('tony@nonexisting.cw', 'sylius');
+
+        $this->client->get('/en_US/order/tokenValue1');
+        $form = $this->client->getCrawler()->selectButton('Pay')->form();
+        $form->getElement()->findElement(WebDriverBy::xpath("//label[contains(text(),'Visa mobile (Tpay)')]"))->click();
+        $this->fillVisaMobile(self::SELECT_FIRST_PAYMENT_FORM_ID, '123123123');
+        $this->client->submitForm('Pay');
+
+        self::assertPageTitleContains('Waiting for payment');
+    }
 }
