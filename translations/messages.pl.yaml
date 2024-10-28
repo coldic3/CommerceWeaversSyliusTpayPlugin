@@ -2,13 +2,13 @@ commerce_weavers_sylius_tpay:
     admin:
         name: 'Tpay'
         gateway_configuration:
-            cards_api: 'Cards API'
-            client_id: 'Identyfikator klienta'
-            client_secret: 'Hasło klienta'
+            cards_api: 'Klucz RSA'
+            client_id: 'Client ID'
+            client_secret: 'Secret'
             google_merchant_id: 'Identyfikator sprzedawcy Google'
             apple_pay_merchant_id: 'Identyfikator sprzedawcy Apple Pay'
             production_mode: 'Tryb produkcyjny'
-            merchant_id: 'ID sprzedawcy'
+            merchant_id: 'Merchant ID'
             notification_security_code: 'Kod bezpieczeństwa (Powiadomienia)'
             type:
                 apple_pay: 'Apple Pay'
