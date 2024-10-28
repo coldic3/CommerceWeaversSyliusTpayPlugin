@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Api\Exception;
 
-final class BlikAliasAmbiguousValueException extends AbstractBadRequestHttpException
+class BlikAliasAmbiguousValueException extends AbstractBadRequestHttpException
 {
-    private function __construct()
+    protected function __construct()
     {
         parent::__construct();
     }

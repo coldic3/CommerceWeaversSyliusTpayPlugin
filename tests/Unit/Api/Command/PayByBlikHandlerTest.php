@@ -11,6 +11,7 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueExcept
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException as PayumBlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\ActiveBlikAliasPreconditionGuardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use Payum\Core\GatewayInterface;
@@ -40,12 +41,15 @@ final class PayByBlikHandlerTest extends TestCase
 
     private ObjectManager|ObjectProphecy $blikAliasManager;
 
+    private ActiveBlikAliasPreconditionGuardInterface|ObjectProphecy $activeBlikAliasPreconditionGuard;
+
     protected function setUp(): void
     {
         $this->paymentRepository = $this->prophesize(PaymentRepositoryInterface::class);
         $this->createTransactionProcessor = $this->prophesize(CreateTransactionProcessorInterface::class);
         $this->blikAliasResolver = $this->prophesize(BlikAliasResolverInterface::class);
         $this->blikAliasManager = $this->prophesize(ObjectManager::class);
+        $this->activeBlikAliasPreconditionGuard = $this->prophesize(ActiveBlikAliasPreconditionGuardInterface::class);
     }
 
     public function test_it_throw_an_exception_if_a_payment_cannot_be_found(): void
@@ -198,6 +202,8 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->blikAliasResolver->resolve($customer)->willReturn($blikAlias);
 
+        $this->activeBlikAliasPreconditionGuard->denyIfNotActive($blikAlias)->shouldNotBeCalled();
+
         $createTransaction = $this->prophesize(CreateTransaction::class);
 
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
@@ -257,6 +263,8 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->blikAliasResolver->resolve($customer)->willReturn($blikAlias);
 
+        $this->activeBlikAliasPreconditionGuard->denyIfNotActive($blikAlias)->shouldBeCalled();
+
         $createTransaction = $this->prophesize(CreateTransaction::class);
 
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
@@ -315,6 +323,8 @@ final class PayByBlikHandlerTest extends TestCase
 
         $this->blikAliasResolver->resolve($customer)->willReturn($blikAlias);
 
+        $this->activeBlikAliasPreconditionGuard->denyIfNotActive($blikAlias)->shouldBeCalled();
+
         $createTransaction = $this->prophesize(CreateTransaction::class);
 
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction);
@@ -336,6 +346,7 @@ final class PayByBlikHandlerTest extends TestCase
             $this->createTransactionProcessor->reveal(),
             $this->blikAliasResolver->reveal(),
             $this->blikAliasManager->reveal(),
+            $this->activeBlikAliasPreconditionGuard->reveal(),
         );
     }
 }

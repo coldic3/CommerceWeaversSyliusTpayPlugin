@@ -10,6 +10,8 @@ use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Processor\CreateTransactionProcessorInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException as PayumBlikAliasAmbiguousValueException;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\ActiveBlikAliasPreconditionGuardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolverInterface;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Component\Core\Model\CustomerInterface;
@@ -25,6 +27,7 @@ final class PayByBlikHandler extends AbstractPayByHandler
         CreateTransactionProcessorInterface $createTransactionProcessor,
         private readonly BlikAliasResolverInterface $blikAliasResolver,
         private readonly ObjectManager $blikAliasManager,
+        private readonly ActiveBlikAliasPreconditionGuardInterface $activeBlikAliasPreconditionGuard,
     ) {
         parent::__construct($paymentRepository, $createTransactionProcessor);
     }
@@ -34,8 +37,12 @@ final class PayByBlikHandler extends AbstractPayByHandler
         $payment = $this->findOr404($command->paymentId);
         $blikAlias = null !== $command->blikAliasAction ? $this->resolveBlikAlias($payment) : null;
 
-        if (BlikAliasAction::REGISTER === $command->blikAliasAction) {
-            $blikAlias?->redefine();
+        if (null !== $blikAlias) {
+            match ($command->blikAliasAction) {
+                BlikAliasAction::APPLY => $this->activeBlikAliasPreconditionGuard->denyIfNotActive($blikAlias),
+                BlikAliasAction::REGISTER => $blikAlias->redefine(),
+                default => null,
+            };
         }
 
         $this->setTransactionData($payment, $command, $blikAlias);
