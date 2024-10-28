@@ -6,6 +6,9 @@ commerce_weavers_sylius_tpay:
             blik_token:
                 length: 'The BLIK token must have exactly {{ limit }} characters.'
                 required: 'The BLIK token is required.'
+                required_with_alias_register: 'The BLIK token is required with an alias register action.'
+            field:
+                not_blank: 'This value should not be blank.'
             google_pay_token:
                 required: 'The Google Pay token is required.'
                 not_json_encoded: 'The Google Pay token must be a JSON object encoded with Base64.'

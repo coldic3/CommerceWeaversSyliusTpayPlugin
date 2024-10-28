@@ -94,6 +94,33 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
         $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
     }
 
+    public function test_paying_and_saving_alias_without_a_blik_token(): void
+    {
+        $this->loadFixturesFromFile('shop/blik_payment_method.yml');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'blikAliasAction' => BlikAliasAction::REGISTER->value,
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseViolations($response, [
+            [
+                'propertyPath' => 'blikToken',
+                'message' => 'The BLIK token is required with an alias register action.',
+            ]
+        ]);
+    }
+
     public function test_paying_using_a_valid_blik_alias(): void
     {
         $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_alias.yml']);

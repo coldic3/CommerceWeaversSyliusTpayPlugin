@@ -32,7 +32,7 @@ final class NotBlankIfGatewayConfigTypeEqualsValidator extends AbstractPayValida
 
         if (null === $constraint->paymentMethodType) {
             throw new MissingOptionsException(
-                sprintf('Option "paymentMethodType"must be given for constraint "%s".', __CLASS__),
+                sprintf('Option "paymentMethodType" must be given for constraint "%s".', __CLASS__),
                 ['paymentMethodType'],
             );
         }

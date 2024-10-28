@@ -18,6 +18,13 @@
                     <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
                 </option>
             </constraint>
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfBlikAliasActionIsRegister">
+                <option name="blikAliasActionPropertyName">blikAliasAction</option>
+                <option name="fieldRequiredErrorMessage">commerce_weavers_sylius_tpay.shop.pay.blik_token.required_with_alias_register</option>
+                <option name="groups">
+                    <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
+                </option>
+            </constraint>
         </property>
         <property name="googlePayToken">
             <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
