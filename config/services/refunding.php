@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Refunding\Checker\RefundPluginAvailabilityCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Dispatcher\RefundDispatcher;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Dispatcher\RefundDispatcherInterface;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Workflow\Listener\DispatchRefundListener;
@@ -12,10 +13,15 @@ use Sylius\Bundle\CoreBundle\SyliusCoreBundle;
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
 
+    $services->set('commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability', RefundPluginAvailabilityCheckerInterface::class)
+        ->alias(RefundPluginAvailabilityCheckerInterface::class, 'commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability')
+    ;
+
     $services->set('commerce_weavers_sylius_tpay.refunding.dispatcher.refund', RefundDispatcher::class)
         ->public()
         ->args([
-            service('payum'),
+            service('commerce_weavers_sylius_tpay.gateway'),
+            service('commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability'),
         ])
         ->alias(RefundDispatcherInterface::class, 'commerce_weavers_sylius_tpay.refunding.dispatcher.refund')
     ;
@@ -26,6 +32,7 @@ return function(ContainerConfigurator $container): void {
                 service('commerce_weavers_sylius_tpay.refunding.dispatcher.refund'),
             ])
             ->tag('kernel.event_listener', ['event' => 'workflow.sylius_payment.transition.refund'])
+            ->tag('kernel.event_listener', ['event' => 'workflow.sylius_refund_refund_payment.transition.complete'])
         ;
     }
 };
