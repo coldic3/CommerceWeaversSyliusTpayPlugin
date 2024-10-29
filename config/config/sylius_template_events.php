@@ -41,6 +41,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_apple_pay_regulations.html.twig',
                         'priority' => 5,
                     ],
+                    'visa_mobile' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/order/pay/_visaMobile.html.twig',
+                        'priority' => 10,
+                    ]
                 ],
             ],
             'sylius.shop.checkout.complete.summary' => [
