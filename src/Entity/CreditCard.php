@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Entity;
 
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 
 class CreditCard implements CreditCardInterface
@@ -17,6 +18,8 @@ class CreditCard implements CreditCardInterface
     private ?\DateTimeInterface $expirationDate = null;
 
     private ?CustomerInterface $customer = null;
+
+    private ?ChannelInterface $channel = null;
 
     public function getId(): ?int
     {
@@ -70,5 +73,15 @@ class CreditCard implements CreditCardInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
+    }
+
+    public function getChannel(): ?ChannelInterface
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?ChannelInterface $channel): void
+    {
+        $this->channel = $channel;
     }
 }

@@ -11,6 +11,7 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\OrderVisito
 use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\Provider\AllowedOrderOperationsProvider;
 use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\Provider\AllowedOrderOperationsProviderInterface;
 use Sylius\Bundle\ApiBundle\Context\UserContextInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
@@ -30,6 +31,7 @@ return function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.api.doctrine.query_item_extension.credit_card_shop_user', CreditCardShopUserItemExtension::class)
         ->args([
             service(UserContextInterface::class),
+            service(ChannelContextInterface::class),
         ])
         ->tag('api_platform.doctrine.orm.query_extension.item')
     ;
@@ -37,6 +39,7 @@ return function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.api.doctrine.query_collection_extension.credit_card_shop_user', CreditCardShopUserCollectionExtension::class)
         ->args([
             service(UserContextInterface::class),
+            service(ChannelContextInterface::class),
         ])
         ->tag('api_platform.doctrine.orm.query_extension.collection')
     ;

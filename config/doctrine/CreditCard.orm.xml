@@ -19,5 +19,9 @@
         <many-to-one field="customer" target-entity="Sylius\Component\Core\Model\CustomerInterface">
             <join-column name="customer_id" nullable="false" on-delete="CASCADE" />
         </many-to-one>
+
+        <many-to-one field="channel" target-entity="Sylius\Component\Core\Model\ChannelInterface">
+            <join-column name="channel_id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
     </mapped-superclass>
 </doctrine-mapping>

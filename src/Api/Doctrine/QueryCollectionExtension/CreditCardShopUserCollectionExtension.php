@@ -9,12 +9,15 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface as Leg
 use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ApiBundle\Context\UserContextInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 
 final class CreditCardShopUserCollectionExtension implements ContextAwareQueryCollectionExtensionInterface
 {
-    public function __construct(private readonly UserContextInterface $userContext)
-    {
+    public function __construct(
+        private readonly UserContextInterface $userContext,
+        private readonly ChannelContextInterface $channelContext,
+    ) {
     }
 
     /** @param array<string, mixed> $context */
@@ -35,14 +38,19 @@ final class CreditCardShopUserCollectionExtension implements ContextAwareQueryCo
             return;
         }
 
+        $channel = $this->channelContext->getChannel();
+
         $customer = $user?->getCustomer();
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $customerParameterName = $queryNameGenerator->generateParameterName('customer');
+        $channelParameterName = $queryNameGenerator->generateParameterName('channel');
 
         $queryBuilder
             ->andWhere(sprintf('%s.customer = :%s', $rootAlias, $customerParameterName))
+            ->andWhere(sprintf('%s.channel = :%s', $rootAlias, $channelParameterName))
             ->setParameter($customerParameterName, $customer)
+            ->setParameter($channelParameterName, $channel)
         ;
     }
 }

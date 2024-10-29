@@ -8,7 +8,8 @@ sylius_grid:
                     repository:
                         method: createByCustomerListQueryBuilder
                         arguments:
-                            - "expr:service('sylius.context.customer').getCustomer().getId()"
+                            - "expr:service('sylius.context.customer').getCustomer()"
+                            - "expr:service('sylius.context.channel').getChannel()"
             sorting:
                 expirationDate: desc
             fields:

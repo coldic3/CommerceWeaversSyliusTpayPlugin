@@ -46,10 +46,11 @@ return function(RoutingConfigurator $routes): void {
             '_sylius' => [
                 'section' => 'shop_account',
                 'repository' => [
-                    'method' => 'findOneByCustomer',
+                    'method' => 'findOneByChannelAndCustomer',
                     'arguments' => [
                         '$id',
-                        'expr:service(\'sylius.context.customer\').getCustomer()',
+                        'expr:service(\'sylius.context.customer\').getCustomer().getId()',
+                        'expr:service(\'sylius.context.channel\').getChannel().getId()',
                     ],
                 ],
                 'redirect' => Routing::SHOP_ACCOUNT_CREDIT_CARD_INDEX,
