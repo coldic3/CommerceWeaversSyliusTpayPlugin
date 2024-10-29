@@ -11,17 +11,17 @@ use CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\Exception\BlikAliasNotReg
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Clock\ClockInterface;
+use Sylius\Calendar\Provider\DateTimeProviderInterface;
 
 final class ActiveBlikAliasPreconditionGuardTest extends TestCase
 {
     use ProphecyTrait;
 
-    private ClockInterface|ObjectProphecy $clock;
+    private DateTimeProviderInterface|ObjectProphecy $dateTimeProvider;
 
     protected function setUp(): void
     {
-        $this->clock = $this->prophesize(ClockInterface::class);
+        $this->clock = $this->prophesize(DateTimeProviderInterface::class);
     }
 
     public function test_it_throws_exception_if_blik_alias_is_not_registered(): void
@@ -51,7 +51,7 @@ final class ActiveBlikAliasPreconditionGuardTest extends TestCase
         $blikAlias = $this->prophesize(BlikAliasInterface::class);
         $blikAlias->isRegistered()->willReturn(true);
         $blikAlias->getExpirationDate()->willReturn(new \DateTimeImmutable('tomorrow'));
-        $this->clock->now()->willReturn(new \DateTimeImmutable('today'));
+        $this->dateTimeProvider->now()->willReturn(new \DateTimeImmutable('today'));
 
         $this->expectNotToPerformAssertions();
 

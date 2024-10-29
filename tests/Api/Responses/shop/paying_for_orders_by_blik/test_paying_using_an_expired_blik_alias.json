@@ -1,0 +1,7 @@
+{
+    "@context": "/api/v2/contexts/Error",
+    "@type": "hydra:Error",
+    "hydra:title": "An error occurred",
+    "hydra:description": "The Blik Alias expired. Please register a new one or use a Blik token.",
+    "trace": "@array@"
+}

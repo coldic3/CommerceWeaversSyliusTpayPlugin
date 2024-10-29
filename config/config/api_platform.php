@@ -6,9 +6,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentFailedException;
-use CommerceWeavers\SyliusTpayPlugin\Api\Exception\AbstractBadRequestHttpException;
+use CommerceWeavers\SyliusTpayPlugin\Api\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnresolvableNextCommandException;
 use CommerceWeavers\SyliusTpayPlugin\Payment\Exception\PaymentCannotBeCancelledException;
+use CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\Exception\BlikAliasExpiredException;
+use CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\Exception\BlikAliasNotRegisteredException;
 
 return function(ContainerConfigurator $configurator): void {
     $configurator->extension('api_platform', [
@@ -17,7 +19,9 @@ return function(ContainerConfigurator $configurator): void {
             PaymentCannotBeCancelledException::class => 400,
             UnresolvableNextCommandException::class => 400,
             PaymentFailedException::class => 424,
-            AbstractBadRequestHttpException::class => 400,
+            BlikAliasAmbiguousValueException::class => 400,
+            BlikAliasExpiredException::class => 400,
+            BlikAliasNotRegisteredException::class => 400,
         ],
         'mapping' => [
             'paths' => [

@@ -44,7 +44,6 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, Response::HTTP_OK);
         $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
     }
 
@@ -96,7 +95,6 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, Response::HTTP_OK);
         $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
     }
 
@@ -151,8 +149,55 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, Response::HTTP_OK);
         $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
+    }
+
+    public function test_paying_using_an_expired_blik_alias(): void
+    {
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_expired_alias.yml', 'shop/common/shop_user.yml']);
+
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'blikAliasAction' => BlikAliasAction::APPLY->value,
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_using_an_expired_blik_alias', Response::HTTP_BAD_REQUEST);
+    }
+
+    public function test_paying_using_not_registered_blik_alias(): void
+    {
+        $fixtures = $this->loadFixturesFromFiles(['shop/blik_payment_method.yml', 'shop/blik_not_registered_alias.yml', 'shop/common/shop_user.yml']);
+
+        /** @var ShopUserInterface $shopUser */
+        $shopUser = $fixtures['shop_user_john_doe'];
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER + $this->generateAuthorizationHeader($shopUser),
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'blikAliasAction' => BlikAliasAction::APPLY->value,
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_using_not_registered_blik_alias', Response::HTTP_BAD_REQUEST);
     }
 
     public function test_paying_using_a_valid_blik_alias_but_registered_in_more_than_one_bank_app(): void
@@ -201,7 +246,6 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, Response::HTTP_OK);
         $this->assertResponse($response, 'shop/paying_for_orders_by_blik/test_paying_with_a_valid_blik_token_for_an_order');
     }
 
