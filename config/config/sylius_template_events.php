@@ -75,6 +75,13 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     ],
                 ],
             ],
+            'cw.tpay.shop.account.credit_card.index.subcontent' => [
+                'blocks' => [
+                    'commerce_weavers_sylius_tpay_scripts' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/shop/account/credit_card/index/_subcontent.html.twig',
+                    ],
+                ],
+            ],
             'sylius.shop.layout.javascripts' => [
                 'blocks' => [
                     'commerce_weavers_sylius_tpay_scripts' => [

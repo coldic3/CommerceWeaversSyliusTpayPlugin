@@ -33,4 +33,12 @@ final class Routing
     public const SHOP_WAITING_FOR_PAYMENT = 'commerce_weavers_sylius_tpay_waiting_for_payment';
 
     public const SHOP_WAITING_FOR_PAYMENT_PATH = '/tpay/waiting-for-payment';
+
+    public const SHOP_ACCOUNT_CREDIT_CARD_INDEX = 'commerce_weavers_sylius_tpay_shop_account_credit_card_index';
+
+    public const SHOP_ACCOUNT_CREDIT_CARD_INDEX_PATH = '/account/credit-cards';
+
+    public const SHOP_ACCOUNT_CREDIT_CARD_DELETE = 'commerce_weavers_sylius_tpay_shop_account_credit_card_delete';
+
+    public const SHOP_ACCOUNT_CREDIT_CARD_DELETE_PATH = '/account/credit-cards/{id}/delete';
 }

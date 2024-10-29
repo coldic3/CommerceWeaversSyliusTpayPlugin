@@ -27,7 +27,6 @@ final class CreditCardShopUserItemExtension implements QueryItemExtensionInterfa
         string $operationName = null,
         array $context = [],
     ): void {
-        VarDumper::dump($resourceClass);
         if (!is_a($resourceClass, CreditCardInterface::class, true)) {
             return;
         }

@@ -19,6 +19,11 @@ commerce_weavers_sylius_tpay:
                 redirect: 'Redirect to Tpay'
                 pay_by_link: 'Redirect to bank'
     shop:
+        credit_cards: 'Credit cards'
+        credit_card:
+            brand: 'Brand'
+            expiration_date: 'Expiration date'
+            tail: 'Tail'
         order_summary:
             blik:
                 token: 'BLIK token'

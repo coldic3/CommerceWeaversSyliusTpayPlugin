@@ -1,0 +1,11 @@
+{% extends '@SyliusShop/Account/layout.html.twig' %}
+
+{% block title %}{{ 'commerce_weavers_sylius_tpay.shop.credit_cards'|trans }} | {{ parent() }}{% endblock %}
+
+{% block breadcrumb %}
+    {% include '@CommerceWeaversSyliusTpayPlugin/shop/account/credit_card/breadcrumb.html.twig' %}
+{% endblock %}
+
+{% block subcontent %}
+    {{ sylius_template_event('cw.tpay.shop.account.credit_card.index.subcontent', _context) }}
+{% endblock %}

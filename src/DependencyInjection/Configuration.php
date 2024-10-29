@@ -10,6 +10,7 @@ use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard;
 use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Factory\BlikAliasFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepository;
+use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Resource\Factory\Factory;
@@ -63,7 +64,7 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('interface')->defaultValue(CreditCardInterface::class)->cannotBeEmpty()->end()
                                         ->scalarNode('controller')->defaultValue(ResourceController::class)->cannotBeEmpty()->end()
                                         ->scalarNode('factory')->defaultValue(Factory::class)->cannotBeEmpty()->end()
-                                        ->scalarNode('repository')->defaultValue(EntityRepository::class)->cannotBeEmpty()->end()
+                                        ->scalarNode('repository')->defaultValue(CreditCardRepository::class)->cannotBeEmpty()->end()
                                     ->end()
                                 ->end()
                             ->end()
