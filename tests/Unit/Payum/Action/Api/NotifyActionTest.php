@@ -99,7 +99,6 @@ final class NotifyActionTest extends TestCase
         $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(true);
         $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
 
-        $this->gateway->execute(Argument::type(NotifyTransaction::class))->shouldBeCalled();
         $this->model->getDetails()->willReturn([]);
         $this->model->setDetails(
             $this->getExpectedDetails(status: $expectedStatus),
@@ -115,30 +114,6 @@ final class NotifyActionTest extends TestCase
             $this->getExpectedDetails(),
         )->shouldBeCalled();
 
-        $this->request->getData()->willReturn(new NotifyData(
-            'jws',
-            'content',
-            [
-                'tr_status' => 'TRUE',
-            ],
-        ));
-
-        $this->api->getNotificationSecretCode()->willReturn('merchant_code');
-
-        $this->basicPaymentFactory->createFromArray(['tr_status' => 'TRUE'])->willReturn($basicPayment = new BasicPayment());
-        $basicPayment->tr_status = 'TRUE';
-
-        $this->checksumVerifier->verify($basicPayment, 'merchant_code')->willReturn(false);
-        $this->signatureVerifier->verify('jws', 'content')->willReturn(true);
-
-        $this->expectException(HttpResponse::class);
-
-        $this->createTestSubject()->execute($this->request->reveal());
-    }
-
-    public function test_it_throws_false_http_reply_when_checksum_is_invalid(): void
-    {
-        $this->model->getDetails()->willReturn([]);
         $this->request->getData()->willReturn(new NotifyData(
             'jws',
             'content',

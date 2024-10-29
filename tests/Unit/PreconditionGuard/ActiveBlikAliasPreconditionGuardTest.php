@@ -21,7 +21,7 @@ final class ActiveBlikAliasPreconditionGuardTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->clock = $this->prophesize(DateTimeProviderInterface::class);
+        $this->dateTimeProvider = $this->prophesize(DateTimeProviderInterface::class);
     }
 
     public function test_it_throws_exception_if_blik_alias_is_not_registered(): void
@@ -39,7 +39,7 @@ final class ActiveBlikAliasPreconditionGuardTest extends TestCase
         $blikAlias = $this->prophesize(BlikAliasInterface::class);
         $blikAlias->isRegistered()->willReturn(true);
         $blikAlias->getExpirationDate()->willReturn(new \DateTimeImmutable('yesterday'));
-        $this->clock->now()->willReturn(new \DateTimeImmutable('today'));
+        $this->dateTimeProvider->now()->willReturn(new \DateTimeImmutable('today'));
 
         $this->expectException(BlikAliasExpiredException::class);
 
@@ -60,6 +60,6 @@ final class ActiveBlikAliasPreconditionGuardTest extends TestCase
 
     private function createTestSubject(): ActiveBlikAliasPreconditionGuard
     {
-        return new ActiveBlikAliasPreconditionGuard($this->clock->reveal());
+        return new ActiveBlikAliasPreconditionGuard($this->dateTimeProvider->reveal());
     }
 }

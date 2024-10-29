@@ -12,8 +12,8 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Signatu
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpResponse;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Payum\Core\Request\Generic;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {

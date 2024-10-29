@@ -17,6 +17,7 @@ use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -128,6 +129,8 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
             'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
+        $this->blikAliasRepository->findOneByValue(Argument::any())->shouldNotBeCalled();
+
         $this->api->transactions()->willReturn($transactions);
 
         $payment->setDetails(
@@ -137,7 +140,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
         $this->createBlikLevelZeroPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
 
@@ -207,30 +210,20 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createTransaction(['factored' => 'payload'])->willReturn([
-            'transactionId' => 'tr4ns4ct!0n_id',
+            'result' => 'success',
             'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
         $this->api->transactions()->willReturn($transactions);
 
-        $payment->setDetails([
-            'tpay' => [
-                'transaction_id' => 'tr4ns4ct!0n_id',
-                'result' => null,
-                'status' => 'correct',
-                'apple_pay_token' => null,
-                'blik_token' => null,
-                'blik_alias_value' => 'i_AM_a_BLIK_alias_VALUE',
-                'blik_alias_application_code' => null,
-                'google_pay_token' => null,
-                'card' => null,
-                'payment_url' => null,
-                'success_url' => null,
-                'failure_url' => null,
-                'tpay_channel_id' => null,
-                'visa_mobile_phone_number' => null,
-            ],
-        ])->shouldBeCalled();
+        $payment->setDetails(
+            $this->getExpectedDetails(
+                transaction_id: 'tr4ns4ct!0n_id',
+                status: 'correct',
+                blik_alias_value: 'i_AM_a_BLIK_alias_VALUE',
+            ),
+        )->shouldBeCalled();
 
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
@@ -315,6 +308,9 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');
@@ -365,6 +361,9 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getOrder()->willReturn($order);
         $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
 
         $token = $this->prophesize(TokenInterface::class);
         $token->getGatewayName()->willReturn('tpay');

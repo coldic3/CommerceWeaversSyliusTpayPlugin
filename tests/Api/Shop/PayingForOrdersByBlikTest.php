@@ -49,7 +49,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
     public function test_it_handles_tpay_error_while_paying_with_blik_based_payment_type(): void
     {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_blik');
+        $this->loadFixturesFromFile('shop/blik_payment_method.yml');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_blik');
 
