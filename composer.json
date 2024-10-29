@@ -49,6 +49,7 @@
         "polishsymfonycommunity/symfony-mocker-container": "^1.0",
         "shipmonk/composer-dependency-analyser": "^1.7",
         "sylius-labs/coding-standard": "^4.2",
+        "sylius/refund-plugin": "^1.5",
         "sylius/sylius": "^1.12",
         "symfony/browser-kit": "^5.4 || ^6.0",
         "symfony/debug-bundle": "^5.4 || ^6.0",

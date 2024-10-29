@@ -17,5 +17,16 @@ return function(ContainerConfigurator $container): void {
                 ],
             ],
         ],
+        'sylius_refund_refund_payment' => [
+            'callbacks' => [
+                'before' => [
+                    'tpay_refund_payment' => [
+                        'on' => ['complete'],
+                        'do' => ['@commerce_weavers_sylius_tpay.refunding.dispatcher.refund', 'dispatch'],
+                        'args' => ['object'],
+                    ],
+                ]
+            ]
+        ],
     ]);
 };

@@ -4,12 +4,19 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin;
 
+use CommerceWeavers\SyliusTpayPlugin\DependencyInjection\CompilerPass\AddSupportedRefundPaymentMethodPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class CommerceWeaversSyliusTpayPlugin extends Bundle
 {
     use SyliusPluginTrait;
+
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new AddSupportedRefundPaymentMethodPass());
+    }
 
     public function getPath(): string
     {

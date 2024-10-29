@@ -17,6 +17,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\PartialRefundAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
@@ -97,6 +98,10 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set(GetStatusAction::class)
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_status'])
+    ;
+
+    $services->set(PartialRefundAction::class)
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.partial_refund'])
     ;
 
     $services->set(RefundAction::class)
