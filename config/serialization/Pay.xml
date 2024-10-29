@@ -17,6 +17,12 @@
         <attribute name="blikToken">
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>
+        <attribute name="blikAliasAction">
+            <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
+        </attribute>
+        <attribute name="blikAliasApplicationCode">
+            <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
+        </attribute>
         <attribute name="googlePayToken">
             <group>commerce_weavers_sylius_tpay:shop:order:pay</group>
         </attribute>

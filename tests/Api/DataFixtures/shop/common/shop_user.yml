@@ -1,0 +1,9 @@
+Sylius\Component\Core\Model\ShopUser:
+    shop_user_john_doe:
+        plainPassword: "sylius"
+        roles: [ROLE_USER]
+        enabled: true
+        verifiedAt: "<(new \\DateTime())>"
+        customer: "@customer_john_doe"
+        username: "sylius@example.com"
+        usernameCanonical: "sylius@example.com"

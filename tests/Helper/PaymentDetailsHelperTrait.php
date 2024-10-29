@@ -15,6 +15,8 @@ trait PaymentDetailsHelperTrait
                 'status' => null,
                 'apple_pay_token' => null,
                 'blik_token' => null,
+                'blik_alias_value' => null,
+                'blik_alias_application_code' => null,
                 'google_pay_token' => null,
                 'card' => null,
                 'apple_pay_session' => null,

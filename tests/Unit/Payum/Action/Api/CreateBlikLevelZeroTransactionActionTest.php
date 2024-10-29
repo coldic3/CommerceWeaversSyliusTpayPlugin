@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\GatewayInterface;
@@ -14,6 +17,7 @@ use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Request\Capture;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -35,6 +39,8 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
 
     private NotifyTokenFactoryInterface|ObjectProphecy $notifyTokenFactory;
 
+    private BlikAliasRepositoryInterface|ObjectProphecy $blikAliasRepository;
+
     private GatewayInterface|ObjectProphecy $gateway;
 
     protected function setUp(): void
@@ -42,6 +48,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->api = $this->prophesize(TpayApi::class);
         $this->createBlikLevelZeroPaymentPayloadFactory = $this->prophesize(CreateBlikLevelZeroPaymentPayloadFactoryInterface::class);
         $this->notifyTokenFactory = $this->prophesize(NotifyTokenFactoryInterface::class);
+        $this->blikAliasRepository = $this->prophesize(BlikAliasRepositoryInterface::class);
         $this->gateway = $this->prophesize(GatewayInterface::class);
     }
 
@@ -96,7 +103,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-    public function test_it_creates_a_payment_and_requests_paying_it_with_a_provided_blik_token(): void
+    public function test_it_creates_a_payment_and_requests_paying_it(): void
     {
         $order = $this->prophesize(OrderInterface::class);
         $order->getLocaleCode()->willReturn('pl_PL');
@@ -122,6 +129,8 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
             'transactionId' => 'tr4ns4ct!0n_id',
         ]);
 
+        $this->blikAliasRepository->findOneByValue(Argument::any())->shouldNotBeCalled();
+
         $this->api->transactions()->willReturn($transactions);
 
         $payment->setDetails(
@@ -131,7 +140,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
         $this->createBlikLevelZeroPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
 
@@ -169,7 +178,57 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
         $this->createBlikLevelZeroPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_creates_a_payment_and_requests_paying_it_using_blik_alias(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn(['tpay' => ['blik_alias_value' => 'i_AM_a_BLIK_alias_VALUE']]);
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $blikAlias = $this->prophesize(BlikAliasInterface::class);
+
+        $this->blikAliasRepository->findOneByValue('i_AM_a_BLIK_alias_VALUE')->willReturn($blikAlias);
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'result' => 'success',
+            'status' => 'correct',
+            'transactionId' => 'tr4ns4ct!0n_id',
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $payment->setDetails(
+            $this->getExpectedDetails(
+                transaction_id: 'tr4ns4ct!0n_id',
+                status: 'correct',
+                blik_alias_value: 'i_AM_a_BLIK_alias_VALUE',
+            ),
+        )->shouldBeCalled();
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, $blikAlias, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
 
@@ -215,7 +274,7 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
 
         $this->createBlikLevelZeroPaymentPayloadFactory
-            ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
         ;
 
@@ -238,11 +297,120 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->createTestSubject()->execute($request->reveal());
     }
 
+    public function test_it_handles_errors_and_throws_exception_if_unexpected_error_occurred(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Unexpected error.');
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'payments' => [
+                'errors' => [
+                    [
+                        'errorCode' => 'yolo',
+                        'errorMessage' => 'I do not know what happened here but it does not work LOL!',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
+    public function test_it_handles_errors_and_throws_blik_alias_ambiguous_value_exception_if_there_are_alternatives_in_the_response(): void
+    {
+        $this->expectExceptionObject(BlikAliasAmbiguousValueException::create([
+            [
+                'applicationName' => 'Acme Bank',
+                'applicationCode' => '1ec8f352-463c-6334-be44-9fede70e64b8',
+            ],
+        ]));
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'payments' => [
+                'errors' => [
+                    [
+                        'errorCode' => 'payment_failed',
+                        'errorMessage' => 'aliases: Too many aliases found for aliasValue: ambiguous_value',
+                    ],
+                ],
+                'alternatives' => [
+                    [
+                        'applicationName' => 'Acme Bank',
+                        'applicationCode' => '1ec8f352-463c-6334-be44-9fede70e64b8',
+                    ],
+                ]
+            ],
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
     private function createTestSubject(): CreateBlikLevelZeroTransactionAction
     {
         $action = new CreateBlikLevelZeroTransactionAction(
             $this->createBlikLevelZeroPaymentPayloadFactory->reveal(),
             $this->notifyTokenFactory->reveal(),
+            $this->blikAliasRepository->reveal(),
         );
 
         $action->setApi($this->api->reveal());

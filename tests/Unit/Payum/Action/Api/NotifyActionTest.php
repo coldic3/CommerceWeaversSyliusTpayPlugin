@@ -19,8 +19,8 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
-use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 use tpaySDK\Model\Objects\NotificationBody\BasicPayment;
+use Tests\CommerceWeavers\SyliusTpayPlugin\Helper\PaymentDetailsHelperTrait;
 
 final class NotifyActionTest extends TestCase
 {
@@ -43,6 +43,7 @@ final class NotifyActionTest extends TestCase
     protected function setUp(): void
     {
         $this->request = $this->prophesize(Notify::class);
+        $this->model = $this->prophesize(PaymentInterface::class);
         $this->api = $this->prophesize(TpayApi::class);
         $this->basicPaymentFactory = $this->prophesize(BasicPaymentFactoryInterface::class);
         $this->checksumVerifier = $this->prophesize(ChecksumVerifierInterface::class);
