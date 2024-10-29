@@ -1,7 +1,9 @@
-{% set method = order.lastCartPayment().method %}
+{% set payment = order.lastCartPayment() %}
 
-{% if cw_tpay_get_gateway_config_value(method.gatewayConfig, 'type') == 'card' %}
+{% if payment is not null and
+    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::CARD')
+%}
     <div class="ui stackable grid">
-        {% include '@CommerceWeaversSyliusTpayPlugin/shop/payment/_card.html.twig' with {'method': method} %}
+        {% include '@CommerceWeaversSyliusTpayPlugin/shop/payment/_card.html.twig' with {'method': payment.method} %}
     </div>
 {% endif %}

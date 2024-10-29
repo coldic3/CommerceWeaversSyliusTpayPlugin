@@ -1,6 +1,7 @@
 {% set payment = order.lastCartPayment() %}
 
-{% if cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') ==
+{% if payment is not null and
+    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') ==
     constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::GOOGLE_PAY')
 %}
     <div class="ui stackable grid">
