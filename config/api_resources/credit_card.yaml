@@ -1,0 +1,12 @@
+'%commerce_weavers_sylius_tpay.model.credit_card.class%':
+    collectionOperations:
+        get:
+            path: /shop/credit-cards
+    itemOperations:
+        get:
+            path: /shop/credit-cards/{id}
+        delete:
+            path: /shop/credit-cards/{id}
+    properties:
+        id:
+            identifier: true

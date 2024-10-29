@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryCollectionExtension\CreditCardShopUserCollectionExtension;
+use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\CreditCardShopUserItemExtension;
 use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\OrderShopUserItemExtension;
 use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\OrderVisitorItemExtension;
 use CommerceWeavers\SyliusTpayPlugin\Api\Doctrine\QueryItemExtension\Provider\AllowedOrderOperationsProvider;
@@ -23,6 +25,20 @@ return function(ContainerConfigurator $container): void {
             service(UserContextInterface::class),
             service('commerce_weavers_sylius_tpay.api.doctrine.query_item_extension.provider.allowed_order_operations'),
         ])
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.doctrine.query_item_extension.credit_card_shop_user', CreditCardShopUserItemExtension::class)
+        ->args([
+            service(UserContextInterface::class),
+        ])
+        ->tag('api_platform.doctrine.orm.query_extension.item')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.doctrine.query_collection_extension.credit_card_shop_user', CreditCardShopUserCollectionExtension::class)
+        ->args([
+            service(UserContextInterface::class),
+        ])
+        ->tag('api_platform.doctrine.orm.query_extension.collection')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.api.doctrine.query_item_extension.order_visitor', OrderVisitorItemExtension::class)
