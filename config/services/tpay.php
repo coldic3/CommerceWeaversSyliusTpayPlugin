@@ -19,8 +19,9 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayl
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProvider;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProvider;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProvider;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\CachedTpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
@@ -149,18 +150,27 @@ return static function(ContainerConfigurator $container): void {
         ->alias(SignatureVerifierInterface::class, 'commerce_weavers_sylius_tpay.tpay.security.notification.verifier.signature')
     ;
 
-    $services->set('commerce_weavers_sylius_tpay.tpay.provider.tpay_api_bank_list', TpayApiBankListProvider::class)
+    $services->set('commerce_weavers_sylius_tpay.tpay.provider.available_tpay_api_bank_list', AvailableTpayChannelListProvider::class)
         ->args([
             service('commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver'),
         ])
-        ->alias(TpayApiBankListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.provider.tpay_api_bank_list')
+        ->alias(AvailableTpayChannelListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.provider.available_tpay_api_bank_list')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.tpay.provider.validated_tpay_api_bank_list', ValidTpayChannelListProvider::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.tpay.provider.available_tpay_api_bank_list'),
+            service('sylius.repository.gateway_config'),
+            service('payum.dynamic_gateways.cypher')
+        ])
+        ->alias(AvailableTpayChannelListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.provider.validated_tpay_api_bank_list')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver', TpayTransactionChannelResolver::class)
         ->args([
             service('payum'),
         ])
-        ->alias(TpayApiBankListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver')
+        ->alias(AvailableTpayChannelListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.resolver.cached_tpay_transaction_channel_resolver', CachedTpayTransactionChannelResolver::class)

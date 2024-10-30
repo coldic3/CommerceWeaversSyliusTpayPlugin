@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolverInterface;
 
-final class TpayApiBankListProvider implements TpayApiBankListProviderInterface
+final class AvailableTpayChannelListProvider implements AvailableTpayChannelListProviderInterface
 {
     public function __construct(
         private readonly TpayTransactionChannelResolverInterface $channelResolver,
@@ -30,11 +30,7 @@ final class TpayApiBankListProvider implements TpayApiBankListProviderInterface
          * }
          */
         return array_filter($result, static function (array $channel) {
-            return
-                ($channel['instantRedirection'] ?? false) === true &&
-                ($channel['onlinePayment'] ?? false) === true &&
-                ($channel['available'] ?? false) === true
-            ;
+            return ($channel['available'] ?? false) === true;
         });
     }
 }

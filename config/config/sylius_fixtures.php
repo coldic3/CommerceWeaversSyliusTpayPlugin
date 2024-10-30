@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Symfony\Config\SyliusFixturesConfig;
 

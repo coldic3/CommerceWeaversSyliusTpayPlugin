@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\ContextProvider;
 
 use CommerceWeavers\SyliusTpayPlugin\ContextProvider\BankListContextProvider;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -17,10 +17,10 @@ class BankListContextProviderTest extends TestCase
 {
     use ProphecyTrait;
 
-    private TpayApiBankListProviderInterface|ObjectProphecy $bankListProvider;
+    private AvailableTpayChannelListProviderInterface|ObjectProphecy $bankListProvider;
     protected function setUp(): void
     {
-        $this->bankListProvider = $this->prophesize(TpayApiBankListProviderInterface::class);
+        $this->bankListProvider = $this->prophesize(AvailableTpayChannelListProviderInterface::class);
     }
 
     public function test_it_does_not_support_some_template_event_and_pay_by_link_template_name(): void
