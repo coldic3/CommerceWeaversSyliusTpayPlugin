@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\GatewayConfigInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
-use Payum\Core\Model\GatewayConfigInterface;
 use Payum\Core\Security\CypherInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Webmozart\Assert\Assert;
@@ -56,23 +56,21 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
                 PaymentType::APPLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::APPLE_PAY,
                 PaymentType::GOOGLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::GOOGLE_PAY,
                 PaymentType::BLIK => $paymentMethodsToRemoveByGroupId[] = PayGroup::BLIK,
+                PaymentType::CARD => $paymentMethodsToRemoveByGroupId[] = PayGroup::CARD,
                 default => null,
             };
         }
 
         if (!$hasPblPaymentAvailable) {
             throw new UnableToGetBankListException(
-                'Bank list cannot be retrieved if there is no payment method with PayByLink type configured'
+                'Bank list cannot be retrieved if there is no payment method with PayByLink type configured',
             );
         }
 
-        foreach ($availableChannels as $availableChannel) {
-            $channelId = (int) $availableChannel['id'];
-            if (in_array($channelId, $paymentMethodsToRemoveByGroupId, true)) {
-                unset($availableChannels[$channelId]);
-            }
-        }
+        return array_filter($availableChannels, static function (array $channel) use ($paymentMethodsToRemoveByGroupId): bool {
+            $groupId = (int) $channel['groups'][0]['id'];
 
-        return $availableChannels;
+            return !in_array($groupId, $paymentMethodsToRemoveByGroupId, true);
+        });
     }
 }

@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Validator\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 
-final class ValidTpayApiChannel extends Constraint
+final class ValidTpayChannel extends Constraint
 {
     public string $message = 'commerce_weavers_sylius_tpay.shop.pay.tpay_channel.not_valid';
 

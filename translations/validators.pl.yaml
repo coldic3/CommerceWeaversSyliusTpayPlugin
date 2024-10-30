@@ -17,6 +17,8 @@ commerce_weavers_sylius_tpay:
                 not_json_encoded: 'Token Google Pay musi być obiektem JSON zakodowanym przez Base64.'
             encoded_card_data:
                 required: 'Dane karty są wymagane.'
+            tpay_channel:
+                not_valid: 'Wybrany kanał płatności nie jest już dostępny.'
             tpay_channel_id:
                 length: 'Id kanału banku nie może być puste.'
                 required: 'Id kanału banku jest wymagane.'

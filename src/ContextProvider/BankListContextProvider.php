@@ -12,14 +12,12 @@ use Sylius\Component\Core\Model\OrderInterface;
 final class BankListContextProvider implements ContextProviderInterface
 {
     public function __construct(
-        private readonly ValidTpayChannelListProviderInterface $validatedTpayApiBankListProvider,
+        private readonly ValidTpayChannelListProviderInterface $validTpayChannelListProvider,
     ) {
     }
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
     {
-        // TODO this is runned few many times when on checkout/complete/choice-item
-        // propably there it should not be runned totaly but on summary step only
         if (isset($templateContext['order'])) {
             /** @var OrderInterface $order */
             $order = $templateContext['order'];
@@ -29,7 +27,7 @@ final class BankListContextProvider implements ContextProviderInterface
             }
         }
 
-        $templateContext['banks'] = $this->validatedTpayApiBankListProvider->provide();
+        $templateContext['banks'] = $this->validTpayChannelListProvider->provide();
 
         return $templateContext;
     }
