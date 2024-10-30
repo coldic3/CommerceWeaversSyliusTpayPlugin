@@ -6,21 +6,20 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListenerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListenerInterface;
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyPasswordFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 final class TpayGatewayConfigurationType extends AbstractType
 {
     public function __construct(
         private readonly DecryptGatewayConfigListenerInterface $decryptGatewayConfigListener,
         private readonly EncryptGatewayConfigListenerInterface $encryptGatewayConfigListener,
-        private readonly PreventSavingEmptyPasswordFieldsListener $preventSavingEmptyClientSecretListener,
     ) {
     }
 
@@ -35,13 +34,21 @@ final class TpayGatewayConfigurationType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_id',
+                    'validation_groups' => ['sylius'],
+                    'constraints' => [
+                        new NotBlank(allowNull: false, groups: ['sylius']),
+                    ],
                 ],
             )
             ->add(
                 'client_secret',
-                PasswordType::class,
+                TextType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
+                    'validation_groups' => ['sylius'],
+                    'constraints' => [
+                        new NotBlank(allowNull: false, groups: ['sylius']),
+                    ],
                 ],
             )
             ->add(
@@ -77,11 +84,20 @@ final class TpayGatewayConfigurationType extends AbstractType
                 ],
             )
             ->add(
+                'notification_security_code',
+                TextType::class,
+                [
+                    'empty_data' => '',
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.notification_security_code',
+                ],
+            )
+            ->add(
                 'google_merchant_id',
                 TextType::class,
                 [
                     'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.google_merchant_id',
+                    'required' => false,
                 ],
             )
             ->add(
@@ -90,14 +106,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 [
                     'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.apple_pay_merchant_id',
-                ],
-            )
-            ->add(
-                'notification_security_code',
-                PasswordType::class,
-                [
-                    'empty_data' => '',
-                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.notification_security_code',
+                    'required' => false,
                 ],
             )
             ->add(
@@ -115,6 +124,10 @@ final class TpayGatewayConfigurationType extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, $this->decryptGatewayConfigListener);
         $builder->addEventListener(FormEvents::POST_SUBMIT, $this->encryptGatewayConfigListener);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, $this->preventSavingEmptyClientSecretListener);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefault('validation_groups', ['sylius']);
     }
 }

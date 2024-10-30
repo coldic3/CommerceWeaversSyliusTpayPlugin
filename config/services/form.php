@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransforme
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\VisaMobilePhoneDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\PreventSavingEmptyPasswordFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\PaymentTypeExtension;
@@ -32,7 +31,6 @@ return function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_sylius_tpay.form.event_listener.decrypt_gateway_config'),
             service('commerce_weavers_sylius_tpay.form.event_listener.encrypt_gateway_config'),
-            service('commerce_weavers_sylius_tpay.form.event_listener.prevent_saving_empty_password_fields'),
         ])
         ->tag(
             'sylius.gateway_configuration_type',
@@ -70,8 +68,6 @@ return function(ContainerConfigurator $container): void {
             service('payum.dynamic_gateways.cypher'),
         ])
     ;
-
-    $services->set('commerce_weavers_sylius_tpay.form.event_listener.prevent_saving_empty_password_fields', PreventSavingEmptyPasswordFieldsListener::class);
 
     $services->set('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields', RemoveUnnecessaryPaymentDetailsFieldsListener::class);
 };

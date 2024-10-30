@@ -21,14 +21,10 @@ class TpayGatewayFactory extends GatewayFactory
 
         $config['payum.api'] = function (ArrayObject $config): TpayApi {
             /** @var array{client_id?: string, client_secret?: string, production_mode?: bool, notification_security_code?: string} $config */
-            $clientId = $config['client_id'] ?? null;
-            $clientSecret = $config['client_secret'] ?? null;
+            $clientId = $config['client_id'] ?? '';
+            $clientSecret = $config['client_secret'] ?? '';
             $productionMode = $config['production_mode'] ?? false;
             $notificationSecretCode = $config['notification_security_code'] ?? null;
-
-            if (null === $clientId || null === $clientSecret) {
-                throw new \InvalidArgumentException('Tpay ClientId and ClientSecret are required.');
-            }
 
             return new TpayApi($clientId, $clientSecret, $productionMode, notificationSecretCode: $notificationSecretCode);
         };
