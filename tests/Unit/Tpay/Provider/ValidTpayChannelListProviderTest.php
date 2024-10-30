@@ -12,6 +12,7 @@ use Payum\Core\Security\CypherInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 final class ValidTpayChannelListProviderTest extends TestCase
@@ -73,12 +74,15 @@ final class ValidTpayChannelListProviderTest extends TestCase
 
     private RepositoryInterface|ObjectProphecy $gatewayMethodRepository;
 
+    private RepositoryInterface|ObjectProphecy $paymentMethodRepository;
+
     private CypherInterface|ObjectProphecy $cypher;
 
     protected function setUp(): void
     {
         $this->availableTpayApiBankListProvider = $this->prophesize(AvailableTpayChannelListProviderInterface::class);
         $this->gatewayMethodRepository = $this->prophesize(RepositoryInterface::class);
+        $this->paymentMethodRepository = $this->prophesize(RepositoryInterface::class);
         $this->cypher = $this->prophesize(CypherInterface::class);
     }
 
@@ -166,6 +170,8 @@ final class ValidTpayChannelListProviderTest extends TestCase
             ])
         ;
 
+        $this->paymentMethodRepository->findBy(['enabled' => false])->willReturn([]);
+
         $result = $this->createTestSubject()->provide();
 
         $expected = self::BANK_LIST;
@@ -192,6 +198,8 @@ final class ValidTpayChannelListProviderTest extends TestCase
 
         $this->availableTpayApiBankListProvider->provide()->willReturn(self::BANK_LIST);
 
+        $this->paymentMethodRepository->findBy(['enabled' => false])->willReturn([]);
+
         $this->gatewayMethodRepository
             ->findBy(['gatewayName' => 'tpay'])
             ->willReturn([
@@ -205,11 +213,56 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->assertSame(self::BANK_LIST, $result);
     }
 
+    public function test_it_returns_valid_payments_even_without_disabled_payments(): void
+    {
+        $tpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $tpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $tpayPblGatewayConfigConfig = [
+            'type' => 'pay_by_link',
+        ];
+        $tpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
+        $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
+        $tpayPblPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfigConfig);
+
+        $disabledTpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $disabledTpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $disabledTpayPblGatewayConfigConfig = [
+            'type' => 'visa_mobile',
+        ];
+
+        $disabledTpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
+        $disabledTpayPblGatewayConfig->getConfig()->willReturn($disabledTpayPblGatewayConfigConfig);
+        $disabledTpayPblPaymentMethod->getGatewayConfig()->willReturn($disabledTpayPblGatewayConfigConfig);
+        $disabledTpayPblPaymentMethod->getId()->willReturn('6');
+
+        $this->availableTpayApiBankListProvider->provide()->willReturn(self::BANK_LIST);
+
+        $this->paymentMethodRepository->findBy(['enabled' => false])->willReturn([
+            $disabledTpayPblPaymentMethod->reveal(),
+        ]);
+
+        $this->gatewayMethodRepository
+            ->findBy(['gatewayName' => 'tpay'])
+            ->willReturn([
+                $tpayPblGatewayConfig->reveal(),
+                $disabledTpayPblGatewayConfig->reveal(),
+            ])
+        ;
+
+        $result = $this->createTestSubject()->provide();
+
+        $expected = self::BANK_LIST;
+        unset($expected['6']);
+
+        $this->assertSame($expected, $result);
+    }
+
     private function createTestSubject(): ValidTpayChannelListProvider
     {
         return new ValidTpayChannelListProvider(
             $this->availableTpayApiBankListProvider->reveal(),
             $this->gatewayMethodRepository->reveal(),
+            $this->paymentMethodRepository->reveal(),
             $this->cypher->reveal(),
         );
     }

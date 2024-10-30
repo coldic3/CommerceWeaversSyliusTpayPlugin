@@ -17,6 +17,7 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
     public function __construct(
         private readonly AvailableTpayChannelListProviderInterface $availableTpayApiBankListProvider,
         private readonly RepositoryInterface $gatewayRepository,
+        private readonly RepositoryInterface $paymentMethodRepository,
         private readonly CypherInterface $cypher,
     ) {
     }
@@ -65,6 +66,12 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
             throw new UnableToGetBankListException(
                 'Bank list cannot be retrieved if there is no payment method with PayByLink type configured',
             );
+        }
+
+        $disabledPaymentMethods = $this->paymentMethodRepository->findBy(['enabled' => false]);
+
+        foreach ($disabledPaymentMethods as $disabledPaymentMethod) {
+            $paymentMethodsToRemoveByGroupId[] = $disabledPaymentMethod->getId();
         }
 
         return array_filter($availableChannels, static function (array $channel) use ($paymentMethodsToRemoveByGroupId): bool {
