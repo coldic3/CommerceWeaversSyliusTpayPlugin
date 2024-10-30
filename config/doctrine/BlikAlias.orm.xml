@@ -14,7 +14,7 @@
         <field name="expirationDate" column="expiration_date" type="datetime" nullable="true" />
         <field name="registered" column="registered" type="boolean">
             <options>
-                <option name="default">false</option>
+                <option name="default">0</option>
             </options>
         </field>
 
