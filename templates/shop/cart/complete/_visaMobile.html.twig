@@ -11,7 +11,6 @@
                     <div class="field required" data-tpay-field>
                         {{ form_label(form.tpay.visa_mobile_phone_number) }}
                         <div class="ui left labeled input">
-                            <div class="ui label">+</div>
                             {{ form_widget(form.tpay.visa_mobile_phone_number, {
                                 attr: {
                                     'data-validation-error-min-length': 'commerce_weavers_sylius_tpay.shop.pay.visa_mobile.min_length'|trans({}, 'validators'),

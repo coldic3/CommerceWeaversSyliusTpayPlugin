@@ -59,20 +59,6 @@ final class TpayVisaMobileCheckoutTest extends E2ETestCase
         $this->assertSame($inputValueMaxLength, strlen($expectedValue));
     }
 
-    public function test_it_throws_validation_error_if_phone_number_contains_non_digit_character(): void
-    {
-        $this->processWithPaymentMethod('tpay_visa_mobile');
-        $this->fillVisaMobile(self::FORM_ID, '+12312312');
-        $this->placeOrder();
-
-        $validationElement = $this->findElementByXpath("//div[contains(@class, 'sylius-validation-error')]");
-        $this->assertNotNull($validationElement);
-        $this->assertSame(
-            "The mobile phone must consist only of digits.",
-            $validationElement->getText()
-        );
-    }
-
     public function test_it_throws_validation_error_if_phone_number_is_empty(): void
     {
         $this->processWithPaymentMethod('tpay_visa_mobile');

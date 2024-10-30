@@ -1,3 +1,6 @@
+import 'intl-tel-input/build/css/intlTelInput.css';
+import intlTelInput from 'intl-tel-input';
+
 document.addEventListener('DOMContentLoaded', () => {
   const MOBILE_PHONE_MIN_LENGTH = 7;
   const MOBILE_PHONE_MAX_LENGTH = 15;
@@ -9,6 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (null === phoneNumber) {
     return;
   }
+
+  phoneNumber.addEventListener('keypress', function(e) {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  const intlPhoneNumber = intlTelInput(phoneNumber, {
+    initialCountry: 'pl',
+    loadUtilsOnInit: () => import("intl-tel-input/utils"),
+    formatAsYouType: false,
+  });
 
   form.addEventListener('submit', (event) => {
     validateVisaMobilePhoneNumber(phoneNumber);
@@ -24,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    phoneNumber.value = intlPhoneNumber.getNumber().substring(1);
 
     form.submit();
   });
