@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Routing\Generator\CallbackUrlGeneratorInterface;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
@@ -24,10 +25,6 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
     {
         $order = $payment->getOrder();
         Assert::notNull($order);
-        $customer = $order->getCustomer();
-        Assert::notNull($customer);
-        $billingAddress = $order->getBillingAddress();
-        Assert::notNull($billingAddress);
         $amount = $payment->getAmount();
         Assert::notNull($amount);
 
@@ -38,15 +35,7 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
                 ['%orderNumber%' => $order->getNumber()],
             ),
             'lang' => substr($localeCode, 0, 2),
-            'payer' => [
-                'email' => $customer->getEmail(),
-                'name' => $billingAddress->getFullName(),
-                'phone' => $billingAddress->getPhoneNumber() ?? $customer->getPhoneNumber() ?? '',
-                'address' => $billingAddress->getStreet() ?? '',
-                'city' => $billingAddress->getCity() ?? '',
-                'code' => $billingAddress->getPostcode() ?? '',
-                'country' => $billingAddress->getCountryCode() ?? '',
-            ],
+            'payer' => $this->createPayerPayload($order),
             'callbacks' => [
                 'payerUrls' => [
                     'success' => $this->callbackUrlGenerator->generateSuccessUrl($payment, $localeCode),
@@ -57,5 +46,32 @@ final class CreateRedirectBasedPaymentPayloadFactory implements CreateRedirectBa
                 ],
             ],
         ];
+    }
+
+    private function createPayerPayload(OrderInterface $order): array
+    {
+        $customer = $order->getCustomer();
+        Assert::notNull($customer);
+        $billingAddress = $order->getBillingAddress();
+        Assert::notNull($billingAddress);
+
+        $requiredResult = [
+            'email' => $customer->getEmail(),
+            'name' => $billingAddress->getFullName(),
+        ];
+
+        $result = [
+            'phone' => $billingAddress->getPhoneNumber() ?? $customer->getPhoneNumber() ?? '',
+            'address' => $billingAddress->getStreet() ?? '',
+            'city' => $billingAddress->getCity() ?? '',
+            'code' => $billingAddress->getPostcode() ?? '',
+            'country' => $billingAddress->getCountryCode() ?? '',
+        ];
+
+        $result = array_filter($result, static function (string $value) {
+            return $value !== '';
+        });
+
+        return array_merge($requiredResult, $result);
     }
 }
