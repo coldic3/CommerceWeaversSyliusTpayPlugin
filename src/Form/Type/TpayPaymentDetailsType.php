@@ -21,6 +21,7 @@ final class TpayPaymentDetailsType extends AbstractType
 {
     public function __construct(
         private readonly object $removeUnnecessaryPaymentDetailsFieldsListener,
+        private readonly object $addSavedCreditCardsListener,
         private readonly TokenStorageInterface $tokenStorage,
     ) {
     }
@@ -104,6 +105,11 @@ final class TpayPaymentDetailsType extends AbstractType
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
             [$this->removeUnnecessaryPaymentDetailsFieldsListener, '__invoke'],
+        );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            [$this->addSavedCreditCardsListener, '__invoke'],
         );
 
         $token = $this->tokenStorage->getToken();

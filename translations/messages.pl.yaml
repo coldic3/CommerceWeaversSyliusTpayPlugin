@@ -19,6 +19,13 @@ commerce_weavers_sylius_tpay:
                 redirect: 'Przekierowanie do Tpay'
                 pay_by_link: 'Przekierowanie do banku'
     shop:
+        credit_cards: 'Karty kredytowe'
+        credit_card:
+            brand: 'Marka'
+            expiration_date: 'Data ważności'
+            tail: 'Ostatnie cyfry'
+            card_selection_one_liner: 'Marka: %brand%, ostatnie 4 cyfry: %tail%, ważność: %expires%'
+            use_new_card: 'Użyj nowej karty'
         order_summary:
             blik:
                 token: 'Kod BLIK'
@@ -46,6 +53,8 @@ commerce_weavers_sylius_tpay:
                 number: 'Numer'
                 save_credit_card_for_later:
                     label: 'Zapisz kartę na później'
+                use_saved_credit_card:
+                    label: 'Zapisane karty'
             visa_mobile:
                 placeholder: 'Numer telefonu'
         payment_failed:

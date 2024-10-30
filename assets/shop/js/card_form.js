@@ -4,6 +4,7 @@ const MAX_CARD_NUMBER_LENGTH = 16;
 
 export class CardForm {
   #form;
+  #savedCard;
   #cardNumber;
   #cardOperatorIcon;
   #cardsApi;
@@ -15,6 +16,7 @@ export class CardForm {
 
   constructor(selector) {
     this.#form = document.querySelector(selector);
+    this.#savedCard = this.#form.querySelector('[data-tpay-saved-card]');
     this.#cardNumber = this.#form.querySelector('[data-tpay-card-number]');
     this.#cardOperatorIcon = this.#form.querySelector('[data-tpay-card-operator-icon]');
     this.#cardsApi = this.#form.querySelector('[data-tpay-cards-api]');
@@ -67,18 +69,30 @@ export class CardForm {
   }
 
   isCvcValid() {
+    if (!this.shouldBeValidated()) {
+      return true;
+    }
+
     const regex = new RegExp(/^\d{3}$/);
 
     return regex.test(this.getCardCvc());
   }
 
   isCardNumberValid() {
+    if (!this.shouldBeValidated()) {
+      return true;
+    }
+
     const regex = new RegExp(`^\\d{${MAX_CARD_NUMBER_LENGTH}}$`);
 
     return regex.test(this.getCardNumber());
   }
 
   isExpirationMonthValid() {
+    if (!this.shouldBeValidated()) {
+      return true;
+    }
+
     if (this.getExpirationYear() > new Date().getFullYear()) {
       return true;
     }
@@ -87,7 +101,15 @@ export class CardForm {
   }
 
   isExpirationYearValid() {
+    if (!this.shouldBeValidated()) {
+      return true;
+    }
+
     return this.getExpirationYear() >= new Date().getFullYear();
+  }
+
+  shouldBeValidated() {
+    return this.#savedCard.value === '';
   }
 
   getCardHolderName() {

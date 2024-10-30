@@ -24,6 +24,7 @@ class PaymentDetails
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
         private bool $saveCreditCardForLater = false,
+        private ?int $useSavedCreditCard = null,
         #[\SensitiveParameter]
         private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
@@ -136,6 +137,16 @@ class PaymentDetails
         $this->saveCreditCardForLater = $saveCreditCardForLater;
     }
 
+    public function getUseSavedCreditCard(): ?int
+    {
+        return $this->useSavedCreditCard;
+    }
+
+    public function setUseSavedCreditCard(?int $useSavedCreditCard): void
+    {
+        $this->useSavedCreditCard = $useSavedCreditCard;
+    }
+
     public function getApplePaySession(): ?string
     {
         return $this->applePaySession;
@@ -245,6 +256,7 @@ class PaymentDetails
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
             $details['tpay']['saveCreditCardForLater'] ?? false,
+            $details['tpay']['useSavedCreditCard'] ?? null,
             $details['tpay']['apple_pay_session'] ?? null,
             $details['tpay']['payment_url'] ?? null,
             $details['tpay']['success_url'] ?? null,
@@ -269,6 +281,7 @@ class PaymentDetails
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
                 'saveCreditCardForLater' => $this->saveCreditCardForLater,
+                'useSavedCreditCard' => $this->useSavedCreditCard,
                 'apple_pay_session' => $this->applePaySession,
                 'payment_url' => $this->paymentUrl,
                 'success_url' => $this->successUrl,

@@ -2,6 +2,19 @@
     <div class="ui small icon message">
         <i class="payment icon"></i>
         <div class="content">
+            {% if form.tpay.useSavedCreditCard is defined %}
+                <div class="field">
+                    <div class="field required" data-tpay-field>
+                        {{ form_label(form.tpay.useSavedCreditCard) }}
+                        <div class="ui left icon input">
+                            {{ form_widget(form.tpay.useSavedCreditCard, { attr: {'data-tpay-saved-card': ''}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui horizontal divider">
+                    {{ 'sylius.ui.or'|trans }}
+                </div>
+            {% endif %}
             <div class="field">
                 <div class="field required" data-tpay-field>
                     {{ form_label(form.tpay.card.number) }}
