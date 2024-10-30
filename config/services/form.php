@@ -51,8 +51,10 @@ return function(ContainerConfigurator $container): void {
     $services->set(TpayPaymentDetailsType::class)
         ->args([
             service('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields'),
-            service('commerce_weavers_sylius_tpay.form.event_listener.add_saved_credit_cards'),
             service('security.token_storage'),
+            service('translator'),
+            service('commerce_weavers_sylius_tpay.repository.credit_card'),
+            service('sylius.context.cart'),
         ])
         ->tag('form.type')
     ;

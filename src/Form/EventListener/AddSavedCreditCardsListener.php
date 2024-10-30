@@ -28,6 +28,7 @@ final class AddSavedCreditCardsListener
     public function __invoke(FormEvent $event): void
     {
         $form = $event->getForm();
+
         /** @var FormInterface $form */
         $form = $form->getParent();
 

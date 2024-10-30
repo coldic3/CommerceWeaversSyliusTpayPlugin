@@ -200,8 +200,7 @@ class PaymentDetails
     public function getType(): string
     {
         return match (true) {
-            null !== $this->getEncodedCardData() => PaymentType::CARD,
-            null !== $this->getUseSavedCreditCard() => PaymentType::CARD,
+            null !== $this->getEncodedCardData(), null !== $this->getUseSavedCreditCard() => PaymentType::CARD,
             null !== $this->getBlikToken() => PaymentType::BLIK,
             null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
             null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,

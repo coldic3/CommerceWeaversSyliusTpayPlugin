@@ -47,6 +47,7 @@ final class SaveCreditCardAction extends BasePaymentAwareAction implements Gatew
         Assert::isInstanceOf($customer, CustomerInterface::class);
 
         $creditCard->setCustomer($customer);
+        $creditCard->setChannel($order?->getChannel());
 
         $expiryDate = $request->getTokenExpiryDate();
 

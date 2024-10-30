@@ -15,6 +15,7 @@ use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -34,6 +35,8 @@ final class SaveCreditCardActionTest extends TestCase
 
     private CustomerInterface|ObjectProphecy $customer;
 
+    private ChannelInterface|ObjectProphecy $channel;
+
     private TpayApi|ObjectProphecy $api;
 
     private BasicPaymentFactoryInterface|ObjectProphecy $factory;
@@ -52,6 +55,9 @@ final class SaveCreditCardActionTest extends TestCase
 
         $this->customer = $this->prophesize(CustomerInterface::class);
         $order->getCustomer()->willReturn($this->customer->reveal());
+
+        $this->channel = $this->prophesize(ChannelInterface::class);
+        $order->getChannel()->willReturn($this->channel->reveal());
 
         $this->model = $this->prophesize(PaymentInterface::class);
         $this->model->getOrder()->willReturn($order->reveal());
@@ -92,6 +98,7 @@ final class SaveCreditCardActionTest extends TestCase
         $creditCard->setToken('card_token')->shouldBeCalled();
         $creditCard->setExpirationDate(new \DateTimeImmutable('01-11-2028'))->shouldBeCalled();
         $creditCard->setCustomer($this->customer)->shouldBeCalled();
+        $creditCard->setChannel($this->channel)->shouldBeCalled();
 
         $this->repository->add($creditCard->reveal())->shouldBeCalled();
 

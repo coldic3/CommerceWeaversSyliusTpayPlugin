@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Entity;
 
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Resource\Model\ResourceInterface;
 
@@ -28,4 +29,8 @@ interface CreditCardInterface extends ResourceInterface
     public function getCustomer(): ?CustomerInterface;
 
     public function setCustomer(?CustomerInterface $customer): void;
+
+    public function getChannel(): ?ChannelInterface;
+
+    public function setChannel(?ChannelInterface $channel): void;
 }
