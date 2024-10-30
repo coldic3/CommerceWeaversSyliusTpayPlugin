@@ -27,6 +27,11 @@ return function(RoutingConfigurator $routes): void {
         ->methods([Request::METHOD_GET])
     ;
 
+    $routes->add(Routing::SHOP_WAITING_FOR_PAYMENT, Routing::SHOP_WAITING_FOR_PAYMENT_PATH)
+        ->controller(DisplayWaitingForPaymentPage::class)
+        ->methods([Request::METHOD_GET])
+    ;
+
     $routes->add(Routing::SHOP_ACCOUNT_CREDIT_CARD_INDEX, Routing::SHOP_ACCOUNT_CREDIT_CARD_INDEX_PATH)
         ->controller('commerce_weavers_sylius_tpay.controller.credit_card::indexAction')
         ->methods([Request::METHOD_GET])

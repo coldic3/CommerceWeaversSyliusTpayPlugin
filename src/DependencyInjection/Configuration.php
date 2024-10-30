@@ -13,7 +13,6 @@ use CommerceWeavers\SyliusTpayPlugin\Factory\CreditCardFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepository;
 use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
-use Sylius\Resource\Factory\Factory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
