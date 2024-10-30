@@ -93,6 +93,7 @@ final class TpayPaymentDetailsType extends AbstractType
                             groups: ['sylius_checkout_complete'],
                         ),
                     ],
+                    'label' => 'sylius.ui.phone_number',
                 ],
             );
 
