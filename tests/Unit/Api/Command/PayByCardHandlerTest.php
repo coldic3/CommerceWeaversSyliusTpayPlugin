@@ -66,7 +66,7 @@ final class PayByCardHandlerTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
         $payment->setDetails(
-            $this->getExpectedDetails(card: 'encoded_card_data', saveCreditCardForLater: true),
+            $this->getExpectedDetails(card: 'encoded_card_data', save_credit_card_for_later: true),
         )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);

@@ -24,10 +24,11 @@ class PayWithCardAction extends BasePaymentAwareAction
         Assert::notNull($paymentDetails->getEncodedCardData(), 'Card data is required to pay with card.');
         Assert::notNull($paymentDetails->getTransactionId(), 'Transaction ID is required to pay with card.');
 
-        $payload = $this->payWithCardActionPayloadMapper->getPayload($paymentDetails);
-
         $this->do(
-            fn () => $this->api->transactions()->createPaymentByTransactionId($payload, $paymentDetails->getTransactionId()),
+            fn () => $this->api->transactions()->createPaymentByTransactionId(
+                $this->payWithCardActionPayloadMapper->getPayload($paymentDetails),
+                $paymentDetails->getTransactionId(),
+            ),
             onSuccess: function ($response) use ($paymentDetails) {
                 $paymentDetails->setResult($response['result']);
                 $paymentDetails->setStatus($response['status']);

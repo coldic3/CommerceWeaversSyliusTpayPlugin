@@ -13,6 +13,7 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Request\Sync;
 use Payum\Core\Security\TokenInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\CustomerInterface;
@@ -87,6 +88,7 @@ final class SaveCreditCardActionTest extends TestCase
 
         $this->model->setDetails($this->getExpectedDetails())->shouldBeCalled();
 
+        $creditCard->setUid(Argument::type('string'))->shouldBeCalled();
         $creditCard->setTail('card_tail')->shouldBeCalled();
         $creditCard->setBrand('card_brand')->shouldBeCalled();
         $creditCard->setToken('card_token')->shouldBeCalled();
