@@ -21,7 +21,9 @@ class PayWithCardAction extends BasePaymentAwareAction
 
     protected function doExecute(Generic $request, PaymentInterface $model, PaymentDetails $paymentDetails, string $gatewayName, string $localeCode): void
     {
-        Assert::notNull($paymentDetails->getEncodedCardData(), 'Card data is required to pay with card.');
+        if ($paymentDetails->getEncodedCardData() === null && $paymentDetails->getUseSavedCreditCard() === null) {
+            throw new \InvalidArgumentException('Card data is required to pay with card.');
+        }
         Assert::notNull($paymentDetails->getTransactionId(), 'Transaction ID is required to pay with card.');
 
         $this->do(

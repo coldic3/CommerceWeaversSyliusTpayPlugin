@@ -20,7 +20,7 @@ final class Pay implements OrderTokenAwareInterface
         public readonly ?string $googlePayToken = null,
         public readonly ?string $encodedCardData = null,
         public readonly ?int $savedCardId = null,
-        public readonly bool $saveCard = false,
+        public readonly ?bool $saveCard = null,
         public readonly ?string $tpayChannelId = null,
         public readonly ?string $visaMobilePhoneNumber = null,
     ) {

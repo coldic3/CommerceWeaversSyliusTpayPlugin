@@ -53,6 +53,57 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
         $this->assertResponse($response, 'shop/paying_for_orders_by_card/test_paying_with_a_valid_card_for_an_order');
     }
 
+    public function test_paying_with_a_saved_card_data_for_an_order(): void
+    {
+        $loadFixtures = $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
+
+        $authorizationHeader = $this->logInUser('shop', self::FIXTURE_EMAIL);
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER + $authorizationHeader,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'savedCardId' => $loadFixtures['single_credit_card']->getId(),
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseCode($response, Response::HTTP_OK);
+        $this->assertResponse($response, 'shop/paying_for_orders_by_card/test_paying_with_a_valid_card_for_an_order');
+    }
+
+    public function test_trying_paying_with_a_saved_without_being_logged_in(): void
+    {
+        $loadFixtures = $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+
+        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
+
+        $this->client->request(
+            Request::METHOD_POST,
+            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
+            server: self::CONTENT_TYPE_HEADER,
+            content: json_encode([
+                'successUrl' => 'https://example.com/success',
+                'failureUrl' => 'https://example.com/failure',
+                'savedCardId' => $loadFixtures['single_credit_card']->getId(),
+            ]),
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertResponseCode($response, 422);
+        $this->assertStringContainsString(
+            'savedCardId: You are not authorized to perform this action."',
+            $response->getContent(),
+        );
+    }
+
     public function test_it_handles_tpay_error_while_paying_with_card_based_payment_type(): void
     {
         $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
@@ -134,9 +185,9 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertResponseCode($response, 424);
+        $this->assertResponseCode($response, 422);
         $this->assertStringContainsString(
-            'An error occurred while processing your payment. Please try again or contact store support.',
+            'saveCard: You are not authorized to perform this action."',
             $response->getContent(),
         );
     }
@@ -161,8 +212,8 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
 
         $this->assertResponseViolations($response, [
             [
-                'propertyPath' => 'encodedCardData',
-                'message' => 'The card data is required.',
+                'propertyPath' => '',
+                'message' => 'You must provide new card data or an identifier of a saved card.',
             ]
         ]);
     }
@@ -178,32 +229,10 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
             'failureUrl' => 'https://example.com/failure',
             'blikToken' => '777123',
         ]];
-    }
-
-    public function test_paying_with_providing_an_empty_card_data(): void
-    {
-        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
-
-        $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
-
-        $this->client->request(
-            Request::METHOD_POST,
-            sprintf('/api/v2/shop/orders/%s/pay', $order->getTokenValue()),
-            server: self::CONTENT_TYPE_HEADER,
-            content: json_encode([
-                'successUrl' => 'https://example.com/success',
-                'failureUrl' => 'https://example.com/failure',
-                'encodedCardData' => '',
-            ]),
-        );
-
-        $response = $this->client->getResponse();
-
-        $this->assertResponseViolations($response, [
-            [
-                'propertyPath' => 'encodedCardData',
-                'message' => 'The card data is required.',
-            ]
-        ]);
+        yield 'content with a empty card data' => [[
+            'successUrl' => 'https://example.com/success',
+            'failureUrl' => 'https://example.com/failure',
+            'encodedCardData' => '',
+        ]];
     }
 }

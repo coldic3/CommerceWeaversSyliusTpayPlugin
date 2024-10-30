@@ -4,7 +4,7 @@ Sylius\Component\Core\Model\Customer:
         lastName: 'Doe'
         email: 'sylius@example.com'
         emailCanonical: 'sylius@example.com'
-        
+
 Sylius\Component\Core\Model\ShopUser:
     user_john_doe:
         plainPassword: '123pa\\$\\$word'

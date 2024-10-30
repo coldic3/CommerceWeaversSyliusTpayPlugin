@@ -12,6 +12,7 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByCardHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByGooglePayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByLinkHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirectHandler;
+use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayBySavedCardHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByVisaMobileHandler;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayHandler;
 use CommerceWeavers\SyliusTpayPlugin\Command\CancelLastPaymentHandler;
@@ -71,6 +72,11 @@ return static function(ContainerConfigurator $container): void {
     ;
 
     $services->set('commerce_weavers_sylius_tpay.api.command.pay_by_card_handler', PayByCardHandler::class)
+        ->parent('commerce_weavers_sylius_tpay.api.command.abstract_pay_by_handler')
+        ->tag('messenger.message_handler')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.api.command.pay_by_saved_card_handler', PayBySavedCardHandler::class)
         ->parent('commerce_weavers_sylius_tpay.api.command.abstract_pay_by_handler')
         ->tag('messenger.message_handler')
     ;
