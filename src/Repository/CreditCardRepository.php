@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Repository;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
+use Webmozart\Assert\Assert;
 
 final class CreditCardRepository extends EntityRepository implements CreditCardRepositoryInterface
 {
@@ -36,10 +36,14 @@ final class CreditCardRepository extends EntityRepository implements CreditCardR
 
     public function findByCustomerAndChannel(?CustomerInterface $customer, ?ChannelInterface $channel): array
     {
-        return $this->createByCustomerListQueryBuilder($customer, $channel)
+        $result = $this->createByCustomerListQueryBuilder($customer, $channel)
             ->getQuery()
             ->getResult()
         ;
+
+        Assert::isArray($result);
+
+        return $result;
     }
 
     public function hasCustomerAnyCreditCardInGivenChannel(?CustomerInterface $customer, ?ChannelInterface $channel): bool

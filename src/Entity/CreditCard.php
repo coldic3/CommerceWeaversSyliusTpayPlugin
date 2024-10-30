@@ -14,7 +14,9 @@ class CreditCard implements CreditCardInterface
     private ?string $uid = null;
 
     private ?string $token = null;
+
     private ?string $brand = null;
+
     private ?string $tail = null;
 
     private ?\DateTimeInterface $expirationDate = null;
@@ -67,6 +69,7 @@ class CreditCard implements CreditCardInterface
     {
         $this->tail = $tail;
     }
+
     public function getExpirationDate(): ?\DateTimeInterface
     {
         return $this->expirationDate;

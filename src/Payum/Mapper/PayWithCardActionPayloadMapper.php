@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Mapper;
 
+use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
-use Payum\Core\Reply\HttpRedirect;
-use Payum\Core\Request\Generic;
-use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
 class PayWithCardActionPayloadMapper implements PayWithCardActionPayloadMapperInterface
@@ -21,9 +17,7 @@ class PayWithCardActionPayloadMapper implements PayWithCardActionPayloadMapperIn
     }
 
     /**
-     * @param PaymentDetails $paymentDetails
-     *
-     * @return array<'groupId' => string, 'cardPaymentData' => array>
+     * @return array{'groupId': int, 'cardPaymentData': array}
      */
     public function getPayload(PaymentDetails $paymentDetails): array
     {
@@ -32,8 +26,13 @@ class PayWithCardActionPayloadMapper implements PayWithCardActionPayloadMapperIn
         ];
 
         if ($paymentDetails->getUseSavedCreditCard() !== null) {
+            /** @var CreditCardInterface|null $creditCard */
+            $creditCard = $this->creditCardRepository->find($paymentDetails->getUseSavedCreditCard());
+
+            Assert::notNull($creditCard);
+
             $payload['cardPaymentData'] = [
-                'token' => $this->creditCardRepository->find($paymentDetails->getUseSavedCreditCard())->getToken(),
+                'token' => $creditCard->getToken(),
             ];
 
             return $payload;

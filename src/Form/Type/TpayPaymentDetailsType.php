@@ -117,10 +117,12 @@ final class TpayPaymentDetailsType extends AbstractType
 
         if ($user instanceof ShopUserInterface) {
             $builder
-                ->add('saveCreditCardForLater', CheckboxType::class,
+                ->add(
+                    'saveCreditCardForLater',
+                    CheckboxType::class,
                     [
                         'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.save_credit_card_for_later.label',
-                    ]
+                    ],
                 )
             ;
         }

@@ -11,6 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\ApiBundle\Context\UserContextInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
+use Sylius\Component\Core\Model\ShopUserInterface;
 
 final class CreditCardShopUserCollectionExtension implements ContextAwareQueryCollectionExtensionInterface
 {
@@ -20,7 +21,6 @@ final class CreditCardShopUserCollectionExtension implements ContextAwareQueryCo
     ) {
     }
 
-    /** @param array<string, mixed> $context */
     public function applyToCollection(
         QueryBuilder $queryBuilder,
         LegacyQueryNameGeneratorInterface $queryNameGenerator,
@@ -32,6 +32,7 @@ final class CreditCardShopUserCollectionExtension implements ContextAwareQueryCo
             return;
         }
 
+        /** @var ShopUserInterface|AdminUserInterface|null $user */
         $user = $this->userContext->getUser();
 
         if ($user instanceof AdminUserInterface) {

@@ -14,6 +14,5 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set(AddCreditCardToAccountMenuEventListener::class)
         ->tag('kernel.event_listener', ['event' => AccountMenuBuilder::EVENT_NAME, 'method' => '__invoke'])
-
     ;
 };

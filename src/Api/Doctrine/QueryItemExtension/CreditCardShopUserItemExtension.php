@@ -12,7 +12,6 @@ use Sylius\Bundle\ApiBundle\Context\UserContextInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\AdminUserInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;
-use Symfony\Component\VarDumper\VarDumper;
 
 final class CreditCardShopUserItemExtension implements QueryItemExtensionInterface
 {

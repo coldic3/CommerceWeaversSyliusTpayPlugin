@@ -132,7 +132,7 @@ class PaymentDetails
         return $this->saveCreditCardForLater;
     }
 
-    public function setSaveCreditCardForLater(?bool $saveCreditCardForLater): void
+    public function setSaveCreditCardForLater(bool $saveCreditCardForLater): void
     {
         $this->saveCreditCardForLater = $saveCreditCardForLater;
     }

@@ -10,12 +10,31 @@ class SaveCreditCard extends Generic
 {
     public function __construct(
         mixed $model,
-        public readonly string $cardToken,
-        public readonly string $cardBrand,
-        public readonly string $cardTail,
-        public readonly string $tokenExpiryDate,
-
+        private readonly string $cardToken,
+        private readonly string $cardBrand,
+        private readonly string $cardTail,
+        private readonly string $tokenExpiryDate,
     ) {
         parent::__construct($model);
+    }
+
+    public function getCardToken(): string
+    {
+        return $this->cardToken;
+    }
+
+    public function getCardBrand(): string
+    {
+        return $this->cardBrand;
+    }
+
+    public function getCardTail(): string
+    {
+        return $this->cardTail;
+    }
+
+    public function getTokenExpiryDate(): string
+    {
+        return $this->tokenExpiryDate;
     }
 }

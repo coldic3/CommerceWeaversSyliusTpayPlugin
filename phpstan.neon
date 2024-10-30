@@ -17,6 +17,7 @@ parameters:
             identifier: missingType.generics # ignore missing type generics, as it is complicated when supported for Sylius 1.12 and 1.13 is required
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
         - '/Parameter \#1 \$request \([^)]+\) of method [^:]+::execute\(\) should be contravariant with parameter \$request \(mixed\) of method Payum\\Core\\Action\\ActionInterface::execute\(\)/'
+        - '/Parameter \#1 \$request \([^)]+\) of method [^:]+::doExecute\(\) should be contravariant with parameter \$request \([^)]+\) of method CommerceWeavers\\SyliusTpayPlugin\\Payum\\Action\\Api\\BasePaymentAwareAction::doExecute\(\)/'
         - '/Parameter \$event of method CommerceWeavers\\SyliusTpayPlugin\\Refunding\\Workflow\\Listener\\DispatchRefundListener::__invoke\(\) has invalid type Symfony\\Component\\Workflow\\Event\\TransitionEvent\./'
         - '/Call to method getSubject\(\) on an unknown class Symfony\\Component\\Workflow\\Event\\TransitionEvent\./'
         - '#Class CommerceWeavers\\SyliusTpayPlugin\\Form\\DataTransformer\\CardTypeDataTransformer implements generic interface Symfony\\Component\\Form\\DataTransformerInterface but does not specify its types: TValue, TTransformedValue#'

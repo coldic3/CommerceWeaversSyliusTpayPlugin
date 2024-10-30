@@ -10,10 +10,13 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\SaveCreditCard;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Generic;
+use Sylius\Component\Core\Model\CustomerInterface;
+use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Resource\Factory\FactoryInterface;
 use Symfony\Component\Uid\Uuid;
+use Webmozart\Assert\Assert;
 
 final class SaveCreditCardAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
@@ -35,16 +38,26 @@ final class SaveCreditCardAction extends BasePaymentAwareAction implements Gatew
         $creditCard = $this->creditCardFactory->createNew();
 
         $creditCard->setUid(Uuid::v4()->toRfc4122());
-        $creditCard->setToken($request->cardToken);
-        $creditCard->setBrand($request->cardBrand);
-        $creditCard->setTail($request->cardTail);
-        $creditCard->setCustomer($model->getOrder()->getCustomer());
+        $creditCard->setToken($request->getCardToken());
+        $creditCard->setBrand($request->getCardBrand());
+        $creditCard->setTail($request->getCardTail());
+
+        /** @var ?OrderInterface $order */
+        $order = $model->getOrder();
+        $customer = $order?->getCustomer();
+
+        Assert::isInstanceOf($customer, CustomerInterface::class);
+
+        $creditCard->setCustomer($customer);
+
+        $expiryDate = $request->getTokenExpiryDate();
+
         $creditCard->setExpirationDate(new \DateTimeImmutable(
             sprintf(
                 '01-%s-20%s',
-                substr($request->tokenExpiryDate, 0, 2),
-                substr($request->tokenExpiryDate, 2, 2)
-            )
+                substr($expiryDate, 0, 2),
+                substr($expiryDate, 2, 2),
+            ),
         ));
 
         $this->creditCardRepository->add($creditCard);

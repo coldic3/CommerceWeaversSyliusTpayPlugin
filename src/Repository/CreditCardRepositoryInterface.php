@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CommerceWeavers\SyliusTpayPlugin\Repository;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;

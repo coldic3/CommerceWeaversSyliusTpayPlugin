@@ -12,7 +12,6 @@ use CommerceWeavers\SyliusTpayPlugin\Factory\BlikAliasFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepository;
 use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
-use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Resource\Factory\Factory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
