@@ -29,22 +29,22 @@ final class PayBySavedCardFactoryTest extends TestCase
     {
         $factory = $this->createTestSubject();
 
-        $this->assertFalse($factory->supports($this->createCommand(savedCardId: 1), new Payment()));
+        $this->assertFalse($factory->supports($this->createCommand(savedCardId: 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'), new Payment()));
     }
 
     public function test_it_supports_a_command_with_an_saved_card_data(): void
     {
         $factory = $this->createTestSubject();
 
-        $this->assertTrue($factory->supports($this->createCommand(savedCardId: 1), $this->createPayment()));
+        $this->assertTrue($factory->supports($this->createCommand(savedCardId: 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'), $this->createPayment()));
     }
 
     public function test_it_creates_a_pay_by_saved_card_command(): void
     {
-        $command = $this->createTestSubject()->create($this->createCommand(savedCardId: 1), $this->createPayment());
+        $command = $this->createTestSubject()->create($this->createCommand(savedCardId: 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'), $this->createPayment());
 
         $this->assertInstanceOf(PayBySavedCard::class, $command);
-        $this->assertSame(1, $command->savedCardId);
+        $this->assertSame('e0f79275-18ef-4edf-b8fc-adc40fdcbcc0', $command->savedCardId);
     }
 
     public function test_it_throws_an_exception_when_trying_to_create_a_command_with_unsupported_factory(): void
@@ -54,7 +54,7 @@ final class PayBySavedCardFactoryTest extends TestCase
         $this->createTestSubject()->create($this->createCommand(), new Payment());
     }
 
-    private function createCommand(?string $token = null, ?int $savedCardId = null, bool $saveCard = false): Pay
+    private function createCommand(?string $token = null, ?string $savedCardId = null, bool $saveCard = false): Pay
     {
         return new Pay(
             $token ?? 'token',

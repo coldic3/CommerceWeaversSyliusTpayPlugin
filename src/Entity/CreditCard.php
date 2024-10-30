@@ -9,9 +9,9 @@ use Sylius\Component\Core\Model\CustomerInterface;
 
 class CreditCard implements CreditCardInterface
 {
-    private ?int $id = null;
-
-    private ?string $uid = null;
+    public function __construct(private ?string $id = null)
+    {
+    }
 
     private ?string $token = null;
 
@@ -25,19 +25,9 @@ class CreditCard implements CreditCardInterface
 
     private ?ChannelInterface $channel = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getUid(): ?string
-    {
-        return $this->uid;
-    }
-
-    public function setUid(?string $uid): void
-    {
-        $this->uid = $uid;
     }
 
     public function getToken(): ?string

@@ -24,7 +24,7 @@ class PaymentDetails
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
         private bool $saveCreditCardForLater = false,
-        private ?int $useSavedCreditCard = null,
+        private ?string $useSavedCreditCard = null,
         #[\SensitiveParameter]
         private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
@@ -137,12 +137,12 @@ class PaymentDetails
         $this->saveCreditCardForLater = $saveCreditCardForLater;
     }
 
-    public function getUseSavedCreditCard(): ?int
+    public function getUseSavedCreditCard(): ?string
     {
         return $this->useSavedCreditCard;
     }
 
-    public function setUseSavedCreditCard(?int $useSavedCreditCard): void
+    public function setUseSavedCreditCard(?string $useSavedCreditCard): void
     {
         $this->useSavedCreditCard = $useSavedCreditCard;
     }

@@ -55,7 +55,7 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
 
     public function test_paying_with_a_saved_card_data_for_an_order(): void
     {
-        $loadFixtures = $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
+        $this->loadFixturesFromDirectory('shop/paying_for_orders_by_card');
 
         $order = $this->doPlaceOrder('t0k3n', paymentMethodCode: 'tpay_card');
 
@@ -68,7 +68,7 @@ final class PayingForOrdersByCardTest extends JsonApiTestCase
             content: json_encode([
                 'successUrl' => 'https://example.com/success',
                 'failureUrl' => 'https://example.com/failure',
-                'savedCardId' => $loadFixtures['single_credit_card']->getId(),
+                'savedCardId' => 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0',
             ]),
         );
 

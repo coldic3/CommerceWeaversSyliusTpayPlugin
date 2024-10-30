@@ -40,7 +40,7 @@ final class PayByCardAndSavedCardFactoryTest extends TestCase
             'https://cw.nonexisting/success',
             'https://cw.nonexisting/failure',
             encodedCardData: 'card_data',
-            savedCardId: 1,
+            savedCardId: 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0',
         );
     }
 

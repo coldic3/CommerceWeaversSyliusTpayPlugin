@@ -42,6 +42,7 @@ return function(RoutingConfigurator $routes): void {
     $routes->add(Routing::SHOP_ACCOUNT_CREDIT_CARD_DELETE, Routing::SHOP_ACCOUNT_CREDIT_CARD_DELETE_PATH)
         ->controller('commerce_weavers_sylius_tpay.controller.credit_card::deleteAction')
         ->methods([Request::METHOD_DELETE])
+        ->requirements(['id' => '[0-9a-f]{8}-[0-9a-f]{4}-[1-6][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'])
         ->defaults([
             '_sylius' => [
                 'section' => 'shop_account',

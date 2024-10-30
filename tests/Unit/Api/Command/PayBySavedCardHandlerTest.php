@@ -41,7 +41,7 @@ final class PayBySavedCardHandlerTest extends TestCase
 
         $this->paymentRepository->find(1)->willReturn(null);
 
-        $this->createTestSubject()->__invoke(new PayBySavedCard(1, 1));
+        $this->createTestSubject()->__invoke(new PayBySavedCard(1, 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'));
     }
 
     public function test_it_creates_a_card_based_transaction(): void
@@ -49,12 +49,12 @@ final class PayBySavedCardHandlerTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getDetails()->willReturn([], ['tpay' => ['status' => 'pending', 'payment_url' => 'https://cw.org/pay']]);
         $payment->setDetails(
-            $this->getExpectedDetails(use_saved_credit_card: 1),
+            $this->getExpectedDetails(use_saved_credit_card: 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'),
         )->shouldBeCalled();
 
         $this->paymentRepository->find(1)->willReturn($payment);
 
-        $result = $this->createTestSubject()->__invoke(new PayBySavedCard(1, 1));
+        $result = $this->createTestSubject()->__invoke(new PayBySavedCard(1, 'e0f79275-18ef-4edf-b8fc-adc40fdcbcc0'));
 
         $this->assertSame('pending', $result->status);
         $this->assertSame('https://cw.org/pay', $result->transactionPaymentUrl);

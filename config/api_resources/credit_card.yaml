@@ -1,11 +1,20 @@
 '%commerce_weavers_sylius_tpay.model.credit_card.class%':
     collectionOperations:
-        get:
+        shop_get:
+            method: 'GET'
             path: /shop/credit-cards
+            normalization_context:
+                groups:
+                    - 'commerce_weavers_sylius_tpay:shop:credit_card:index'
     itemOperations:
-        get:
+        shop_get:
+            method: 'GET'
             path: /shop/credit-cards/{id}
-        delete:
+            normalization_context:
+                groups:
+                    - 'commerce_weavers_sylius_tpay:shop:credit_card:show'
+        shop_delete:
+            method: 'DELETE'
             path: /shop/credit-cards/{id}
     properties:
         id:

@@ -9,10 +9,6 @@ use Sylius\Resource\Model\ResourceInterface;
 
 interface CreditCardInterface extends ResourceInterface
 {
-    public function getUid(): ?string;
-
-    public function setUid(?string $uid): void;
-
     public function getToken(): ?string;
 
     public function setToken(?string $token): void;

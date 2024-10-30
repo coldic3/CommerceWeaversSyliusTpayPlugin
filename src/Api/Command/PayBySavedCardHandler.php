@@ -22,7 +22,7 @@ final class PayBySavedCardHandler extends AbstractPayByHandler
         return $this->createResultFrom($payment);
     }
 
-    private function setTransactionData(PaymentInterface $payment, int $savedCardId): void
+    private function setTransactionData(PaymentInterface $payment, string $savedCardId): void
     {
         $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
         $paymentDetails->setUseSavedCreditCard($savedCardId);

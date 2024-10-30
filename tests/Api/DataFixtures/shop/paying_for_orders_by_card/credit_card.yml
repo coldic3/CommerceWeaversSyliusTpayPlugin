@@ -1,5 +1,6 @@
 CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard:
     single_credit_card:
+        __construct: ['e0f79275-18ef-4edf-b8fc-adc40fdcbcc0']
         brand: 'Visa'
         expirationDate: "<(new \\DateTime('+1 year'))>"
         tail: '1234'

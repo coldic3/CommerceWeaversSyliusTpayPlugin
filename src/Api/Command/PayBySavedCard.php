@@ -8,7 +8,7 @@ final class PayBySavedCard
 {
     public function __construct(
         public readonly int $paymentId,
-        public readonly int $savedCardId,
+        public readonly string $savedCardId,
     ) {
     }
 }

@@ -21,6 +21,7 @@ final class Version20241029160137 extends AbstractMigration
         $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card ADD channel_id INT NOT NULL');
         $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card ADD CONSTRAINT FK_9FF1996C72F5A1AA FOREIGN KEY (channel_id) REFERENCES sylius_channel (id) ON DELETE CASCADE');
         $this->addSql('CREATE INDEX IDX_9FF1996C72F5A1AA ON cw_sylius_tpay_credt_card (channel_id)');
+        $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card CHANGE id id VARCHAR(255) NOT NULL');
     }
 
     public function down(Schema $schema): void
@@ -30,5 +31,6 @@ final class Version20241029160137 extends AbstractMigration
         $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card DROP FOREIGN KEY FK_9FF1996C72F5A1AA');
         $this->addSql('DROP INDEX IDX_9FF1996C72F5A1AA ON cw_sylius_tpay_credt_card');
         $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card DROP channel_id');
+        $this->addSql('ALTER TABLE cw_sylius_tpay_credt_card CHANGE id id INT AUTO_INCREMENT NOT NULL');
     }
 }

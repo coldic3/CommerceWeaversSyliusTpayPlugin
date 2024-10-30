@@ -15,7 +15,6 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Resource\Factory\FactoryInterface;
-use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 
 final class SaveCreditCardAction extends BasePaymentAwareAction implements GatewayAwareInterface
@@ -37,7 +36,6 @@ final class SaveCreditCardAction extends BasePaymentAwareAction implements Gatew
         /** @var CreditCardInterface $creditCard */
         $creditCard = $this->creditCardFactory->createNew();
 
-        $creditCard->setUid(Uuid::v4()->toRfc4122());
         $creditCard->setToken($request->getCardToken());
         $creditCard->setBrand($request->getCardBrand());
         $creditCard->setTail($request->getCardTail());

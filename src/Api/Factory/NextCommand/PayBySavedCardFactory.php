@@ -20,7 +20,7 @@ final class PayBySavedCardFactory implements NextCommandFactoryInterface
 
         /** @var int $paymentId */
         $paymentId = $payment->getId();
-        /** @var int $savedCardId */
+        /** @var string $savedCardId */
         $savedCardId = $command->savedCardId;
 
         return new PayBySavedCard($paymentId, $savedCardId);
