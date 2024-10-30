@@ -52,16 +52,7 @@
                 value="{{ cw_tpay_get_gateway_config_value(method.gatewayConfig, 'cards_api') }}"
                 data-tpay-cards-api
             />
-            <div class="field">
-                {{ 'commerce_weavers_sylius_tpay.shop.pay.policy'|trans({
-                    '%url%': tpayPolicyUrl
-                })|raw }}
-            </div>
-            <div class="field">
-                {{ 'commerce_weavers_sylius_tpay.shop.pay.regulations'|trans({
-                    '%url%': tpayRegulationsUrl
-                })|raw }}
-            </div>
+            {% include '@CommerceWeaversSyliusTpayPlugin/shop/partial/_policies.html.twig' %}
         </div>
     </div>
 </div>

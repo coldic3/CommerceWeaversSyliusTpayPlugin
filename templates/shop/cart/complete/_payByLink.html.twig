@@ -3,25 +3,16 @@
 {% if payment is not null and
     cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::PAY_BY_LINK')
 %}
-<div class="bank-container">
-    {% for bank in banks %}
-        <div class="bank-tile" data-bank-id="{{ bank.id }}">
-            <img src="{{ bank.image.url }}" alt="{{ bank.name }}">
-            <p>{{ bank.name }}</p>
-        </div>
-    {% endfor %}
-</div>
-
-{{ form_row(form.tpay.tpay_channel_id) }}
-
-    <div class="field">
-        {{ 'commerce_weavers_sylius_tpay.shop.pay.policy'|trans({
-            '%url%': tpayPolicyUrl
-        })|raw }}
+    <div class="bank-container">
+        {% for bank in banks %}
+            <div class="bank-tile" data-bank-id="{{ bank.id }}">
+                <img src="{{ bank.image.url }}" alt="{{ bank.name }}">
+                <p>{{ bank.name }}</p>
+            </div>
+        {% endfor %}
     </div>
-    <div class="field">
-        {{ 'commerce_weavers_sylius_tpay.shop.pay.regulations'|trans({
-            '%url%': tpayRegulationsUrl
-        })|raw }}
-    </div>
+
+    {{ form_row(form.tpay.tpay_channel_id) }}
+
+    {% include '@CommerceWeaversSyliusTpayPlugin/shop/partial/_policies.html.twig' %}
 {% endif %}
