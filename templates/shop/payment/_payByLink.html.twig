@@ -10,14 +10,5 @@
 
     {{ form_row(form.tpay.tpay_channel_id) }}
 
-    <div class="field">
-        {{ 'commerce_weavers_sylius_tpay.shop.pay.policy'|trans({
-            '%url%': tpayPolicyUrl
-        })|raw }}
-    </div>
-    <div class="field">
-        {{ 'commerce_weavers_sylius_tpay.shop.pay.regulations'|trans({
-            '%url%': tpayRegulationsUrl
-        })|raw }}
-    </div>
+    {% include '@CommerceWeaversSyliusTpayPlugin/shop/partial/_policies.html.twig' %}
 </div>
