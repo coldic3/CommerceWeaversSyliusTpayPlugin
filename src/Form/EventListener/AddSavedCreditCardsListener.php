@@ -74,8 +74,6 @@ final class AddSavedCreditCardsListener
             $choices[$stringifiedCard] = $creditCard->getId();
         }
 
-        VarDumper::dump($choices);
-
         $form
             ->add(
                 'useSavedCreditCard',
