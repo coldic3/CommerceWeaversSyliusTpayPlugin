@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\Refunding\Checker\RefundPluginAvailabilityChecker;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Checker\RefundPluginAvailabilityCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Dispatcher\RefundDispatcher;
 use CommerceWeavers\SyliusTpayPlugin\Refunding\Dispatcher\RefundDispatcherInterface;
@@ -13,7 +14,7 @@ use Sylius\Bundle\CoreBundle\SyliusCoreBundle;
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
 
-    $services->set('commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability', RefundPluginAvailabilityCheckerInterface::class)
+    $services->set('commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability', RefundPluginAvailabilityChecker::class)
         ->alias(RefundPluginAvailabilityCheckerInterface::class, 'commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability')
     ;
 
