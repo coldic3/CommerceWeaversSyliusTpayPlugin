@@ -68,7 +68,7 @@ final class PayingForOrdersByBlikTest extends JsonApiTestCase
 
         $this->assertResponseCode($response, 424);
         $this->assertStringContainsString(
-            'An error occurred while processing your payment. Please try again or contact store support.',
+            'Podany kod jest nieprawidłowy, bądź utracił ważność.',
             $response->getContent(),
         );
     }

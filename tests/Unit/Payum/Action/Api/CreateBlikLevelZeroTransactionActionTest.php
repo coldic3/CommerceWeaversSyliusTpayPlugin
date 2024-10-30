@@ -297,6 +297,59 @@ final class CreateBlikLevelZeroTransactionActionTest extends TestCase
         $this->createTestSubject()->execute($request->reveal());
     }
 
+    public function test_it_handles_payment_error(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $order->getLocaleCode()->willReturn('pl_PL');
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getOrder()->willReturn($order);
+        $payment->getDetails()->willReturn([]);
+        $payment->setDetails(
+            $this->getExpectedDetails(
+                transaction_id: 'tr4ns4ct!0n_id',
+                status: 'failed',
+                error_message: 'I do not know what happened here but it does not work LOL!',
+            ),
+        )->shouldBeCalled();
+
+        $token = $this->prophesize(TokenInterface::class);
+        $token->getGatewayName()->willReturn('tpay');
+
+        $request = $this->prophesize(CreateTransaction::class);
+        $request->getModel()->willReturn($payment);
+        $request->getToken()->willReturn($token);
+
+        $notifyToken = $this->prophesize(TokenInterface::class);
+        $notifyToken->getTargetUrl()->willReturn('https://cw.org/notify');
+
+        $transactions = $this->prophesize(TransactionsApi::class);
+        $transactions->createTransaction(['factored' => 'payload'])->willReturn([
+            'result' => 'success',
+            'status' => 'pending',
+            'transactionId' => 'tr4ns4ct!0n_id',
+            'payments' => [
+                'errors' => [
+                    [
+                        'errorCode' => 'yolo',
+                        'errorMessage' => 'I do not know what happened here but it does not work LOL!',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->api->transactions()->willReturn($transactions);
+
+        $this->notifyTokenFactory->create($payment, 'tpay', 'pl_PL')->willReturn($notifyToken);
+
+        $this->createBlikLevelZeroPaymentPayloadFactory
+            ->createFrom($payment, null, 'https://cw.org/notify', 'pl_PL')
+            ->willReturn(['factored' => 'payload'])
+        ;
+
+        $this->createTestSubject()->execute($request->reveal());
+    }
+
     public function test_it_handles_errors_and_throws_exception_if_unexpected_error_occurred(): void
     {
         $this->expectException(\Exception::class);

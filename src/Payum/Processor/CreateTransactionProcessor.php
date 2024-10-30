@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Processor;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentFailedException;
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Payum;
@@ -30,7 +31,7 @@ final class CreateTransactionProcessor implements CreateTransactionProcessorInte
         $this->refreshPayment($payment);
 
         if ($payment->getState() === PaymentInterface::STATE_FAILED) {
-            $this->handlePaymentFailure();
+            $this->handlePaymentFailure($payment);
         }
     }
 
@@ -53,10 +54,12 @@ final class CreateTransactionProcessor implements CreateTransactionProcessorInte
     /**
      * @throws PaymentFailedException
      */
-    private function handlePaymentFailure(): void
+    private function handlePaymentFailure(PaymentInterface $payment): void
     {
+        $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
+
         throw new PaymentFailedException(
-            $this->translator->trans('commerce_weavers_sylius_tpay.shop.payment_failed.error', domain: 'messages'),
+            $paymentDetails->getErrorMessage() ?? $this->translator->trans('commerce_weavers_sylius_tpay.shop.payment_failed.error'),
         );
     }
 

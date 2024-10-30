@@ -56,4 +56,17 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
 
         $this->assertPageTitleContains('Waiting for payment');
     }
+
+    public function test_it_fails_completing_the_checkout_using_invalid_blik_token(): void
+    {
+        $this->processWithPaymentMethod('tpay_blik');
+        $this->fillBlikToken(self::FORM_ID, '999123');
+        $this->placeOrder();
+
+        $this->assertPageTitleContains('Something went wrong with your payment | Web Channel');
+        $this->assertSame(
+            'Podany kod jest nieprawidłowy, bądź utracił ważność.',
+            $this->findElementByXpath("//div[contains(@class, 'message') and contains(@class, 'negative')]")->getText(),
+        );
+    }
 }

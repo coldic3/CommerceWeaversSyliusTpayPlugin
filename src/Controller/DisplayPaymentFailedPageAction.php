@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Controller;
 
+use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,12 +24,24 @@ final class DisplayPaymentFailedPageAction
     public function __invoke(Request $request, string $orderToken): Response
     {
         $order = $this->findOrderOr404($orderToken);
-        $payment = $order->getLastPayment();
+        $newPayment = $order->getLastPayment();
+        $failedPayment = $order->getLastPayment(PaymentInterface::STATE_FAILED);
 
-        return new Response($this->twig->render('@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/payment_failed.html.twig', [
+        $context = [
             'order' => $order,
-            'payment' => $payment,
-        ]));
+            'payment' => $newPayment,
+        ];
+
+        if (null !== $failedPayment) {
+            $paymentDetails = PaymentDetails::fromArray($failedPayment->getDetails());
+
+            $context['errorMessage'] = $paymentDetails->getErrorMessage();
+        }
+
+        return new Response($this->twig->render(
+            '@CommerceWeaversSyliusTpayPlugin/shop/cart/complete/payment_failed.html.twig',
+            $context,
+        ));
     }
 
     private function findOrderOr404(string $orderToken): OrderInterface
