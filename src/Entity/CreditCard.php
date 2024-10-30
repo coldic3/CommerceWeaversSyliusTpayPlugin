@@ -11,6 +11,8 @@ class CreditCard implements CreditCardInterface
 {
     private ?int $id = null;
 
+    private ?string $uid = null;
+
     private ?string $token = null;
     private ?string $brand = null;
     private ?string $tail = null;
@@ -24,6 +26,16 @@ class CreditCard implements CreditCardInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(?string $uid): void
+    {
+        $this->uid = $uid;
     }
 
     public function getToken(): ?string

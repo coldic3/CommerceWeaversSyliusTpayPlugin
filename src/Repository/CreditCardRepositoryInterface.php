@@ -3,12 +3,12 @@
 namespace CommerceWeavers\SyliusTpayPlugin\Repository;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 
-interface CreditCardRepositoryInterface
+interface CreditCardRepositoryInterface extends RepositoryInterface
 {
     public function createByCustomerListQueryBuilder(?CustomerInterface $customer, ?ChannelInterface $channel): QueryBuilder;
 

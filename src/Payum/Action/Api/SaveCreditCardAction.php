@@ -13,6 +13,7 @@ use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Resource\Factory\FactoryInterface;
+use Symfony\Component\Uid\Uuid;
 
 final class SaveCreditCardAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
@@ -33,6 +34,7 @@ final class SaveCreditCardAction extends BasePaymentAwareAction implements Gatew
         /** @var CreditCardInterface $creditCard */
         $creditCard = $this->creditCardFactory->createNew();
 
+        $creditCard->setUid(Uuid::v4()->toRfc4122());
         $creditCard->setToken($request->cardToken);
         $creditCard->setBrand($request->cardBrand);
         $creditCard->setTail($request->cardTail);
