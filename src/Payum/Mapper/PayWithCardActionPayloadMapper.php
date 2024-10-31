@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Mapper;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;

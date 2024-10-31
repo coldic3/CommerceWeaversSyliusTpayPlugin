@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Payum\Action;
 
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action\SaveCreditCardAction;
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\SaveCreditCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;

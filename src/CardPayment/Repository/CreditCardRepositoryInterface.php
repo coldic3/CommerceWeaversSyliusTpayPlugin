@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Repository;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;

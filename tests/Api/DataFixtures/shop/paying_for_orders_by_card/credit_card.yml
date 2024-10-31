@@ -1,4 +1,4 @@
-CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard:
+CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCard:
     single_credit_card:
         __construct: ['e0f79275-18ef-4edf-b8fc-adc40fdcbcc0']
         brand: 'Visa'

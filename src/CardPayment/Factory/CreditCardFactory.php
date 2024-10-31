@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Factory;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
 use Symfony\Component\Uid\Uuid;
 
 final class CreditCardFactory implements CreditCardFactoryInterface

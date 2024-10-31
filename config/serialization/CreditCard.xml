@@ -4,7 +4,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd"
 >
-    <class name="CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard">
+    <class name="CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCard">
         <attribute name="id">
             <group>commerce_weavers_sylius_tpay:shop:credit_card:index</group>
             <group>commerce_weavers_sylius_tpay:shop:credit_card:show</group>

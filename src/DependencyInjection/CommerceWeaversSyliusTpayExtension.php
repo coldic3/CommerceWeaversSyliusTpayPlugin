@@ -78,10 +78,17 @@ final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension
                 'mappings' => [
                     'CommerceWeaversSyliusTpayPlugin' => [
                         'type' => 'xml',
-                        'dir' => $this->getPath($container, '/config/doctrine/'),
+                        'dir' => $this->getPath($container, '/config/doctrine/shared/'),
                         'is_bundle' => false,
                         'prefix' => 'CommerceWeavers\SyliusTpayPlugin\Entity',
                         'alias' => 'CommerceWeaversSyliusTpayPlugin',
+                    ],
+                    'CommerceWeaversSyliusTpayPluginCardPayment' => [
+                        'type' => 'xml',
+                        'dir' => $this->getPath($container, '/config/doctrine/card_payment/'),
+                        'is_bundle' => false,
+                        'prefix' => 'CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity',
+                        'alias' => 'CommerceWeaversSyliusTpayPluginCardPayment',
                     ],
                 ],
             ],
