@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Sylius\Component\Channel\Model\ChannelInterface;
 
 /**
@@ -16,10 +17,9 @@ trait FindByChannelWithGatewayConfigTrait
     {
         return $this->createQueryBuilder('o')
             ->addSelect('gatewayConfig')
-            ->leftJoin('o.gatewayConfig', 'gatewayConfig')
+            ->innerJoin('o.gatewayConfig', 'gatewayConfig', Join::WITH, 'gatewayConfig.gatewayName = :gatewayName')
             ->where('o.enabled = :enabled')
             ->andWhere(':channel MEMBER OF o.channels')
-            ->andWhere('gatewayConfig.gatewayName = :gatewayName')
             ->setParameter('enabled', true)
             ->setParameter('channel', $channel)
             ->setParameter('gatewayName', $gatewayConfigName)

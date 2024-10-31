@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Provider;
 
 use App\Repository\PaymentMethodRepositoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Model\GatewayConfigInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProvider;
@@ -13,6 +12,7 @@ use Payum\Core\Security\CypherInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Bundle\PayumBundle\Model\GatewayConfig;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -112,7 +112,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->expectExceptionMessage('Bank list cannot be retrieved if there is no payment method with PayByLink type configured');
 
         $notTpayBasedPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $notTpayBasedGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $notTpayBasedGatewayConfig = $this->prophesize(GatewayConfig::class);
         $notTpayBasedGatewayConfigConfig = [
             'type' => 'visa_mobile',
         ];
@@ -139,7 +139,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
     public function test_it_returns_all_available_payments_if_only_tpay_payment_method_is_pbl(): void
     {
         $tpayBasedPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $tpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
         $tpayPblGatewayConfigConfig = [
             'type' => 'pay_by_link',
         ];
@@ -168,7 +168,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
     public function test_it_returns_valid_payments_according_to_available_tpay_payment_methods(): void
     {
         $tpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $tpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
         $tpayPblGatewayConfigConfig = [
             'type' => 'pay_by_link',
         ];
@@ -177,7 +177,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
 
         $anotherTpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
         $anotherTpayPblGatewayConfigConfig = [
             'type' => 'visa_mobile',
         ];
@@ -209,7 +209,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
     public function test_it_returns_valid_payments_even_if_gateway_config_lacks_type(): void
     {
         $tpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $tpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
         $tpayPblGatewayConfigConfig = [
             'type' => 'pay_by_link',
         ];
@@ -218,7 +218,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
 
         $anotherTpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
         $anotherTpayPblGatewayConfigConfig = [
             'i_have_no_type' => 'i_should_still_work',
         ];
