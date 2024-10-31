@@ -11,66 +11,65 @@
                         </div>
                     </div>
                 </div>
-                <div class="ui horizontal divider">
-                    {{ 'sylius.ui.or'|trans }}
-                </div>
             {% endif %}
-            <div class="field">
-                <div class="field required" data-tpay-field>
-                    {{ form_label(form.tpay.card.number) }}
-                    <div class="ui left icon input">
-                        {{ form_widget(form.tpay.card.number, {
-                            attr: {
-                                'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.number'|trans({}, 'validators'),
-                                'data-tpay-card-number': ''
-                            },
-                        }) }}
-                        <i class="icon" data-tpay-card-operator-icon></i>
-                    </div>
-                    <div data-tpay-error-container></div>
-                </div>
-            </div>
-            <div class="fields">
-                <div class="three wide field" data-tpay-field>
-                    {{ form_row(form.tpay.card.cvv, { attr: {
-                        'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.cvc'|trans({}, 'validators'),
-                        'data-tpay-cvc': ''
-                    } }) }}
-                    <div data-tpay-error-container></div>
-                </div>
-                <div class="twelve wide field" data-tpay-field>
-                    <div class="two fields">
-                        <div class="field" data-tpay-field>
-                            {{ form_row(form.tpay.card.expiration_date_month, { attr: {
-                                'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.expiration_month'|trans({}, 'validators'),
-                                'data-tpay-expiration-month': ''
-                            } }) }}
-                            <div data-tpay-error-container></div>
+            <div data-tpay-card-data>
+                <div class="field">
+                    <div class="field required" data-tpay-field>
+                        {{ form_label(form.tpay.card.number) }}
+                        <div class="ui left icon input">
+                            {{ form_widget(form.tpay.card.number, {
+                                attr: {
+                                    'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.number'|trans({}, 'validators'),
+                                    'data-tpay-card-number': ''
+                                },
+                            }) }}
+                            <i class="icon" data-tpay-card-operator-icon></i>
                         </div>
-                        <div class="field" data-tpay-field>
-                            {{ form_row(form.tpay.card.expiration_date_year, {attr: {
-                                'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.expiration_year'|trans({}, 'validators'),
-                                'data-tpay-expiration-year': ''
-                            } }) }}
-                            <div data-tpay-error-container></div>
-                        </div>
-                    </div>
-                </div>
-                {% if form.tpay.save_credit_card_for_later is defined %}
-                    <div class="three wide field" data-tpay-save-card>
-                        {{ form_row(form.tpay.save_credit_card_for_later) }}
                         <div data-tpay-error-container></div>
                     </div>
-                {% endif %}
-            </div>
-            {{ form_row(form.tpay.card.card, { attr: {'data-tpay-encrypted-card': '' } }) }}
+                </div>
+                <div class="fields">
+                    <div class="three wide field" data-tpay-field>
+                        {{ form_row(form.tpay.card.cvv, { attr: {
+                            'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.cvc'|trans({}, 'validators'),
+                            'data-tpay-cvc': ''
+                        } }) }}
+                        <div data-tpay-error-container></div>
+                    </div>
+                    <div class="twelve wide field" data-tpay-field>
+                        <div class="two fields">
+                            <div class="field" data-tpay-field>
+                                {{ form_row(form.tpay.card.expiration_date_month, { attr: {
+                                    'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.expiration_month'|trans({}, 'validators'),
+                                    'data-tpay-expiration-month': ''
+                                } }) }}
+                                <div data-tpay-error-container></div>
+                            </div>
+                            <div class="field" data-tpay-field>
+                                {{ form_row(form.tpay.card.expiration_date_year, {attr: {
+                                    'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.expiration_year'|trans({}, 'validators'),
+                                    'data-tpay-expiration-year': ''
+                                } }) }}
+                                <div data-tpay-error-container></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.tpay.save_credit_card_for_later is defined %}
+                        <div class="three wide field" data-tpay-save-card>
+                            {{ form_row(form.tpay.save_credit_card_for_later) }}
+                            <div data-tpay-error-container></div>
+                        </div>
+                    {% endif %}
+                </div>
+                {{ form_row(form.tpay.card.card, { attr: {'data-tpay-encrypted-card': '' } }) }}
 
-            <input
-                id="sylius_checkout_complete_tpay_cards_api"
-                type="hidden"
-                value="{{ cw_tpay_get_gateway_config_value(method.gatewayConfig, 'cards_api') }}"
-                data-tpay-cards-api
-            />
+                <input
+                    id="sylius_checkout_complete_tpay_cards_api"
+                    type="hidden"
+                    value="{{ cw_tpay_get_gateway_config_value(method.gatewayConfig, 'cards_api') }}"
+                    data-tpay-cards-api
+                />
+            </div>
             {% include '@CommerceWeaversSyliusTpayPlugin/shop/partial/_policies.html.twig' %}
         </div>
     </div>

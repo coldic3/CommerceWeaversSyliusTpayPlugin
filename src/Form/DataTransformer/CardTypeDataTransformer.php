@@ -22,6 +22,6 @@ final class CardTypeDataTransformer implements DataTransformerInterface
             return '';
         }
 
-        return $value['card'];
+        return (string) ($value['card'] ?? '');
     }
 }

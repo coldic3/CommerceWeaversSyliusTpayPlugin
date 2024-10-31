@@ -4,6 +4,8 @@ const MAX_CARD_NUMBER_LENGTH = 16;
 
 export class CardForm {
   #form;
+  #savedCardsSelect;
+  #cardDataContainer;
   #cardNumber;
   #cardOperatorIcon;
   #cardsApi;
@@ -15,6 +17,8 @@ export class CardForm {
 
   constructor(selector) {
     this.#form = document.querySelector(selector);
+    this.#savedCardsSelect = this.#form.querySelector('[data-tpay-saved-card]');
+    this.#cardDataContainer = this.#form.querySelector('[data-tpay-card-data]');
     this.#cardNumber = this.#form.querySelector('[data-tpay-card-number]');
     this.#cardOperatorIcon = this.#form.querySelector('[data-tpay-card-operator-icon]');
     this.#cardsApi = this.#form.querySelector('[data-tpay-cards-api]');
@@ -150,6 +154,7 @@ export class CardForm {
     this.#cardNumber.addEventListener('keyup', this.#updateCardOperatorIcon.bind(this));
     this.#expirationMonth.addEventListener('change', this.#validateExpirationDate.bind(this));
     this.#expirationYear.addEventListener('change', this.#validateExpirationDate.bind(this));
+    this.#savedCardsSelect.addEventListener('change', this.#updateCardDataVisibility.bind(this));
 
     this.#form.addEventListener('submit', (event) => {
       if (!this.#isVisible()) {
@@ -228,6 +233,10 @@ export class CardForm {
     this.#cardOperatorIcon.classList.remove('cc');
     this.#cardOperatorIcon.classList.remove('visa');
     this.#cardOperatorIcon.classList.remove('mastercard');
+  }
+
+  #updateCardDataVisibility() {
+    this.#cardDataContainer.style.display = this.#savedCardsSelect.selectedIndex === 0 ? 'block' : 'none';
   }
 
   #isVisaCard() {
