@@ -12,7 +12,7 @@ return static function(ContainerConfigurator $container): void {
 
     $services->set(BankListContextProvider::class)
         ->args([
-            service('commerce_weavers_sylius_tpay.tpay.provider.tpay_api_bank_list'),
+            service('commerce_weavers_sylius_tpay.tpay.provider.validated_tpay_api_bank_list'),
         ])
         ->tag('sylius.ui.template_event.context_provider')
     ;

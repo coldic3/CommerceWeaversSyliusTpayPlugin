@@ -23,3 +23,9 @@ sylius_order:
         order:
             classes:
                 model: App\Entity\Order
+
+sylius_payment:
+    resources:
+        payment_method:
+            classes:
+                repository: App\Repository\PaymentMethodRepository

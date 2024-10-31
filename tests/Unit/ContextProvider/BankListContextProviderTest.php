@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\ContextProvider;
 
 use CommerceWeavers\SyliusTpayPlugin\ContextProvider\BankListContextProvider;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\TpayApiBankListProviderInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -17,10 +17,10 @@ class BankListContextProviderTest extends TestCase
 {
     use ProphecyTrait;
 
-    private TpayApiBankListProviderInterface|ObjectProphecy $bankListProvider;
+    private ValidTpayChannelListProviderInterface|ObjectProphecy $validTpayChannelListProvider;
     protected function setUp(): void
     {
-        $this->bankListProvider = $this->prophesize(TpayApiBankListProviderInterface::class);
+        $this->validTpayChannelListProvider = $this->prophesize(ValidTpayChannelListProviderInterface::class);
     }
 
     public function test_it_does_not_support_some_template_event_and_pay_by_link_template_name(): void
@@ -54,8 +54,8 @@ class BankListContextProviderTest extends TestCase
     {
         $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
 
-        $this->bankListProvider->provide()->shouldBeCalled();
-        $this->bankListProvider->provide()->willReturn(['1' => 'some bank']);
+        $this->validTpayChannelListProvider->provide()->shouldBeCalled();
+        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
 
         $context = $this->createTestObject()->provide(
             ['i_am_not_an_order' => 'some_context'],
@@ -72,8 +72,8 @@ class BankListContextProviderTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
         $order->getLastPayment()->willReturn(null);
 
-        $this->bankListProvider->provide()->shouldNotBeCalled();
-        $this->bankListProvider->provide()->willReturn(['1' => 'some bank']);
+        $this->validTpayChannelListProvider->provide()->shouldNotBeCalled();
+        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
 
         $context = $this->createTestObject()->provide(
             ['order' => $order->reveal()],
@@ -90,8 +90,8 @@ class BankListContextProviderTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $order->getLastPayment()->willReturn($payment);
 
-        $this->bankListProvider->provide()->shouldBeCalled();
-        $this->bankListProvider->provide()->willReturn(['1' => 'some bank']);
+        $this->validTpayChannelListProvider->provide()->shouldBeCalled();
+        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
 
         $context = $this->createTestObject()->provide(
             ['order' => $order->reveal()],
@@ -104,6 +104,6 @@ class BankListContextProviderTest extends TestCase
 
     private function createTestObject(): BankListContextProvider
     {
-        return new BankListContextProvider($this->bankListProvider->reveal());
+        return new BankListContextProvider($this->validTpayChannelListProvider->reveal());
     }
 }

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use CommerceWeavers\SyliusTpayPlugin\EventListener\AddCreditCardToAccountMenuEventListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
-use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\VisaMobilePhoneDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\AddSavedCreditCardsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
@@ -18,7 +16,7 @@ use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayGatewayConfigurationType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayPaymentDetailsType;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
-return function(ContainerConfigurator $container): void {
+return static function(ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set(CompleteTypeExtension::class)

@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
+use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ValidTpayChannel;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;
@@ -87,6 +88,10 @@ final class TpayPaymentDetailsType extends AbstractType
                 HiddenType::class,
                 [
                     'property_path' => '[tpay_channel_id]',
+                    'validation_groups' => ['sylius_checkout_complete'],
+                    'constraints' => [
+                        new ValidTpayChannel(groups: ['sylius_checkout_complete']),
+                    ],
                 ],
             )
             ->add(

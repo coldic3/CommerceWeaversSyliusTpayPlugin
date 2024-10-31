@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
-interface TpayApiBankListProviderInterface
+interface AvailableTpayChannelListProviderInterface
 {
     /** @return array{
      *     id: string,
