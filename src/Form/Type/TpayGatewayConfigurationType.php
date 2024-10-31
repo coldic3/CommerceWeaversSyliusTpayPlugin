@@ -38,6 +38,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                     'constraints' => [
                         new NotBlank(allowNull: false, groups: ['sylius']),
                     ],
+                    'empty_data' => '',
                 ],
             )
             ->add(
@@ -49,6 +50,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                     'constraints' => [
                         new NotBlank(allowNull: false, groups: ['sylius']),
                     ],
+                    'empty_data' => '',
                 ],
             )
             ->add(
