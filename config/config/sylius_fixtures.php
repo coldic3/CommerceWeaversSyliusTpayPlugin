@@ -65,7 +65,6 @@ return static function(SyliusFixturesConfig $fixtures): void {
     $tpayConfig = [
         'client_id' => '%env(string:TPAY_CLIENT_ID)%',
         'client_secret' => '%env(string:TPAY_CLIENT_SECRET)%',
-
         'notification_security_code' => '%env(string:TPAY_NOTIFICATION_SECURITY_CODE)%',
         'google_merchant_id' => '%env(string:TPAY_GOOGLE_MERCHANT_ID)%',
         'merchant_id' => '%env(string:TPAY_MERCHANT_ID)%',
