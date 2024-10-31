@@ -160,8 +160,8 @@ return static function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.tpay.provider.validated_tpay_api_bank_list', ValidTpayChannelListProvider::class)
         ->args([
             service('commerce_weavers_sylius_tpay.tpay.provider.available_tpay_api_bank_list'),
-            service('sylius.repository.gateway_config'),
             service('sylius.repository.payment_method'),
+            service('sylius.context.channel'),
             service('payum.dynamic_gateways.cypher')
         ])
         ->alias(AvailableTpayChannelListProviderInterface::class, 'commerce_weavers_sylius_tpay.tpay.provider.validated_tpay_api_bank_list')

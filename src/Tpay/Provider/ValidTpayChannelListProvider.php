@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
+use App\Repository\PaymentMethodRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\GatewayConfigInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Security\CypherInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Webmozart\Assert\Assert;
 
 final class ValidTpayChannelListProvider implements ValidTpayChannelListProviderInterface
 {
     public function __construct(
         private readonly AvailableTpayChannelListProviderInterface $availableTpayApiBankListProvider,
-        private readonly RepositoryInterface $gatewayRepository,
-        private readonly RepositoryInterface $paymentMethodRepository,
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly ChannelContextInterface $channelContext,
         private readonly CypherInterface $cypher,
     ) {
     }
@@ -26,21 +28,24 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
     {
         $availableChannels = $this->availableTpayApiBankListProvider->provide();
 
-        /** @var GatewayConfigInterface[] $tpayGatewayConfigs */
-        $tpayGatewayConfigs = $this->gatewayRepository->findBy(['gatewayName' => 'tpay']);
+        /** @var PaymentMethodInterface[] $paymentMethods */
+        $paymentMethods = $this->paymentMethodRepository->findByChannelAndGatewayConfigNameWithGatewayConfig(
+            $this->channelContext->getChannel(),
+            'tpay',
+        );
 
-        Assert::notEmpty($tpayGatewayConfigs, 'There is no gateway config of Tpay type available');
-
-        if (count($tpayGatewayConfigs) === 1 &&
-            $tpayGatewayConfigs[0]->getConfig()['type'] === PaymentType::PAY_BY_LINK
-        ) {
-            return $availableChannels;
-        }
+        Assert::notEmpty($paymentMethods, 'There is no payment method of Tpay type available');
 
         $paymentMethodsToRemoveByGroupId = [];
         $hasPblPaymentAvailable = false;
-        foreach ($tpayGatewayConfigs as $tpayGatewayConfig) {
-            // cached doctrine values are encrypted hence need for decrypt
+        foreach ($paymentMethods as $paymentMethod) {
+            /** @var GatewayConfigInterface|null $tpayGatewayConfig */
+            $tpayGatewayConfig = $paymentMethod->getGatewayConfig();
+
+            if (null === $tpayGatewayConfig) {
+                continue;
+            }
+
             $tpayGatewayConfig->decrypt($this->cypher);
             $config = $tpayGatewayConfig->getConfig();
 
@@ -66,12 +71,6 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
             throw new UnableToGetBankListException(
                 'Bank list cannot be retrieved if there is no payment method with PayByLink type configured',
             );
-        }
-
-        $disabledPaymentMethods = $this->paymentMethodRepository->findBy(['enabled' => false]);
-
-        foreach ($disabledPaymentMethods as $disabledPaymentMethod) {
-            $paymentMethodsToRemoveByGroupId[] = $disabledPaymentMethod->getId();
         }
 
         return array_filter($availableChannels, static function (array $channel) use ($paymentMethodsToRemoveByGroupId): bool {
