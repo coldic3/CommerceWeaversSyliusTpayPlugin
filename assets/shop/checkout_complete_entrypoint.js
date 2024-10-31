@@ -3,6 +3,7 @@ import './scss/style.scss';
 import './js/_pay_by_link';
 import './js/_visa_mobile';
 import './js/apple_pay';
+import './js/blik_code';
 import {CardForm} from "./js/card_form";
 
 document.addEventListener('DOMContentLoaded', () => {
