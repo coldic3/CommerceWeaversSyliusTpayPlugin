@@ -16,6 +16,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated Deprecated since CommerceWeavers/TpayPlugin 1.0.1, will be removed in 2.0.0. Use \CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCreditCardChoiceType instead.
+ */
 final class AddSavedCreditCardsListener
 {
     public function __construct(
