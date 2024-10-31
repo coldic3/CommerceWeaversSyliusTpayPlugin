@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action\CreateCardTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Model\GatewayConfigInterface;

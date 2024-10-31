@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Factory;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Tpay\Factory;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 final class CreateCardPaymentPayloadFactory implements CreateCardPaymentPayloadFactoryInterface
 {
     public function __construct(
-        private CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,
+        private readonly CreateRedirectBasedPaymentPayloadFactoryInterface $createRedirectBasedPaymentPayloadFactory,
     ) {
     }
 

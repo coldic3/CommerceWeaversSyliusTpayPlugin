@@ -18,7 +18,7 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(CreateCardTransactionAction::class)
         ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_card_payment_payload'),
+            service('commerce_weavers_sylius_tpay.card_payment.tpay.factory.create_card_payment_payload'),
             service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
         ->tag('payum.action', ['factory' => GatewayFactory::NAME, 'alias' => 'cw.tpay_card.create_card_transaction'])
