@@ -18,7 +18,7 @@ trait FindByChannelWithGatewayConfigTrait
             ->addSelect('gatewayConfig')
             ->leftJoin('o.gatewayConfig', 'gatewayConfig')
             ->where('o.enabled = :enabled')
-            ->andWhere(':channel MEMBER OF pm.channels')
+            ->andWhere(':channel MEMBER OF o.channels')
             ->andWhere('gatewayConfig.gatewayName = :gatewayName')
             ->setParameter('enabled', true)
             ->setParameter('channel', $channel)
