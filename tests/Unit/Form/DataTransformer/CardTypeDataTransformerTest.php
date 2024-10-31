@@ -18,6 +18,7 @@ final class CardTypeDataTransformerTest extends TestCase
         $this->assertSame(null, $dataTransformer->transform(true));
         $this->assertSame(null, $dataTransformer->transform('string'));
         $this->assertSame(null, $dataTransformer->transform(1));
+        $this->assertSame(null, $dataTransformer->transform([]));
     }
 
     public function test_it_returns_an_empty_string_when_trying_to_reverse_transform_a_non_array(): void
@@ -28,6 +29,15 @@ final class CardTypeDataTransformerTest extends TestCase
         $this->assertSame('', $dataTransformer->reverseTransform(true));
         $this->assertSame('', $dataTransformer->reverseTransform('string'));
         $this->assertSame('', $dataTransformer->reverseTransform(1));
+        $this->assertSame('', $dataTransformer->reverseTransform([]));
+    }
+
+    public function test_it_returns_card_value_when_trying_to_reverse_transform_an_array_with_a_card_key(): void
+    {
+        $dataTransformer = $this->createTestSubject();
+
+        $this->assertSame('wheee!', $dataTransformer->reverseTransform(['card' => 'wheee!']));
+        $this->assertSame('123', $dataTransformer->reverseTransform(['card' => 123]));
     }
 
     private function createTestSubject(): DataTransformerInterface
