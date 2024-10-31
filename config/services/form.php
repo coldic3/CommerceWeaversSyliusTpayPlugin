@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\EventListener\AddCreditCardToAccountMenuEventListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
 use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\VisaMobilePhoneDataTransformer;
+use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\AddSavedCreditCardsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
@@ -49,6 +51,10 @@ return function(ContainerConfigurator $container): void {
     $services->set(TpayPaymentDetailsType::class)
         ->args([
             service('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields'),
+            service('security.token_storage'),
+            service('translator'),
+            service('commerce_weavers_sylius_tpay.repository.credit_card'),
+            service('sylius.context.cart'),
         ])
         ->tag('form.type')
     ;
@@ -70,4 +76,13 @@ return function(ContainerConfigurator $container): void {
     ;
 
     $services->set('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields', RemoveUnnecessaryPaymentDetailsFieldsListener::class);
+
+    $services
+        ->set('commerce_weavers_sylius_tpay.form.event_listener.add_saved_credit_cards', AddSavedCreditCardsListener::class)
+        ->args([
+            service('security.token_storage'),
+            service('translator'),
+            service('commerce_weavers_sylius_tpay.repository.credit_card'),
+        ])
+    ;
 };

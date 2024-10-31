@@ -1,0 +1,9 @@
+CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard:
+    single_credit_card:
+        __construct: ['e0f79275-18ef-4edf-b8fc-adc40fdcbcc0']
+        brand: 'Visa'
+        expirationDate: "<(new \\DateTime('+1 year'))>"
+        tail: '1234'
+        token: '8d1bb66340e35c112117459231057592b3afc0a5253e3e2d171a72da4921ffc5'
+        customer: '@customer_john_doe'
+        channel: '@channel_web'

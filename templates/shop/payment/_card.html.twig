@@ -2,6 +2,19 @@
     <div class="ui small icon message">
         <i class="payment icon"></i>
         <div class="content">
+            {% if form.tpay.use_saved_credit_card is defined %}
+                <div class="field">
+                    <div class="field required" data-tpay-field>
+                        {{ form_label(form.tpay.use_saved_credit_card) }}
+                        <div class="ui left icon input">
+                            {{ form_widget(form.tpay.use_saved_credit_card, { attr: {'data-tpay-saved-card': ''}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui horizontal divider">
+                    {{ 'sylius.ui.or'|trans }}
+                </div>
+            {% endif %}
             <div class="field">
                 <div class="field required" data-tpay-field>
                     {{ form_label(form.tpay.card.number) }}
@@ -18,7 +31,7 @@
                 </div>
             </div>
             <div class="fields">
-                <div class="six wide field" data-tpay-field>
+                <div class="three wide field" data-tpay-field>
                     {{ form_row(form.tpay.card.cvv, { attr: {
                         'data-validation-error': 'commerce_weavers_sylius_tpay.shop.pay.card.cvc'|trans({}, 'validators'),
                         'data-tpay-cvc': ''
@@ -43,6 +56,12 @@
                         </div>
                     </div>
                 </div>
+                {% if form.tpay.save_credit_card_for_later is defined %}
+                    <div class="three wide field" data-tpay-save-card>
+                        {{ form_row(form.tpay.save_credit_card_for_later) }}
+                        <div data-tpay-error-container></div>
+                    </div>
+                {% endif %}
             </div>
             {{ form_row(form.tpay.card.card, { attr: {'data-tpay-encrypted-card': '' } }) }}
 

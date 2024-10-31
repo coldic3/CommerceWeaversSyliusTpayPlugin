@@ -139,6 +139,7 @@ final class CreateCardTransactionActionTest extends TestCase
         $this->createCardPaymentPayloadFactory
             ->createFrom($payment, 'https://cw.org/notify', 'pl_PL')
             ->willReturn(['factored' => 'payload'])
+            ->shouldBeCalled()
         ;
 
         $this->gateway->execute(Argument::that(function (PayWithCard $request) use ($payment): bool {

@@ -23,7 +23,9 @@ final class PayByCardFactory implements NextCommandFactoryInterface
         /** @var string $encodedCardData */
         $encodedCardData = $command->encodedCardData;
 
-        return new PayByCard($paymentId, $encodedCardData);
+        $saveCard = $command->saveCard;
+
+        return new PayByCard($paymentId, $encodedCardData, $saveCard ?? false);
     }
 
     public function supports(Pay $command, PaymentInterface $payment): bool

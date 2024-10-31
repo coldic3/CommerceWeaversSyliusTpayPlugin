@@ -15,6 +15,7 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\GetTpayTransactionsChannel
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\InitializeApplePayPaymentAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\PayWithCardAction;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\SaveCreditCardAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\PartialRefundAction;
@@ -93,7 +94,18 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.notify'])
     ;
 
+    $services->set(SaveCreditCardAction::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.factory.credit_card'),
+            service('commerce_weavers_sylius_tpay.repository.credit_card'),
+        ])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.save_credit_card'])
+    ;
+
     $services->set(PayWithCardAction::class)
+        ->args([
+            service('commerce_weavers_sylius_tpay.payum.mapper.pay_with_card_action'),
+        ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.pay_with_card'])
     ;
 

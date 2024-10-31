@@ -5,6 +5,16 @@ Sylius\Component\Core\Model\Customer:
         email: 'sylius@example.com'
         emailCanonical: 'sylius@example.com'
 
+Sylius\Component\Core\Model\ShopUser:
+    user_john_doe:
+        plainPassword: '123pa\\$\\$word'
+        roles: [ROLE_USER]
+        enabled: true
+        customer: '@customer_john_doe'
+        username: 'sylius@example.com'
+        usernameCanonical: 'sylius@example.com'
+
+
 Sylius\Component\Core\Model\Product:
     product_mug:
         code: 'MUG'

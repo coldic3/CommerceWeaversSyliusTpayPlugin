@@ -7,6 +7,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Factory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -34,7 +35,7 @@ final class CreateCardPaymentPayloadFactoryTest extends TestCase
         $this->assertSame([
             'some' => 'data',
             'pay' => [
-                'groupId' => 103,
+                'groupId' => PayGroup::CARD,
             ],
         ], $payload);
     }

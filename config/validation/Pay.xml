@@ -12,6 +12,17 @@
                 <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
             </option>
         </constraint>
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals">
+            <option name="paymentMethodType">card</option>
+            <option name="properties">
+                <value>encodedCardData</value>
+                <value>savedCardId</value>
+            </option>
+            <option name="allFieldsAreBlankErrorMessage">commerce_weavers_sylius_tpay.shop.pay.card.required_fields</option>
+            <option name="groups">
+                <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
+            </option>
+        </constraint>
         <property name="applePayToken">
             <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
                 <option name="paymentMethodType">apple_pay</option>
@@ -58,10 +69,15 @@
                 </option>
             </constraint>
         </property>
-        <property name="encodedCardData">
-            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
-                <option name="paymentMethodType">card</option>
-                <option name="fieldRequiredErrorMessage">commerce_weavers_sylius_tpay.shop.pay.encoded_card_data.required</option>
+        <property name="savedCardId">
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ForAuthorizedUserOnly">
+                <option name="groups">
+                    <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="saveCard">
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ForAuthorizedUserOnly">
                 <option name="groups">
                     <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
                 </option>

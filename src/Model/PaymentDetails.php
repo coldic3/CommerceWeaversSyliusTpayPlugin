@@ -23,6 +23,8 @@ class PaymentDetails
         private ?string $googlePayToken = null,
         #[\SensitiveParameter]
         private ?string $encodedCardData = null,
+        private bool $saveCreditCardForLater = false,
+        private ?string $useSavedCreditCard = null,
         #[\SensitiveParameter]
         private ?string $applePaySession = null,
         private ?string $paymentUrl = null,
@@ -125,6 +127,26 @@ class PaymentDetails
         $this->encodedCardData = $encodedCardData;
     }
 
+    public function isSaveCreditCardForLater(): bool
+    {
+        return $this->saveCreditCardForLater;
+    }
+
+    public function setSaveCreditCardForLater(bool $saveCreditCardForLater): void
+    {
+        $this->saveCreditCardForLater = $saveCreditCardForLater;
+    }
+
+    public function getUseSavedCreditCard(): ?string
+    {
+        return $this->useSavedCreditCard;
+    }
+
+    public function setUseSavedCreditCard(?string $useSavedCreditCard): void
+    {
+        $this->useSavedCreditCard = $useSavedCreditCard;
+    }
+
     public function getApplePaySession(): ?string
     {
         return $this->applePaySession;
@@ -178,7 +200,7 @@ class PaymentDetails
     public function getType(): string
     {
         return match (true) {
-            null !== $this->getEncodedCardData() => PaymentType::CARD,
+            null !== $this->getEncodedCardData(), null !== $this->getUseSavedCreditCard() => PaymentType::CARD,
             null !== $this->getBlikToken() => PaymentType::BLIK,
             null !== $this->getTpayChannelId() => PaymentType::PAY_BY_LINK,
             null !== $this->getGooglePayToken() => PaymentType::GOOGLE_PAY,
@@ -233,6 +255,8 @@ class PaymentDetails
             $details['tpay']['blik_alias_application_code'] ?? null,
             $details['tpay']['google_pay_token'] ?? null,
             $details['tpay']['card'] ?? null,
+            $details['tpay']['save_credit_card_for_later'] ?? false,
+            $details['tpay']['use_saved_credit_card'] ?? null,
             $details['tpay']['apple_pay_session'] ?? null,
             $details['tpay']['payment_url'] ?? null,
             $details['tpay']['success_url'] ?? null,
@@ -256,6 +280,8 @@ class PaymentDetails
                 'blik_alias_application_code' => $this->blikAliasApplicationCode,
                 'google_pay_token' => $this->googlePayToken,
                 'card' => $this->encodedCardData,
+                'save_credit_card_for_later' => $this->saveCreditCardForLater,
+                'use_saved_credit_card' => $this->useSavedCreditCard,
                 'apple_pay_session' => $this->applePaySession,
                 'payment_url' => $this->paymentUrl,
                 'success_url' => $this->successUrl,

@@ -11,6 +11,7 @@ commerce_weavers_sylius_tpay:
                 required_with_alias_register: 'Kod BLIK jest wymagany w przypadku rejestracji aliasu Blik.'
             field:
                 not_blank: 'Ta wartość nie powinna być pusta.'
+                user_not_authorized: 'Nie masz uprawnień do wykonania tej akcji.'
             google_pay_token:
                 required: 'Token Google Pay jest wymagany.'
                 not_json_encoded: 'Token Google Pay musi być obiektem JSON zakodowanym przez Base64.'
@@ -23,6 +24,7 @@ commerce_weavers_sylius_tpay:
                 not_available: 'Kanał z podanym id nie jest dostępny.'
                 not_a_bank: 'Kanał z podanym id nie jest bankiem.'
             card:
+                required_fields: 'Musisz podać dane nowej karty bądź identyfikator już zapamiętanej karty.'
                 cvc: 'Kod CVC musi składać się z 3 cyfr.'
                 expiration_month: 'Miesiąc ważności musi być bieżący lub późniejszy.'
                 expiration_year: 'Rok ważności musi być bieżący lub późniejszy.'

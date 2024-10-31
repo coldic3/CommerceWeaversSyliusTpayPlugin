@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<serializer xmlns="http://symfony.com/schema/dic/serializer-mapping"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://symfony.com/schema/dic/serializer-mapping https://symfony.com/schema/dic/serializer-mapping/serializer-mapping-1.0.xsd"
+>
+    <class name="CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard">
+        <attribute name="id">
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:index</group>
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:show</group>
+        </attribute>
+        <attribute name="brand">
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:index</group>
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:show</group>
+        </attribute>
+        <attribute name="tail">
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:index</group>
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:show</group>
+        </attribute>
+        <attribute name="expirationDate">
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:index</group>
+            <group>commerce_weavers_sylius_tpay:shop:credit_card:show</group>
+        </attribute>
+    </class>
+</serializer>

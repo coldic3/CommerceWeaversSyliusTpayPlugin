@@ -6,6 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\SaveCreditCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\SignatureVerifierInterface;
@@ -14,6 +15,7 @@ use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpResponse;
 use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Webmozart\Assert\Assert;
 
 final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareInterface
 {
@@ -50,6 +52,18 @@ final class NotifyAction extends BasePaymentAwareAction implements GatewayAwareI
 
         /** @var string $status */
         $status = $basicPayment->tr_status;
+
+        $cardToken = $requestData->requestParameters['card_token'] ?? null;
+
+        if ($cardToken !== null) {
+            $cardBrand = $requestData->requestParameters['card_brand'] ?? null;
+            $cardTail = $requestData->requestParameters['card_tail'] ?? null;
+            $tokenExpirationDate = $requestData->requestParameters['token_expiry_date'] ?? null;
+
+            Assert::allString([$cardToken, $cardBrand, $cardTail, $tokenExpirationDate]);
+
+            $this->gateway->execute(new SaveCreditCard($model, $cardToken, $cardBrand, $cardTail, $tokenExpirationDate));
+        }
 
         $newPaymentStatus = match (true) {
             str_contains($status, 'TRUE') => PaymentInterface::STATE_COMPLETED,

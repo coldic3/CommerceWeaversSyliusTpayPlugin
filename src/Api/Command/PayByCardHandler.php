@@ -15,16 +15,17 @@ final class PayByCardHandler extends AbstractPayByHandler
     {
         $payment = $this->findOr404($command->paymentId);
 
-        $this->setTransactionData($payment, $command->encodedCardData);
+        $this->setTransactionData($payment, $command->encodedCardData, $command->saveCard);
         $this->createTransactionProcessor->process($payment);
 
         return $this->createResultFrom($payment);
     }
 
-    private function setTransactionData(PaymentInterface $payment, string $encodedCardData): void
+    private function setTransactionData(PaymentInterface $payment, string $encodedCardData, bool $saveCard = false): void
     {
         $paymentDetails = PaymentDetails::fromArray($payment->getDetails());
         $paymentDetails->setEncodedCardData($encodedCardData);
+        $paymentDetails->setSaveCreditCardForLater($saveCard);
 
         $payment->setDetails($paymentDetails->toArray());
     }
