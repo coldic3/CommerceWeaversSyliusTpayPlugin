@@ -28,7 +28,7 @@ commerce_weavers_sylius_tpay:
             use_new_card: 'Use new card'
         order_summary:
             blik:
-                token: 'BLIK token'
+                token: 'BLIK code'
             card:
                 cvv: 'CVC2/CVV2'
                 expiration_date:
