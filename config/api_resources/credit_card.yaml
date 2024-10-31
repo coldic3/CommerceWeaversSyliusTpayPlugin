@@ -19,3 +19,7 @@
     properties:
         id:
             identifier: true
+        tail:
+            writable: false
+        brand:
+            writable: false

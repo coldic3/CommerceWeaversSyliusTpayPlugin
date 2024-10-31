@@ -99,7 +99,7 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.factory.credit_card'),
             service('commerce_weavers_sylius_tpay.repository.credit_card'),
         ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.credit_card'])
+        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.save_credit_card'])
     ;
 
     $services->set(PayWithCardAction::class)
