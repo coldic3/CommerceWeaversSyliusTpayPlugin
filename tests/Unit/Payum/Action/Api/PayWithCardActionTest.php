@@ -95,7 +95,7 @@ final class PayWithCardActionTest extends TestCase
         $request->getModel()->willReturn($paymentModel->reveal());
         $request->getToken()->willReturn($token->reveal());
 
-        $this->mapper->getPayload(Argument::type(PaymentDetails::class))->willReturn(['GENERATED' => 'PAYLOAD']);
+        $this->mapper->getPayload(Argument::type(PaymentDetails::class), $paymentModel->reveal())->willReturn(['GENERATED' => 'PAYLOAD']);
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createPaymentByTransactionId(['GENERATED' => 'PAYLOAD'], $details['tpay']['transaction_id'])->willReturn($response);
@@ -136,7 +136,7 @@ final class PayWithCardActionTest extends TestCase
 
         $transactions = $this->prophesize(TransactionsApi::class);
 
-        $this->mapper->getPayload(Argument::type(PaymentDetails::class))->willReturn(['GENERATED' => 'PAYLOAD']);
+        $this->mapper->getPayload(Argument::type(PaymentDetails::class), $paymentModel->reveal())->willReturn(['GENERATED' => 'PAYLOAD']);
         $transactions->createPaymentByTransactionId(['GENERATED' => 'PAYLOAD'], $details['tpay']['transaction_id'])->willThrow(new TpayException('Something went wrong'));
 
         $this->api->transactions()->willReturn($transactions);
@@ -180,7 +180,7 @@ final class PayWithCardActionTest extends TestCase
             'result' => 'failed',
         ];
 
-        $this->mapper->getPayload(Argument::type(PaymentDetails::class))->willReturn(['GENERATED' => 'PAYLOAD']);
+        $this->mapper->getPayload(Argument::type(PaymentDetails::class), $paymentModel->reveal())->willReturn(['GENERATED' => 'PAYLOAD']);
 
         $transactions = $this->prophesize(TransactionsApi::class);
         $transactions->createPaymentByTransactionId(['GENERATED' => 'PAYLOAD'], $details['tpay']['transaction_id'])->willReturn($response);

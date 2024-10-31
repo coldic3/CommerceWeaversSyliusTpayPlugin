@@ -8,6 +8,10 @@ use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
+use Sylius\Component\Core\Model\ChannelInterface;
+use Sylius\Component\Core\Model\CustomerInterface;
+use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
 class PayWithCardActionPayloadMapper implements PayWithCardActionPayloadMapperInterface
@@ -19,15 +23,22 @@ class PayWithCardActionPayloadMapper implements PayWithCardActionPayloadMapperIn
     /**
      * @return array{'groupId': int, 'cardPaymentData': array}
      */
-    public function getPayload(PaymentDetails $paymentDetails): array
+    public function getPayload(PaymentDetails $paymentDetails, PaymentInterface $payment): array
     {
         $payload = [
             'groupId' => PayGroup::CARD,
         ];
 
         if ($paymentDetails->getUseSavedCreditCard() !== null) {
+            /** @var OrderInterface $order */
+            $order = $payment->getOrder();
+            /** @var ChannelInterface $channel */
+            $channel = $order->getChannel();
+            /** @var CustomerInterface $customer */
+            $customer = $order->getCustomer();
+
             /** @var CreditCardInterface|null $creditCard */
-            $creditCard = $this->creditCardRepository->find($paymentDetails->getUseSavedCreditCard());
+            $creditCard = $this->creditCardRepository->findOneByIdCustomerAndChannel($paymentDetails->getUseSavedCreditCard(), $customer, $channel);
 
             Assert::notNull($creditCard);
 
