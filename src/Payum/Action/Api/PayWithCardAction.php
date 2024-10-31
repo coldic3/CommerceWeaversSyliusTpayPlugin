@@ -28,7 +28,7 @@ class PayWithCardAction extends BasePaymentAwareAction
 
         $this->do(
             fn () => $this->api->transactions()->createPaymentByTransactionId(
-                $this->payWithCardActionPayloadMapper->getPayload($paymentDetails),
+                $this->payWithCardActionPayloadMapper->getPayload($paymentDetails, $model),
                 $paymentDetails->getTransactionId(),
             ),
             onSuccess: function ($response) use ($paymentDetails) {
