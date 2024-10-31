@@ -10,9 +10,15 @@
                 <i class="circular close icon"></i>
                 <div class="content">
                     {{ 'commerce_weavers_sylius_tpay.shop.payment_failed.title'|trans }}
-                    <div class="sub header">{{ 'commerce_weavers_sylius_tpay.shop.payment_failed.subtitle'|trans }}</div>
+                    <div class="sub header">
+                        {{ 'commerce_weavers_sylius_tpay.shop.payment_failed.subtitle'|trans }}
+                    </div>
                 </div>
             </h1>
+
+            <div class="ui negative message">
+                {{ errorMessage ?? 'commerce_weavers_sylius_tpay.shop.payment_failed.error'|trans }}
+            </div>
 
             <div class="ui hidden divider"></div>
 

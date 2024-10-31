@@ -1,6 +1,6 @@
 {
   "uuid": "056988e1-0ddd-4d0b-a1e7-eaa1d84a1219",
-  "lastMigration": 32,
+  "lastMigration": 33,
   "name": "Mockoon tpay",
   "endpointPrefix": "",
   "latency": 0,
@@ -286,7 +286,7 @@
           "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"b6325d51e8c4b9130476\",\n  \"transactionId\": \"ta_jrkNGj5L29pnlbqw\",\n  \"title\": \"TR-BRA-CCP1S9X\",\n  \"posId\": \"ps_NyRBLzV5kelrpjaM\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-05-08 21:01:15\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"test transaction via BLIK\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZ3qyPPG1bqY\",\n    \"email\": \"<jan.nowak@tpay.com>\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"<https://secure.tpay.com/?title=TR-BRA-CCP1S9X&uid=01HXCS9KVQBDZDDWDHP1TZKJ1K>\"\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "Blik",
+          "label": "Blik with a token",
           "headers": [],
           "bodyType": "INLINE",
           "filePath": "",
@@ -303,9 +303,50 @@
             {
               "target": "body",
               "modifier": "pay.blikPaymentData.blikToken",
-              "value": "999137",
+              "value": "^777",
+              "invert": false,
+              "operator": "regex"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "207637f9-49be-4436-8151-848e4cf08319",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"b6325d51e8c4b9130476\",\n  \"transactionId\": \"ta_jrkNGj5L29pnlbqw\",\n  \"title\": \"TR-BRA-CCP1S9X\",\n  \"posId\": \"ps_NyRBLzV5kelrpjaM\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-05-08 21:01:15\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"test transaction via BLIK\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZ3qyPPG1bqY\",\n    \"email\": \"<jan.nowak@tpay.com>\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n  \"payments\": {\n    \"status\": \"pending\",\n    \"method\": \"pay_by_link\",\n    \"amountPaid\": 0,\n    \"date\": {\n      \"realization\": null\n    }\n  },\n  \"transactionPaymentUrl\": \"<https://secure.tpay.com/?title=TR-BRA-CCP1S9X&uid=01HXCS9KVQBDZDDWDHP1TZKJ1K>\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Blik with an alias",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "pay.groupId",
+              "value": "150",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.blikPaymentData.aliases.value",
+              "value": "ambiguous_value",
               "invert": true,
               "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "pay.blikPaymentData.blikToken",
+              "value": "",
+              "invert": false,
+              "operator": "null"
             }
           ],
           "rulesOperator": "AND",
@@ -317,7 +358,7 @@
         },
         {
           "uuid": "5f9103c7-dc9b-49ec-8dad-d1e19ebf3c24",
-          "body": "{\n  \"result\": \"failed\"\n}",
+          "body": "{\n  \"result\": \"success\",\n  \"requestId\": \"b6325d51e8c4b9130476\",\n  \"transactionId\": \"ta_jrkNGj5L29pnlbqw\",\n  \"title\": \"TR-BRA-CCP1S9X\",\n  \"posId\": \"ps_NyRBLzV5kelrpjaM\",\n  \"status\": \"pending\",\n  \"date\": {\n    \"creation\": \"2024-05-08 21:01:15\",\n    \"realization\": null\n  },\n  \"amount\": 0.1,\n  \"currency\": \"PLN\",\n  \"description\": \"test transaction via BLIK\",\n  \"hiddenDescription\": \"\",\n  \"payer\": {\n    \"payerId\": \"py_a9rjlZ3qyPPG1bqY\",\n    \"email\": \"<jan.nowak@tpay.com>\",\n    \"name\": \"Jan Nowak\",\n    \"phone\": \"\",\n    \"address\": \"\",\n    \"city\": \"\",\n    \"country\": \"PL\",\n    \"postalCode\": \"\"\n  },\n   \"payments\":{\n      \"status\":\"pending\",\n      \"method\":\"pay_by_link\",\n      \"amountPaid\":0,\n      \"date\":{\n         \"realization\":null\n      },\n      \"errors\":[\n         {\n            \"errorCode\":\"payment_failed\",\n            \"errorMessage\":\"Podany kod jest nieprawidłowy, bądź utracił ważność.\",\n            \"fieldName\":null\n         }\n      ]\n   }\n}\n",
           "latency": 0,
           "statusCode": 200,
           "label": "Blik (Failing)",
@@ -337,9 +378,9 @@
             {
               "target": "body",
               "modifier": "pay.blikPaymentData.blikToken",
-              "value": "999137",
-              "invert": false,
-              "operator": "equals"
+              "value": "^777",
+              "invert": true,
+              "operator": "regex"
             }
           ],
           "rulesOperator": "AND",
@@ -581,7 +622,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "b4085aff-5a8b-4f26-b601-dfb3537f7494",
@@ -610,7 +653,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "0b6be9e5-c227-4fa9-a8c5-fc7a0daf9881",
@@ -674,7 +719,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "e4a22d76-46eb-41c1-b11b-4691771080df",
@@ -703,7 +750,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     },
     {
       "uuid": "7156e806-bfaf-4a61-8635-144c74efc290",
@@ -732,7 +781,9 @@
           "callbacks": []
         }
       ],
-      "responseMode": null
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
     }
   ],
   "rootChildren": [

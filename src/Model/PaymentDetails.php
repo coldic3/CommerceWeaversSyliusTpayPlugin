@@ -31,6 +31,7 @@ class PaymentDetails
         private ?string $tpayChannelId = null,
         #[\SensitiveParameter]
         private ?string $visaMobilePhoneNumber = null,
+        private ?string $errorMessage = null,
     ) {
     }
 
@@ -197,6 +198,16 @@ class PaymentDetails
         $this->visaMobilePhoneNumber = $visaMobilePhoneNumber;
     }
 
+    public function getErrorMessage(): ?string
+    {
+        return $this->errorMessage;
+    }
+
+    public function setErrorMessage(?string $errorMessage): void
+    {
+        $this->errorMessage = $errorMessage;
+    }
+
     public function clearSensitiveData(): void
     {
         $this->applePayToken = null;
@@ -228,6 +239,7 @@ class PaymentDetails
             $details['tpay']['failure_url'] ?? null,
             $details['tpay']['tpay_channel_id'] ?? null,
             $details['tpay']['visa_mobile_phone_number'] ?? null,
+            $details['tpay']['error_message'] ?? null,
         );
     }
 
@@ -250,6 +262,7 @@ class PaymentDetails
                 'failure_url' => $this->failureUrl,
                 'tpay_channel_id' => $this->tpayChannelId,
                 'visa_mobile_phone_number' => $this->visaMobilePhoneNumber,
+                'error_message' => $this->errorMessage,
             ],
         ];
     }

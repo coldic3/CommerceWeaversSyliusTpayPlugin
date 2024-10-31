@@ -66,7 +66,35 @@ final class CreateTransactionProcessorTest extends TestCase
         $this->createTestSubject()->process($payment->reveal());
     }
 
-    public function test_it_throws_an_exception_if_payment_failed(): void
+    public function test_it_throws_an_exception_with_an_error_message_if_payment_failed(): void
+    {
+        $this->expectException(PaymentFailedException::class);
+        $this->expectExceptionMessage('So long and thanks for all the fish');
+
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $payment->getState()->willReturn(PaymentInterface::STATE_FAILED);
+        $payment->getDetails()->willReturn(['tpay' => ['error_message' => 'So long and thanks for all the fish']]);
+
+        $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction = $this->prophesize(CreateTransaction::class));
+        $this->getStatusFactory->createNewWithModel($payment)->willReturn($getStatus = $this->prophesize(GetStatus::class));
+
+        $gateway = $this->prophesize(GatewayInterface::class);
+        $gateway->execute($createTransaction, true)->shouldBeCalled();
+        $gateway->execute($getStatus, true)->shouldBeCalled();
+
+        $this->payum->getGateway('tpay')->willReturn($gateway);
+
+        $this->createTestSubject()->process($payment->reveal());
+    }
+
+    public function test_it_throws_an_exception_with_a_default_message_if_payment_failed(): void
     {
         $this->expectException(PaymentFailedException::class);
         $this->expectExceptionMessage('Payment failed');
@@ -80,6 +108,7 @@ final class CreateTransactionProcessorTest extends TestCase
         $payment = $this->prophesize(PaymentInterface::class);
         $payment->getMethod()->willReturn($paymentMethod);
         $payment->getState()->willReturn(PaymentInterface::STATE_FAILED);
+        $payment->getDetails()->willReturn([]);
 
         $this->createTransactionFactory->createNewWithModel($payment)->willReturn($createTransaction = $this->prophesize(CreateTransaction::class));
         $this->getStatusFactory->createNewWithModel($payment)->willReturn($getStatus = $this->prophesize(GetStatus::class));
@@ -89,7 +118,7 @@ final class CreateTransactionProcessorTest extends TestCase
         $gateway->execute($getStatus, true)->shouldBeCalled();
 
         $this->payum->getGateway('tpay')->willReturn($gateway);
-        $this->translator->trans('commerce_weavers_sylius_tpay.shop.payment_failed.error', [], 'messages')->willReturn('Payment failed');
+        $this->translator->trans('commerce_weavers_sylius_tpay.shop.payment_failed.error')->willReturn('Payment failed');
 
         $this->createTestSubject()->process($payment->reveal());
     }

@@ -41,6 +41,11 @@ final class CreateBlikLevelZeroTransactionAction extends BasePaymentAwareAction
             onSuccess: function (array $response) use ($paymentDetails) {
                 $paymentDetails->setTransactionId($response['transactionId']);
                 $paymentDetails->setStatus($response['status']);
+
+                if (isset($response['payments']['errors'])) {
+                    $paymentDetails->setStatus(PaymentInterface::STATE_FAILED);
+                    $paymentDetails->setErrorMessage($response['payments']['errors'][0]['errorMessage'] ?? null);
+                }
             },
             onFailure: function (array $response) use ($paymentDetails) {
                 if (array_keys($response) !== ['payments']) {

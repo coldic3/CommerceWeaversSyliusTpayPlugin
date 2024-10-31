@@ -25,6 +25,7 @@ trait PaymentDetailsHelperTrait
                 'failure_url' => null,
                 'tpay_channel_id' => null,
                 'visa_mobile_phone_number' => null,
+                'error_message' => null,
             ],
         ];
 
