@@ -1,6 +1,7 @@
 import './js/retry_payment';
 import './scss/style.scss';
 import './js/_pay_by_link';
+import './js/blik_code';
 import {CardForm} from "./js/card_form";
 
 document.addEventListener('DOMContentLoaded', () => {
