@@ -21,7 +21,7 @@ trait TpayTrait
         $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_card_expiration_date_year', $formId)))->sendKeys($year);
 
         if ($saveCardForLater) {
-            $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_saveCreditCardForLater', $formId)))->click();
+            $this->client->findElement(WebDriverBy::id(sprintf('%s_tpay_save_credit_card_for_later', $formId)))->sendKeys(true);
         }
     }
 
