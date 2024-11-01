@@ -2,53 +2,20 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Api\OpenApi;
+namespace CommerceWeavers\SyliusTpayPlugin\Api\Documentation;
 
-use ApiPlatform\Core\OpenApi\Model\MediaType;
-use ApiPlatform\OpenApi\OpenApi;
-use Sylius\Bundle\ApiBundle\OpenApi\Documentation\DocumentationModifierInterface;
-
-final class PayDocumentationModifier implements DocumentationModifierInterface
+final class PayRequestBodyExampleFactory
 {
     private const EXAMPLE_VALUE = 'string';
 
-    public function __construct(private readonly string $apiShopRoutePrefix)
+    public static function create(): array
     {
-    }
-
-    public function modify(OpenApi $docs): OpenApi
-    {
-        $paths = $docs->getPaths();
-        $path = sprintf('%s/orders/{tokenValue}/pay', $this->apiShopRoutePrefix);
-        $pathItem = $paths->getPath($path);
-
-        if (null === $pathItem) {
-            return $docs;
-        }
-
-        $post = $pathItem->getPost();
-
-        if (null === $post) {
-            return $docs;
-        }
-
-        $requestBody = $post->getRequestBody();
-
-        if (null === $requestBody) {
-            return $docs;
-        }
-
-        $content = $requestBody->getContent();
-
-        /** @var MediaType $mediaType */
-        $mediaType = $content['application/ld+json'];
-
         $commonExampleData = [
             'successUrl' => self::EXAMPLE_VALUE,
             'failureUrl' => self::EXAMPLE_VALUE,
         ];
 
-        $content['application/ld+json'] = $mediaType->withExamples(new \ArrayObject([
+        return [
             'Pay by link' => [
                 'value' => $commonExampleData,
             ],
@@ -104,16 +71,6 @@ final class PayDocumentationModifier implements DocumentationModifierInterface
                     'visaMobilePhoneNumber' => self::EXAMPLE_VALUE,
                 ],
             ],
-        ]));
-
-        $pathItem = $pathItem->withPost(
-            $post->withRequestBody(
-                $requestBody->withContent($content),
-            ),
-        );
-
-        $paths->addPath($path, $pathItem);
-
-        return $docs->withPaths($paths);
+        ];
     }
 }
