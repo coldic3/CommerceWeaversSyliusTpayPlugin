@@ -11,6 +11,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Tpay\OpenApi\Utilities\Logger;
 
 final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension implements PrependExtensionInterface
 {
@@ -43,6 +44,7 @@ final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension
             $container,
         );
 
+        $this->setUpTpayLogger($container);
         $this->prependDoctrineMigrations($container);
         $this->prependDoctrineMapping($container);
     }
@@ -104,5 +106,20 @@ final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension
         $configs = $container->getExtensionConfig($this->getAlias());
 
         return $this->processConfiguration($configuration, $configs);
+    }
+
+    private function setUpTpayLogger(ContainerBuilder $container): void
+    {
+        if (!$container->hasParameter('kernel.logs_dir')) {
+            return;
+        }
+
+        $logsDir = $container->getParameter('kernel.logs_dir');
+
+        if (!is_string($logsDir)) {
+            return;
+        }
+
+        Logger::setLogPath(sprintf('%s/tpay_open_api_', $logsDir));
     }
 }
