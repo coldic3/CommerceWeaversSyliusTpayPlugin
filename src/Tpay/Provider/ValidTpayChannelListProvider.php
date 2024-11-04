@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
-use App\Repository\PaymentMethodRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
@@ -13,6 +12,7 @@ use Payum\Core\Security\CypherInterface;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
+use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Webmozart\Assert\Assert;
 
 final class ValidTpayChannelListProvider implements ValidTpayChannelListProviderInterface

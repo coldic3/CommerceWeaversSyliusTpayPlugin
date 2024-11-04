@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Provider;
 
-use App\Repository\PaymentMethodRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
+use CommerceWeavers\SyliusTpayPlugin\Repository\PaymentMethodRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProvider;
 use Payum\Core\Security\CypherInterface;
