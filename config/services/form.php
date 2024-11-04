@@ -12,6 +12,7 @@ use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPayment
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\CompleteTypeExtension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Extension\PaymentTypeExtension;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCardType;
+use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCreditCardChoiceType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayGatewayConfigurationType;
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayPaymentDetailsType;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
@@ -50,6 +51,13 @@ return static function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields'),
             service('security.token_storage'),
+        ])
+        ->tag('form.type')
+    ;
+
+    $services->set(TpayCreditCardChoiceType::class)
+        ->args([
+            service('security.token_storage'),
             service('translator'),
             service('commerce_weavers_sylius_tpay.repository.credit_card'),
             service('sylius.context.cart'),
@@ -77,6 +85,7 @@ return static function(ContainerConfigurator $container): void {
 
     $services
         ->set('commerce_weavers_sylius_tpay.form.event_listener.add_saved_credit_cards', AddSavedCreditCardsListener::class)
+        ->deprecate('commerce-weavers/sylius-tpay-plugin', '2.0', 'The "%service_id%" service is deprecated and will be removed in the version 2.0 as it is considered daed code.')
         ->args([
             service('security.token_storage'),
             service('translator'),
