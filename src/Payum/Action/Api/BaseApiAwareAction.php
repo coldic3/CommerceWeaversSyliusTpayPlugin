@@ -21,7 +21,6 @@ abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
     public function __construct()
     {
         $this->apiClass = TpayApi::class;
-        Logger::setLogPath(dirname(__DIR__, 4) . '/tests/Application/var/log/');
     }
 
     protected function do(callable $func, callable $onSuccess, callable $onFailure): void
