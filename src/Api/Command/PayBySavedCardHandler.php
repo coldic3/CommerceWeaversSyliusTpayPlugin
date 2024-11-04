@@ -19,7 +19,7 @@ final class PayBySavedCardHandler extends AbstractPayByHandler
 
         $this->createTransactionProcessor->process($payment);
 
-        return $this->createResultFrom($payment);
+        return $this->createResultFrom($payment, false);
     }
 
     private function setTransactionData(PaymentInterface $payment, string $savedCardId): void
