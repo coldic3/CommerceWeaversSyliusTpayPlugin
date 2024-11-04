@@ -11,7 +11,7 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 /**
  * @mixin EntityRepository
  */
-trait FindByChannelWithGatewayConfigTrait
+trait PaymentMethodTrait
 {
     public function findByChannelAndGatewayConfigNameWithGatewayConfig(ChannelInterface $channel, string $gatewayConfigName): array
     {
