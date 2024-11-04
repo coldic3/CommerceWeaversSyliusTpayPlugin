@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\ApiAwareTrait;
-use Tpay\OpenApi\Utilities\Logger;
 use Tpay\OpenApi\Utilities\TpayException;
 
 /**
@@ -21,7 +20,6 @@ abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
     public function __construct()
     {
         $this->apiClass = TpayApi::class;
-        Logger::setLogPath(dirname(__DIR__, 4) . '/tests/Application/var/log/');
     }
 
     protected function do(callable $func, callable $onSuccess, callable $onFailure): void

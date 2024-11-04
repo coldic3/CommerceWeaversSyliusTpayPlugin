@@ -15,7 +15,7 @@
             validation_groups:
                 - 'commerce_weavers_sylius_tpay:shop:order:pay'
             openapi_context:
-                summary: 'Pay for the order'
+                summary: 'Pays for the order.'
         shop_initialize_apple_pay_session:
             method: 'POST'
             path: '/shop/orders/{tokenValue}/payments/{paymentId}/apple-pay-session'
@@ -31,7 +31,7 @@
             validation_groups:
                 - 'commerce_weavers_sylius_tpay:shop:order:payment:initialize_apple_pay_session'
             openapi_context:
-                summary: 'Initialize Apple Pay payment session'
+                summary: 'Initializes Apple Pay payment session.'
                 parameters:
                     -   name: tokenValue
                         in: path
@@ -55,4 +55,4 @@
             validation_groups:
                 - 'commerce_weavers_sylius_tpay:shop:order:cancel_last_payment'
             openapi_context:
-                summary: 'Cancel the last in-progress payment for the order'
+                summary: 'Cancels the last in-progress payment for the order.'

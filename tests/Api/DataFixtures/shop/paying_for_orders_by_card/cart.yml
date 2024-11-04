@@ -14,7 +14,6 @@ Sylius\Component\Core\Model\ShopUser:
         username: 'sylius@example.com'
         usernameCanonical: 'sylius@example.com'
 
-
 Sylius\Component\Core\Model\Product:
     product_mug:
         code: 'MUG'
