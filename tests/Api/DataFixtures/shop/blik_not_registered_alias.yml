@@ -1,3 +1,9 @@
 CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias:
     blik_alias_john_doe:
-        __factory: {'Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory\BlikAliasFactory::create': ['@customer_john_doe', 'd576029b-a586-49f4-a355-85f5dccf5107'] }
+        __factory: {
+            'Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory\BlikAliasFactory::create': [
+                '@customer_john_doe',
+                '@channel_web',
+                'd576029b-a586-49f4-a355-85f5dccf5107',
+            ]
+        }

@@ -14,6 +14,7 @@ return static function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_sylius_tpay.repository.blik_alias'),
             service('commerce_weavers_sylius_tpay.factory.blik_alias'),
+            service('sylius.context.channel'),
         ])
         ->alias(BlikAliasResolverInterface::class, 'commerce_weavers_sylius_tpay.resolver.blik_alias')
     ;

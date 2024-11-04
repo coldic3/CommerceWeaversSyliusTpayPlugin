@@ -5,23 +5,29 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 
 final class BlikAliasFactory
 {
-    public static function create(CustomerInterface $customer, string $value): BlikAlias
+    public static function create(CustomerInterface $customer, ChannelInterface $channel, string $value): BlikAlias
     {
         $blikAlias = new BlikAlias();
 
         $blikAlias->setCustomer($customer);
+        $blikAlias->setChannel($channel);
         $blikAlias->setValue($value);
 
         return $blikAlias;
     }
 
-    public static function createRegistered(CustomerInterface $customer, string $value, \DateTimeInterface $expirationDate): BlikAlias
-    {
-        $blikAlias = self::create($customer, $value);
+    public static function createRegistered(
+        CustomerInterface $customer,
+        ChannelInterface $channel,
+        string $value,
+        \DateTimeInterface $expirationDate
+    ): BlikAlias {
+        $blikAlias = self::create($customer, $channel, $value);
 
         $blikAlias->register($expirationDate);
 
