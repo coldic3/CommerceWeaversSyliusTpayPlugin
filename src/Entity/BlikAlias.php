@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Entity;
 
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -18,6 +19,8 @@ class BlikAlias implements BlikAliasInterface
     private bool $registered = false;
 
     private ?CustomerInterface $customer = null;
+
+    private ?ChannelInterface $channel = null;
 
     public function getId(): ?int
     {
@@ -70,5 +73,15 @@ class BlikAlias implements BlikAliasInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
+    }
+
+    public function getChannel(): ?ChannelInterface
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?ChannelInterface $channel): void
+    {
+        $this->channel = $channel;
     }
 }

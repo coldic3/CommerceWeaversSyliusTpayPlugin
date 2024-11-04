@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 
 final class BlikAliasFactory implements BlikAliasFactoryInterface
@@ -27,10 +28,13 @@ final class BlikAliasFactory implements BlikAliasFactoryInterface
         return new $this->className();
     }
 
-    public function createForCustomer(CustomerInterface $customer): BlikAliasInterface
-    {
+    public function createForCustomerAndChannel(
+        CustomerInterface $customer,
+        ChannelInterface $channel,
+    ): BlikAliasInterface {
         $blikAlias = $this->createNew();
         $blikAlias->setCustomer($customer);
+        $blikAlias->setChannel($channel);
 
         return $blikAlias;
     }
