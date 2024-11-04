@@ -8,7 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
 use Payum\Core\ApiAwareTrait;
-use Tpay\OpenApi\Utilities\Logger;
 use Tpay\OpenApi\Utilities\TpayException;
 
 /**

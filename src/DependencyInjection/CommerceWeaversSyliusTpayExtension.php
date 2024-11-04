@@ -110,8 +110,16 @@ final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension
 
     private function setUpTpayLogger(ContainerBuilder $container): void
     {
-        if ($container->hasParameter('kernel.logs_dir')) {
-            Logger::setLogPath(sprintf('%s/tpay_open_api_', $container->getParameter('kernel.logs_dir')));
+        if (!$container->hasParameter('kernel.logs_dir')) {
+            return;
         }
+
+        $logsDir = $container->getParameter('kernel.logs_dir');
+
+        if (!is_string($logsDir)) {
+            return;
+        }
+
+        Logger::setLogPath(sprintf('%s/tpay_open_api_', $logsDir));
     }
 }
