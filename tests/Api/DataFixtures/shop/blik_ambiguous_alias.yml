@@ -1,3 +1,10 @@
 CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias:
     blik_alias_john_doe:
-        __factory: {'Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory\BlikAliasFactory::createRegistered': ['@customer_john_doe', 'ambiguous_value', "<dateTimeBetween('+1 day', '+1 month')>"] }
+        __factory: {
+            'Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory\BlikAliasFactory::createRegistered': [
+                '@customer_john_doe',
+                '@channel_web',
+                'ambiguous_value',
+                "<dateTimeBetween('+1 day', '+1 month')>",
+            ]
+        }
