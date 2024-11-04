@@ -154,7 +154,10 @@ export class CardForm {
     this.#cardNumber.addEventListener('keyup', this.#updateCardOperatorIcon.bind(this));
     this.#expirationMonth.addEventListener('change', this.#validateExpirationDate.bind(this));
     this.#expirationYear.addEventListener('change', this.#validateExpirationDate.bind(this));
-    this.#savedCardsSelect.addEventListener('change', this.#updateCardDataVisibility.bind(this));
+
+    if (this.#savedCardsSelect !== null) {
+      this.#savedCardsSelect.addEventListener('change', this.#updateCardDataVisibility.bind(this));
+    }
 
     this.#form.addEventListener('submit', (event) => {
       if (!this.#isVisible()) {
