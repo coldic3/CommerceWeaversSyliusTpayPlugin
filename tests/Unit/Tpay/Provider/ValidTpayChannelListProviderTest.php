@@ -70,6 +70,14 @@ final class ValidTpayChannelListProviderTest extends TestCase
                 ['id' => '171'],
             ],
         ],
+        '7' => [
+            'id' => '7',
+            'name' => 'Visa mobile on site',
+            'available' => true,
+            'groups' => [
+                ['id' => '177'],
+            ],
+        ],
     ];
 
     private AvailableTpayChannelListProviderInterface|ObjectProphecy $availableTpayApiBankListProvider;
@@ -201,7 +209,8 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $result = $this->createTestSubject()->provide();
 
         $expected = self::BANK_LIST;
-        unset($expected['6']);
+        // unsets both methods for visa mobile and its onsite version
+        unset($expected['6'], $expected['7']);
 
         $this->assertSame($expected, $result);
     }

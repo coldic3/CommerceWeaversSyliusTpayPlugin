@@ -15,4 +15,6 @@ class PayGroup
     public const GOOGLE_PAY = 166;
 
     public const VISA_MOBILE = 171;
+
+    public const VISA_MOBILE_ON_SITE = 177;
 }
