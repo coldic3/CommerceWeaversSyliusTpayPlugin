@@ -63,7 +63,11 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
             }
 
             match ($config['type']) {
-                PaymentType::VISA_MOBILE => $paymentMethodsToRemoveByGroupId[] = PayGroup::VISA_MOBILE,
+                PaymentType::VISA_MOBILE => array_push(
+                    $paymentMethodsToRemoveByGroupId,
+                    PayGroup::VISA_MOBILE,
+                    PayGroup::VISA_MOBILE_ON_SITE,
+                ),
                 PaymentType::APPLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::APPLE_PAY,
                 PaymentType::GOOGLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::GOOGLE_PAY,
                 PaymentType::BLIK => $paymentMethodsToRemoveByGroupId[] = PayGroup::BLIK,
