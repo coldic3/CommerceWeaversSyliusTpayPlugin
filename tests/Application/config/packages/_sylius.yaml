@@ -8,7 +8,6 @@ imports:
     - { resource: "@SyliusApiBundle/Resources/config/app/config.yaml" }
 
 parameters:
-    env(STATE_MACHINE_DEFAULT_ADAPTER): 'winzou_state_machine'
     sylius_core.public_dir: '%kernel.project_dir%/public'
 
 sylius_shop:
