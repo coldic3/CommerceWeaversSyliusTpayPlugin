@@ -18,6 +18,7 @@ commerce_weavers_sylius_tpay:
                 label: 'Typ'
                 redirect: 'Przekierowanie do Tpay'
                 pay_by_link: 'Przekierowanie do banku'
+                visa_mobile: 'Visa Mobile'
     shop:
         credit_cards: 'Karty kredytowe'
         credit_card:

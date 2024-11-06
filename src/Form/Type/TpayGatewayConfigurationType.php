@@ -34,7 +34,6 @@ final class TpayGatewayConfigurationType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_id',
-                    'validation_groups' => ['sylius'],
                     'constraints' => [
                         new NotBlank(allowNull: false, groups: ['sylius']),
                     ],
@@ -46,7 +45,6 @@ final class TpayGatewayConfigurationType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.client_secret',
-                    'validation_groups' => ['sylius'],
                     'constraints' => [
                         new NotBlank(allowNull: false, groups: ['sylius']),
                     ],
@@ -74,6 +72,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.pay_by_link' => PaymentType::PAY_BY_LINK,
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.google_pay' => PaymentType::GOOGLE_PAY,
                         'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.apple_pay' => PaymentType::APPLE_PAY,
+                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.visa_mobile' => PaymentType::VISA_MOBILE,
                     ],
                 ],
             )
