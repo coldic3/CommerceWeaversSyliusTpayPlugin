@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Security\Notification\Verifier;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Checker\ProductionModeCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509FactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CertificateResolverInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\TrustedCertificateResolverInterface;
@@ -27,6 +28,8 @@ final class SignatureVerifierTest extends TestCase
 
     private X509FactoryInterface|ObjectProphecy $x509Factory;
 
+    private ProductionModeCheckerInterface|ObjectProphecy $productionModeChecker;
+
     private X509|ObjectProphecy $x509;
 
     private PublicKey|ObjectProphecy $publicKey;
@@ -36,6 +39,7 @@ final class SignatureVerifierTest extends TestCase
         $this->certificateResolver = $this->prophesize(CertificateResolverInterface::class);
         $this->trustedCertificateResolver = $this->prophesize(TrustedCertificateResolverInterface::class);
         $this->x509Factory = $this->prophesize(X509FactoryInterface::class);
+        $this->productionModeChecker = $this->prophesize(ProductionModeCheckerInterface::class);
         $this->x509 = $this->prophesize(X509::class);
         $this->publicKey = $this->prophesize(PublicKey::class);
 
@@ -68,8 +72,9 @@ final class SignatureVerifierTest extends TestCase
 
         $jws = sprintf('%s.non_used_value.%s', $header, $signature);
 
+        $this->productionModeChecker->isProduction('https://cw.x5u')->willReturn(true);
         $this->certificateResolver->resolve('https://cw.x5u')->willReturn('cert');
-        $this->trustedCertificateResolver->resolve()->willReturn('trusted_cert');
+        $this->trustedCertificateResolver->resolve(true)->willReturn('trusted_cert');
 
         $this->x509->loadX509('cert')->shouldBeCalled();
         $this->x509->loadCA('trusted_cert')->shouldBeCalled();
@@ -90,8 +95,9 @@ final class SignatureVerifierTest extends TestCase
 
         $jws = sprintf('%s.non_used_value.%s', $header, $signature);
 
+        $this->productionModeChecker->isProduction('https://cw.x5u')->willReturn(true);
         $this->certificateResolver->resolve('https://cw.x5u')->willReturn('cert');
-        $this->trustedCertificateResolver->resolve()->willReturn('trusted_cert');
+        $this->trustedCertificateResolver->resolve(true)->willReturn('trusted_cert');
 
         $this->x509->loadX509('cert')->shouldBeCalled();
         $this->x509->loadCA('trusted_cert')->shouldBeCalled();
@@ -110,8 +116,9 @@ final class SignatureVerifierTest extends TestCase
 
         $jws = sprintf('%s.non_used_value.%s', $header, $signature);
 
+        $this->productionModeChecker->isProduction('https://cw.x5u')->willReturn(true);
         $this->certificateResolver->resolve('https://cw.x5u')->willReturn('cert');
-        $this->trustedCertificateResolver->resolve()->willReturn('trusted_cert');
+        $this->trustedCertificateResolver->resolve(true)->willReturn('trusted_cert');
 
         $this->x509->loadX509('cert')->shouldBeCalled();
         $this->x509->loadCA('trusted_cert')->shouldBeCalled();
@@ -125,12 +132,41 @@ final class SignatureVerifierTest extends TestCase
         $this->assertFalse($isJwsValid);
     }
 
+    public function test_it_supports_legacy_behaviour_if_production_mode_checker_is_not_passed(): void
+    {
+        $header = base64_encode(json_encode(['x5u' => 'https://cw.x5u']));
+        $encodedRequestContent = str_replace('=', '', strtr(base64_encode('request content'), '+/', '-_'));
+        $signature = base64_encode('sigmature');
+
+        $jws = sprintf('%s.non_used_value.%s', $header, $signature);
+
+        $this->certificateResolver->resolve('https://cw.x5u')->willReturn('cert');
+        $this->trustedCertificateResolver->resolve(false)->willReturn('trusted_cert');
+
+        $this->x509->loadX509('cert')->shouldBeCalled();
+        $this->x509->loadCA('trusted_cert')->shouldBeCalled();
+        $this->x509->validateSignature()->willReturn(true);
+        $this->x509->withSettings($this->publicKey, 'sha256', RSA::SIGNATURE_PKCS1)->willReturn($this->publicKey);
+
+        $this->publicKey->verify(sprintf('%s.%s', $header, $encodedRequestContent), 'sigmature')->willReturn(true);
+
+        $signatureVerifier = new SignatureVerifier(
+            $this->certificateResolver->reveal(),
+            $this->trustedCertificateResolver->reveal(),
+            $this->x509Factory->reveal(),
+        );
+        $isJwsValid = $signatureVerifier->verify($jws, 'request content');
+
+        $this->assertTrue($isJwsValid);
+    }
+
     private function createTestSubject(): SignatureVerifierInterface
     {
         return new SignatureVerifier(
             $this->certificateResolver->reveal(),
             $this->trustedCertificateResolver->reveal(),
             $this->x509Factory->reveal(),
+            $this->productionModeChecker->reveal(),
         );
     }
 }

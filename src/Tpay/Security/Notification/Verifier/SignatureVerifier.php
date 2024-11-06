@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier;
 
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Checker\ProductionModeCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509FactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CertificateResolverInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\TrustedCertificateResolverInterface;
@@ -16,7 +17,16 @@ final class SignatureVerifier implements SignatureVerifierInterface
         private readonly CertificateResolverInterface $certificateResolver,
         private readonly TrustedCertificateResolverInterface $trustedCertificateResolver,
         private readonly X509FactoryInterface $x509Factory,
+        private readonly ?ProductionModeCheckerInterface $productionModeChecker = null,
     ) {
+        if (null === $this->productionModeChecker) {
+            trigger_deprecation(
+                'commerce-weavers/sylius-tpay-plugin',
+                '1.0',
+                'Not passing a $productionModeChecker to %s constructor is deprecated and will be removed in SyliusTpayPlugin 2.0.',
+                self::class,
+            );
+        }
     }
 
     public function verify(string $jws, string $requestContent): bool
@@ -42,8 +52,9 @@ final class SignatureVerifier implements SignatureVerifierInterface
             throw new InvalidSignatureException('Missing x5u header');
         }
 
+        $production = $this->productionModeChecker?->isProduction($x5u) ?? false;
         $certificate = $this->certificateResolver->resolve($x5u);
-        $trusted = $this->trustedCertificateResolver->resolve();
+        $trusted = $this->trustedCertificateResolver->resolve($production);
 
         $x509 = $this->x509Factory->create();
         $x509->loadX509($certificate);

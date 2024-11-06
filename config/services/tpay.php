@@ -24,7 +24,10 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProvi
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProvider;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\CachedTpayTransactionChannelResolver;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Checker\ProductionModeChecker;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Checker\ProductionModeCheckerInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactory;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509Factory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509FactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CachedCertificateResolver;
@@ -103,8 +106,12 @@ return static function(ContainerConfigurator $container): void {
         ->alias(CreateVisaMobilePaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_visa_mobile_payment_payload')
     ;
 
+    $services->set('commerce_weavers_sylius_tpay.tpay.security.notification.checker.production_mode', ProductionModeChecker::class)
+        ->alias(ProductionModeCheckerInterface::class, 'commerce_weavers_sylius_tpay.tpay.security.notification.checker.production_mode')
+    ;
+
     $services->set('commerce_weavers_sylius_tpay.tpay.security.notification.factory.basic_payment', BasicPaymentFactory::class)
-        ->alias(BasicPaymentFactory::class, 'commerce_weavers_sylius_tpay.tpay.security.notification.factory.basic_payment')
+        ->alias(BasicPaymentFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.security.notification.factory.basic_payment')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.security.notification.factory.x509', X509Factory::class)
@@ -146,6 +153,7 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.tpay.security.notification.resolver.certificate'),
             service('commerce_weavers_sylius_tpay.tpay.security.notification.resolver.trusted_certificate'),
             service('commerce_weavers_sylius_tpay.tpay.security.notification.factory.x509'),
+            service('commerce_weavers_sylius_tpay.tpay.security.notification.checker.production_mode'),
         ])
         ->alias(SignatureVerifierInterface::class, 'commerce_weavers_sylius_tpay.tpay.security.notification.verifier.signature')
     ;
