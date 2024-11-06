@@ -66,6 +66,7 @@ mounts:
     "/tests/Application/public/media": "shared:files/media"
     "/tests/Application/public/assets": "shared:files/assets"
     "/tests/Application/public/bundles": "shared:files/bundles"
+    "/tests/Application/private/credit_memos/": "shared:files/credit_memos"
 
 # The configuration of app when it is exposed to the web.
 web:
