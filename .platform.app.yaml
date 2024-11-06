@@ -14,6 +14,8 @@ hooks:
     build: |
         set -x -e
         
+        wkhtmltopdf -V
+        
         curl -fs https://get.symfony.com/cloud/configurator | bash
         
         symfony-build
@@ -49,6 +51,8 @@ dependencies:
         yarn: "*"
     php:
         composer/composer: '^2'
+    ruby:
+        "wkhtmltopdf-binary": "> 0.12.6"
 
 # The size of the persistent disk of the application (in MB).
 disk: 2048
