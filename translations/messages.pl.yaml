@@ -51,7 +51,7 @@ commerce_weavers_sylius_tpay:
                     year: 'Rok'
                     year_placeholder: 'Wybierz rok'
                 holder_name: 'Imię i nazwisko właściciela'
-                number: 'Numer'
+                number: 'Numer karty'
                 save_credit_card_for_later:
                     label: 'Zapisz kartę na później'
                 use_saved_credit_card:
