@@ -43,7 +43,10 @@ final class AddWinzouStateMachineConfigurationPass implements CompilerPassInterf
             ]);
         }
 
-        if ($this->hasWinzouStateMachineGraph('sylius_refund_refund_payment', $stateMachineDefaultAdapter, $stateMachineAdapterMapping)) {
+        if (
+            $container->hasExtension('sylius_refund') &&
+            $this->hasWinzouStateMachineGraph('sylius_refund_refund_payment', $stateMachineDefaultAdapter, $stateMachineAdapterMapping)
+        ) {
             $container->prependExtensionConfig('winzou_state_machine', [
                 'sylius_refund_refund_payment' => [
                     'callbacks' => [
