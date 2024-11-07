@@ -9,7 +9,7 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\X509Fact
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\CertificateResolverInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Resolver\TrustedCertificateResolverInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\Exception\InvalidSignatureException;
-use phpseclib3\Crypt\RSA;
+use Tpay\OpenApi\Utilities\phpseclib\Crypt\RSA;
 
 final class SignatureVerifier implements SignatureVerifierInterface
 {
