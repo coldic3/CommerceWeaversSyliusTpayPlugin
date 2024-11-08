@@ -6,7 +6,6 @@ namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Webmozart\Assert\Assert;
 
 final class CachedTpayTransactionChannelResolver implements TpayTransactionChannelResolverInterface
 {
@@ -21,14 +20,10 @@ final class CachedTpayTransactionChannelResolver implements TpayTransactionChann
 
     public function resolve(): array
     {
-        $result = $this->cache->get(self::COMMERCE_WEAVERS_SYLIUS_TPAY_TRANSACTION_CHANNELS, function (ItemInterface $item): array {
+        return (array) $this->cache->get(self::COMMERCE_WEAVERS_SYLIUS_TPAY_TRANSACTION_CHANNELS, function (ItemInterface $item): array {
             $item->expiresAfter($this->cacheTtlInSeconds);
 
             return $this->decorated->resolve();
         });
-
-        Assert::isArray($result);
-
-        return $result;
     }
 }

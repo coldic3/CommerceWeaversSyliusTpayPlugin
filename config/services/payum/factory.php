@@ -6,6 +6,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\CreateTransactionFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\GetTpayTransactionsChannelsFactory;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\GetTpayTransactionsChannelsFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\NotifyDataFactory;
@@ -33,6 +35,10 @@ return function(ContainerConfigurator $container): void {
 
     $services->set('commerce_weavers_sylius_tpay.payum.factory.create_transaction', CreateTransactionFactory::class)
         ->alias(CreateTransactionFactoryInterface::class, 'commerce_weavers_sylius_tpay.payum.factory.create_transaction')
+    ;
+
+    $services->set('commerce_weavers_sylius_tpay.payum.factory.get_tpay_transactions_channels', GetTpayTransactionsChannelsFactory::class)
+        ->alias(GetTpayTransactionsChannelsFactoryInterface::class, 'commerce_weavers_sylius_tpay.payum.factory.get_tpay_transactions_channels')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.payum.factory.initialize_apple_pay_payment', InitializeApplePayPaymentFactory::class)
