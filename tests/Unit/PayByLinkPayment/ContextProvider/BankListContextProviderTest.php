@@ -9,9 +9,11 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderI
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
+use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 class BankListContextProviderTest extends TestCase
 {
@@ -88,7 +90,12 @@ class BankListContextProviderTest extends TestCase
         $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
         $order = $this->prophesize(OrderInterface::class);
         $payment = $this->prophesize(PaymentInterface::class);
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
         $order->getLastPayment()->willReturn($payment);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn([]);
 
         $this->validTpayChannelListProvider->provide()->shouldBeCalled();
         $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
@@ -100,6 +107,31 @@ class BankListContextProviderTest extends TestCase
 
         $this->assertArrayHasKey('banks', $context);
         $this->assertSame(['1' => 'some bank'], $context['banks']);
+        $this->assertNull($context['defaultTpayChannelId']);
+    }
+
+    public function test_it_does_not_provide_bank_list_if_gateway_config_has_tpay_channel_id_specified(): void
+    {
+        $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
+        $order = $this->prophesize(OrderInterface::class);
+        $payment = $this->prophesize(PaymentInterface::class);
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $order->getLastPayment()->willReturn($payment);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn(['tpay_channel_id' => '71']);
+
+        $this->validTpayChannelListProvider->provide()->shouldNotBeCalled();
+
+        $context = $this->createTestObject()->provide(
+            ['order' => $order->reveal()],
+            $templateBlock
+        );
+
+        $this->assertArrayHasKey('banks', $context);
+        $this->assertSame([], $context['banks']);
+        $this->assertSame('71', $context['defaultTpayChannelId']);
     }
 
     private function createTestObject(): BankListContextProvider

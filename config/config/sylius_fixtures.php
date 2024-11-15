@@ -71,6 +71,8 @@ return static function(SyliusFixturesConfig $fixtures): void {
         'production_mode' => false,
     ];
 
+    $twistoChannelId = '71';
+
     $defaultSuite->fixtures('payment_method', [
         'options' => [
             'custom' => [
@@ -146,6 +148,20 @@ return static function(SyliusFixturesConfig $fixtures): void {
                     'gatewayFactory' => 'tpay',
                     'gatewayName' => 'tpay',
                     'gatewayConfig' => $tpayConfig + ['type' => PaymentType::VISA_MOBILE],
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
+                'pbl_twisto' => [
+                    'code' => 'tpay_pbl_twisto',
+                    'name' => 'Twisto (Tpay)',
+                    'gatewayFactory' => 'tpay',
+                    'gatewayName' => 'tpay',
+                    'gatewayConfig' => $tpayConfig + [
+                        'type' => PaymentType::PAY_BY_LINK,
+                        'tpay_channel_id' => $twistoChannelId,
+                    ],
                     'channels' => [
                         'FASHION_WEB',
                     ],

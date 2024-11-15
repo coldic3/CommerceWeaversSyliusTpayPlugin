@@ -111,6 +111,15 @@ final class TpayGatewayConfigurationType extends AbstractType
                 ],
             )
             ->add(
+                'tpay_channel_id',
+                TextType::class,
+                [
+                    'empty_data' => '',
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.tpay_channel_id',
+                    'required' => false,
+                ],
+            )
+            ->add(
                 'production_mode',
                 ChoiceType::class,
                 [

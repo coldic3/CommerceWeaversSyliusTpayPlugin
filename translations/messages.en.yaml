@@ -12,6 +12,7 @@ commerce_weavers_sylius_tpay:
             client_secret: 'Secret'
             google_merchant_id: 'Google Merchant ID'
             apple_pay_merchant_id: 'Apple Merchant ID'
+            tpay_channel_id: 'Tpay Channel ID'
             production_mode: 'Production mode'
             merchant_id: 'Merchant ID'
             notification_security_code: 'Security code (Notification)'
