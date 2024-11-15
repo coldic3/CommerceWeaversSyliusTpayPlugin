@@ -18,6 +18,10 @@ final class Routing
 
     public const WEBHOOK_NOTIFICATION_PATH = '/webhook/{_locale}/tpay/notification';
 
+    public const ADMIN_TPAY_CHANNELS = 'commerce_weavers_sylius_tpay_admin_tpay_get_channels';
+
+    public const ADMIN_TPAY_CHANNELS_PATH = '/tpay/channels';
+
     public const SHOP_PAYMENT_FAILED = 'commerce_weavers_sylius_tpay_payment_failed';
 
     public const SHOP_PAYMENT_FAILED_PATH = '/tpay/order/{orderToken}/payment-failed';

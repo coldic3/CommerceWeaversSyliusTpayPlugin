@@ -1,0 +1,138 @@
+{% import '@SyliusUi/Macro/flags.html.twig' as flags %}
+
+{{ form_errors(form) }}
+
+<div class="ui segment">
+    <h4 class="ui dividing header">{{ 'sylius.ui.details'|trans }}</h4>
+    {{ form_errors(form) }}
+
+    <div class="two fields">
+        {{ form_row(form.code) }}
+        {{ form_row(form.position) }}
+    </div>
+    {{ form_row(form.enabled) }}
+    {{ form_row(form.channels) }}
+</div>
+
+<div class="ui segment">
+    <h4 class="ui dividing header">{{ 'sylius.ui.gateway_configuration'|trans }}</h4>
+
+    {% if resource.gatewayConfig.factoryName == 'stripe_checkout' %}
+        <div class="ui icon negative orange message sylius-flash-message">
+            <i class="close icon"></i>
+            <i class="warning icon"></i>
+            <div class="content">
+                <div class="header">
+                    {{ 'sylius.ui.gateway.no_sca_support_notice'|trans }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if resource.gatewayConfig.factoryName == 'paypal_express_checkout' %}
+        <div class="ui icon negative orange message sylius-flash-message">
+            <i class="close icon"></i>
+            <i class="warning icon"></i>
+            <div class="content">
+                <div class="header">
+                    {% autoescape false %}{{ 'sylius.ui.gateway.pay_pal_express_checkout_deprecation_notice'|trans }}{% endautoescape %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.gatewayConfig.factoryName) }}
+    {% if form.gatewayConfig.config is defined %}
+        {% for field in form.gatewayConfig.config %}
+            {% if loop.index is odd and not loop.last %}<div class="two fields">{% endif %}
+            {{ form_row(field) }}
+            {% if loop.index is even %}</div>{% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if resource.gatewayConfig.factoryName == 'tpay' %}
+        <div class="ui compact segment" style="display: flex; align-items: center;">
+            <div class="ui button" id="test-connection-button" style="margin-right: 10px;">{{ 'commerce_weavers_sylius_tpay.admin.gateway_configuration.test_connection'|trans }}</div>
+            <div class="ui message" id="test-connection-message" style="flex-grow: 1; margin: 0;"></div>
+        </div>
+
+        <script>
+        document.getElementById('test-connection-button').addEventListener('click', function() {
+            fetch('/admin/tpay/channels?productionMode=' + document.getElementsByName('sylius_payment_method[gatewayConfig][config][production_mode]')[0].value, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Client-Id': document.getElementsByName('sylius_payment_method[gatewayConfig][config][client_id]')[0].value,
+                    'X-Client-Secret': document.getElementsByName('sylius_payment_method[gatewayConfig][config][client_secret]')[0].value,
+                },
+            })
+            .then(response => {
+                const jsonResponse = response.json();
+
+                if (!response.ok) {
+                    throw new Error();
+                }
+
+                return jsonResponse;
+            })
+            .then(data => {
+                let tpayChannelIdFormType = document.getElementsByName('sylius_payment_method[gatewayConfig][config][tpay_channel_id]')[0];
+                if (tpayChannelIdFormType === undefined) {
+                    return;
+                }
+
+                const value = tpayChannelIdFormType.value;
+
+                if (tpayChannelIdFormType.tagName.toLowerCase() === 'input' && tpayChannelIdFormType.type === 'text') {
+                    const select = document.createElement('select');
+                    select.name = tpayChannelIdFormType.name;
+                    select.className = tpayChannelIdFormType.className;
+                    tpayChannelIdFormType.replaceWith(select);
+                    tpayChannelIdFormType = select;
+                }
+
+                tpayChannelIdFormType.innerHTML = '';
+
+                for (const [id, name] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = name;
+
+                    if (id === value) {
+                        option.selected = true;
+                    }
+
+                    tpayChannelIdFormType.appendChild(option);
+                }
+
+                document.getElementById('test-connection-message').innerText = 'Connection test successful. Channels loaded.';
+                document.getElementById('test-connection-message').classList.remove('negative');
+                document.getElementById('test-connection-message').classList.add('positive');
+            })
+            .catch(error => {
+                document.getElementById('test-connection-message').innerText = 'Connection test failed. Please check your credentials and try again.';
+                document.getElementById('test-connection-message').classList.remove('positive');
+                document.getElementById('test-connection-message').classList.add('negative');
+            })
+        });
+        </script>
+    {% endif %}
+</div>
+
+<div class="ui styled fluid accordion">
+    {% for locale, translationForm in form.translations %}
+        <div class="title{% if loop.first %} active{% endif %}">
+            <i class="dropdown icon"></i>
+            {{ flags.fromLocaleCode(locale) }} {{ locale|sylius_locale_name }}
+        </div>
+        <div class="content{% if loop.first %} active{% endif %}">
+            {{ form_row(translationForm.name) }}
+            {{ form_row(translationForm.description) }}
+            <div class="ui compact message">
+                <p>
+                    <i class="icon info circle"></i> {{ 'sylius.ui.the_instructions_below_will_be_displayed_to_the_customer'|trans }}.
+                </p>
+            </div>
+            {{ form_row(translationForm.instructions) }}
+        </div>
+    {% endfor %}
+</div>

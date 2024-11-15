@@ -13,9 +13,11 @@ commerce_weavers_sylius_tpay:
             google_merchant_id: 'Identyfikator sprzedawcy Google'
             apple_pay_merchant_id: 'Identyfikator sprzedawcy Apple Pay'
             tpay_channel_id: 'ID kanału Tpay'
+            tpay_channel_id_help: 'Kliknij przycisk "Testuj połączenie", aby pobrać listę dostępnych kanałów.'
             production_mode: 'Tryb produkcyjny'
             merchant_id: 'Merchant ID'
             notification_security_code: 'Kod bezpieczeństwa (Powiadomienia)'
+            test_connection: 'Testuj połączenie'
             type:
                 apple_pay: 'Apple Pay'
                 blik: 'BLIK'

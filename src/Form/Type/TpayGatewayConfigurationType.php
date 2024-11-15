@@ -116,6 +116,7 @@ final class TpayGatewayConfigurationType extends AbstractType
                 [
                     'empty_data' => '',
                     'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.tpay_channel_id',
+                    'help' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.tpay_channel_id_help',
                     'required' => false,
                 ],
             )
