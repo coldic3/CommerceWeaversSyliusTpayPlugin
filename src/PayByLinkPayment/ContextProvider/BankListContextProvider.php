@@ -8,6 +8,7 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderI
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class BankListContextProvider implements ContextProviderInterface
 {
@@ -23,16 +24,16 @@ final class BankListContextProvider implements ContextProviderInterface
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
     {
-        /** @var OrderInterface|null $order */
-        $order = $templateContext['order'] ?? null;
-        if (null === $order) {
-            $templateContext['banks'] = $this->validTpayChannelListProvider->provide();
+        $templateContext['defaultTpayChannelId'] = null;
+        $templateContext['banks'] = [];
 
-            return $templateContext;
-        }
+        $paymentMethod = $this->resolvePaymentMethod($templateContext);
+        $gatewayConfig = $paymentMethod?->getGatewayConfig()?->getConfig() ?? [];
 
-        $payment = $order->getLastPayment();
-        if (null === $payment) {
+        if (
+            null === $paymentMethod ||
+            'pay_by_link' !== ($gatewayConfig['type'] ?? null)
+        ) {
             return $templateContext;
         }
 
@@ -41,7 +42,7 @@ final class BankListContextProvider implements ContextProviderInterface
          *
          * @var string|null $tpayChannelId
          */
-        $tpayChannelId = $payment->getMethod()->getGatewayConfig()->getConfig()['tpay_channel_id'] ?? null;
+        $tpayChannelId = $gatewayConfig['tpay_channel_id'] ?? null;
 
         $templateContext['defaultTpayChannelId'] = $tpayChannelId;
         $templateContext['banks'] = null === $tpayChannelId ? $this->validTpayChannelListProvider->provide() : [];
@@ -55,5 +56,30 @@ final class BankListContextProvider implements ContextProviderInterface
             'pay_by_link' === $templateBlock->getName() &&
             in_array($templateBlock->getEventName(), self::SUPPORTED_TEMPLATE_BLOCK_EVENT_NAMES, true)
         ;
+    }
+
+    private function resolvePaymentMethod(array $templateContext): ?PaymentMethodInterface
+    {
+        /** @var PaymentMethodInterface|null $paymentMethod */
+        $paymentMethod = $templateContext['method'] ?? null;
+        if (null !== $paymentMethod) {
+            return $paymentMethod;
+        }
+
+        /** @var OrderInterface|null $order */
+        $order = $templateContext['order'] ?? null;
+        if (null === $order) {
+            return null;
+        }
+
+        $payment = $order->getLastPayment();
+        if (null === $payment) {
+            return null;
+        }
+
+        /** @var PaymentMethodInterface|null $paymentMethod */
+        $paymentMethod = $payment->getMethod();
+
+        return $paymentMethod;
     }
 }

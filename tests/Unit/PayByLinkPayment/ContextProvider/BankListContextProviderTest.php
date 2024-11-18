@@ -20,6 +20,7 @@ class BankListContextProviderTest extends TestCase
     use ProphecyTrait;
 
     private ValidTpayChannelListProviderInterface|ObjectProphecy $validTpayChannelListProvider;
+
     protected function setUp(): void
     {
         $this->validTpayChannelListProvider = $this->prophesize(ValidTpayChannelListProviderInterface::class);
@@ -52,86 +53,153 @@ class BankListContextProviderTest extends TestCase
         $this->assertTrue($supports);
     }
 
-    public function test_it_provides_banks_for_context_if_there_is_no_order_in_template_context(): void
+    public function test_it_provides_banks_in_template_context_if_method_is_present_in_context(): void
     {
-        $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn(['type' => 'pay_by_link']);
+        $this->validTpayChannelListProvider->provide()->willReturn(['3' => 'somebank']);
 
-        $this->validTpayChannelListProvider->provide()->shouldBeCalled();
-        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                ['method' => $paymentMethod->reveal()],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
 
-        $context = $this->createTestObject()->provide(
-            ['i_am_not_an_order' => 'some_context'],
-            $templateBlock
+        $this->assertSame(
+            [
+                'method' => $paymentMethod->reveal(),
+                'defaultTpayChannelId' => null,
+                'banks' => ['3' => 'somebank'],
+            ],
+            $result,
         );
-
-        $this->assertArrayHasKey('banks', $context);
-        $this->assertSame(['1' => 'some bank'], $context['banks']);
     }
 
-    public function test_it_provides_nothing_new_for_context_if_order_has_no_payment(): void
+    public function test_it_provides_banks_in_template_context_if_order_is_present_in_context(): void
     {
-        $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
+        $order = $this->prophesize(OrderInterface::class);
+        $payment = $this->prophesize(PaymentInterface::class);
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $order->getLastPayment()->willReturn($payment);
+        $payment->getMethod()->willReturn($paymentMethod);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+        $gatewayConfig->getConfig()->willReturn(['type' => 'pay_by_link']);
+        $this->validTpayChannelListProvider->provide()->willReturn(['3' => 'somebank']);
+
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                ['order' => $order->reveal()],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
+
+        $this->assertSame(
+            [
+                'order' => $order->reveal(),
+                'defaultTpayChannelId' => null,
+                'banks' => ['3' => 'somebank'],
+            ],
+            $result,
+        );
+    }
+
+    public function test_it_provides_empty_banks_and_channel_id_in_template_context_if_orders_payment_does_not_have_method(): void
+    {
+        $order = $this->prophesize(OrderInterface::class);
+        $payment = $this->prophesize(PaymentInterface::class);
+        $order->getLastPayment()->willReturn($payment);
+        $payment->getMethod()->willReturn(null);
+
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                ['order' => $order->reveal()],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
+
+        $this->assertSame(
+            [
+                'order' => $order->reveal(),
+                'defaultTpayChannelId' => null,
+                'banks' => [],
+            ],
+            $result,
+        );
+    }
+
+    public function test_it_provides_empty_banks_and_channel_id_in_template_context_if_order_does_not_have_last_payment(): void
+    {
         $order = $this->prophesize(OrderInterface::class);
         $order->getLastPayment()->willReturn(null);
 
-        $this->validTpayChannelListProvider->provide()->shouldNotBeCalled();
-        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                ['order' => $order->reveal()],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
 
-        $context = $this->createTestObject()->provide(
-            ['order' => $order->reveal()],
-            $templateBlock
+        $this->assertSame(
+            [
+                'order' => $order->reveal(),
+                'defaultTpayChannelId' => null,
+                'banks' => [],
+            ],
+            $result,
         );
-
-        $this->assertArrayNotHasKey('banks', $context);
     }
 
-    public function test_it_provides_bank_list_as_context_if_order_has_payment(): void
+    public function test_it_provides_empty_banks_and_channel_id_in_template_context_if_neither_order_nor_method_is_present_in_context(): void
     {
-        $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
-        $order = $this->prophesize(OrderInterface::class);
-        $payment = $this->prophesize(PaymentInterface::class);
-        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $order->getLastPayment()->willReturn($payment);
-        $payment->getMethod()->willReturn($paymentMethod);
-        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
-        $gatewayConfig->getConfig()->willReturn([]);
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                [],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
 
-        $this->validTpayChannelListProvider->provide()->shouldBeCalled();
-        $this->validTpayChannelListProvider->provide()->willReturn(['1' => 'some bank']);
-
-        $context = $this->createTestObject()->provide(
-            ['order' => $order->reveal()],
-            $templateBlock
+        $this->assertSame(
+            [
+                'defaultTpayChannelId' => null,
+                'banks' => [],
+            ],
+            $result,
         );
-
-        $this->assertArrayHasKey('banks', $context);
-        $this->assertSame(['1' => 'some bank'], $context['banks']);
-        $this->assertNull($context['defaultTpayChannelId']);
     }
 
-    public function test_it_does_not_provide_bank_list_if_gateway_config_has_tpay_channel_id_specified(): void
+    public function test_it_provides_channel_id_and_empty_banks_in_template_context_if_tpay_channel_id_is_specified(): void
     {
-        $templateBlock = new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null);
-        $order = $this->prophesize(OrderInterface::class);
-        $payment = $this->prophesize(PaymentInterface::class);
         $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
         $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
-        $order->getLastPayment()->willReturn($payment);
-        $payment->getMethod()->willReturn($paymentMethod);
         $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
-        $gatewayConfig->getConfig()->willReturn(['tpay_channel_id' => '71']);
+        $gatewayConfig->getConfig()->willReturn(['type' => 'pay_by_link', 'tpay_channel_id' => '3']);
+
+        $result = $this
+            ->createTestObject()
+            ->provide(
+                ['method' => $paymentMethod->reveal()],
+                new TemplateBlock('pay_by_link', 'cw.tpay.shop.select_payment.choice_item_form', null, null, null, null),
+            )
+        ;
 
         $this->validTpayChannelListProvider->provide()->shouldNotBeCalled();
-
-        $context = $this->createTestObject()->provide(
-            ['order' => $order->reveal()],
-            $templateBlock
+        $this->assertSame(
+            [
+                'method' => $paymentMethod->reveal(),
+                'defaultTpayChannelId' => '3',
+                'banks' => [],
+            ],
+            $result,
         );
-
-        $this->assertArrayHasKey('banks', $context);
-        $this->assertSame([], $context['banks']);
-        $this->assertSame('71', $context['defaultTpayChannelId']);
     }
 
     private function createTestObject(): BankListContextProvider
