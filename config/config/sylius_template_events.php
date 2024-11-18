@@ -82,6 +82,13 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                     ],
                 ],
             ],
+            'sylius.admin.layout.javascripts' => [
+                'blocks' => [
+                    'commerce_weavers_sylius_tpay_scripts' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/admin/scripts.html.twig',
+                    ],
+                ],
+            ],
             'sylius.shop.layout.javascripts' => [
                 'blocks' => [
                     'commerce_weavers_sylius_tpay_scripts' => [

@@ -25,6 +25,29 @@ class CommerceWeaversSyliusTpay {
 
     return shopConfig;
   }
+
+  static getWebpackAdminConfig(rootDir) {
+    Encore
+      .setOutputPath('public/build/commerce-weavers/tpay/admin')
+      .setPublicPath('/build/commerce-weavers/tpay/admin')
+      .addEntry('commerce-weavers-sylius-tpay-admin-payment-method-entry', path.resolve(__dirname, 'assets/admin/payment_method_entrypoint.js'))
+      .disableSingleRuntimeChunk()
+      .cleanupOutputBeforeBuild()
+      .enableSourceMaps(!Encore.isProduction())
+      .enableVersioning(Encore.isProduction())
+      .enableSassLoader((options) => {
+        // eslint-disable-next-line no-param-reassign
+        options.additionalData = `$rootDir: ${rootDir};`;
+      })
+
+    const adminConfig = Encore.getWebpackConfig();
+
+    adminConfig.name = 'commerce_weavers_sylius_tpay_admin';
+
+    Encore.reset();
+
+    return adminConfig;
+  }
 }
 
 module.exports = CommerceWeaversSyliusTpay;

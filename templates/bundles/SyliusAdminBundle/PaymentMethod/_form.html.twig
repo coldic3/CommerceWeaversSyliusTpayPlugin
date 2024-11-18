@@ -54,67 +54,6 @@
             <div class="ui button" id="test-connection-button" style="margin-right: 10px;">{{ 'commerce_weavers_sylius_tpay.admin.gateway_configuration.test_connection'|trans }}</div>
             <div class="ui message" id="test-connection-message" style="flex-grow: 1; margin: 0;"></div>
         </div>
-
-        <script>
-        document.getElementById('test-connection-button').addEventListener('click', function() {
-            fetch('/admin/tpay/channels?productionMode=' + document.getElementsByName('sylius_payment_method[gatewayConfig][config][production_mode]')[0].value, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Client-Id': document.getElementsByName('sylius_payment_method[gatewayConfig][config][client_id]')[0].value,
-                    'X-Client-Secret': document.getElementsByName('sylius_payment_method[gatewayConfig][config][client_secret]')[0].value,
-                },
-            })
-            .then(response => {
-                const jsonResponse = response.json();
-
-                if (!response.ok) {
-                    throw new Error();
-                }
-
-                return jsonResponse;
-            })
-            .then(data => {
-                let tpayChannelIdFormType = document.getElementsByName('sylius_payment_method[gatewayConfig][config][tpay_channel_id]')[0];
-                if (tpayChannelIdFormType === undefined) {
-                    return;
-                }
-
-                const value = tpayChannelIdFormType.value;
-
-                if (tpayChannelIdFormType.tagName.toLowerCase() === 'input' && tpayChannelIdFormType.type === 'text') {
-                    const select = document.createElement('select');
-                    select.name = tpayChannelIdFormType.name;
-                    select.className = tpayChannelIdFormType.className;
-                    tpayChannelIdFormType.replaceWith(select);
-                    tpayChannelIdFormType = select;
-                }
-
-                tpayChannelIdFormType.innerHTML = '';
-
-                for (const [id, name] of Object.entries(data)) {
-                    const option = document.createElement('option');
-                    option.value = id;
-                    option.text = name;
-
-                    if (id === value) {
-                        option.selected = true;
-                    }
-
-                    tpayChannelIdFormType.appendChild(option);
-                }
-
-                document.getElementById('test-connection-message').innerText = 'Connection test successful. Channels loaded.';
-                document.getElementById('test-connection-message').classList.remove('negative');
-                document.getElementById('test-connection-message').classList.add('positive');
-            })
-            .catch(error => {
-                document.getElementById('test-connection-message').innerText = 'Connection test failed. Please check your credentials and try again.';
-                document.getElementById('test-connection-message').classList.remove('positive');
-                document.getElementById('test-connection-message').classList.add('negative');
-            })
-        });
-        </script>
     {% endif %}
 </div>
 
