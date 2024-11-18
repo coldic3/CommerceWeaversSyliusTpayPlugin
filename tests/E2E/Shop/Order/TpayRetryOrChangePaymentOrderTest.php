@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Order;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Shop\Order;
 
 use Facebook\WebDriver\WebDriverBy;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
@@ -93,7 +93,7 @@ final class TpayRetryOrChangePaymentOrderTest extends E2ETestCase
 
         $this->client->get('/en_US/order/tokenValue1');
         $form = $this->client->getCrawler()->selectButton('Pay')->form();
-        $form->getElement()->findElement(WebDriverBy::xpath("//label[contains(text(),'Bank (Tpay)')]"))->click();
+        $form->getElement()->findElement(WebDriverBy::xpath("//label[contains(text(),'Choose bank (Tpay)')]"))->click();
         $form->getElement()->findElement(WebDriverBy::cssSelector('.bank-tile[data-bank-id="1"]'))->click();
         $this->client->submitForm('Pay');
 

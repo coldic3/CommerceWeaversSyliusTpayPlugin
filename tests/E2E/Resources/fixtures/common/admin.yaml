@@ -1,0 +1,8 @@
+Sylius\Component\Core\Model\AdminUser:
+    admin_user_rich:
+        plainPassword: sylius
+        roles: [ROLE_ADMINISTRATION_ACCESS]
+        enabled: true
+        email: "rich\\@example.com"
+        username: rich
+        localeCode: en

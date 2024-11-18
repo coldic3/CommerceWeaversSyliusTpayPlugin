@@ -57,6 +57,7 @@ function convertTpayChannelIdInputIntoSelect(channels) {
   if (tpayChannelIdFormType.tagName.toLowerCase() === 'input' && tpayChannelIdFormType.type === 'text') {
     const select = document.createElement('select');
     select.name = tpayChannelIdFormType.name;
+    select.id = tpayChannelIdFormType.id;
     select.className = tpayChannelIdFormType.className;
     tpayChannelIdFormType.replaceWith(select);
     tpayChannelIdFormType = select;

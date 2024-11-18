@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace E2E\RetryPayment;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Shop\RetryPayment;
 
 use Tests\CommerceWeavers\SyliusTpayPlugin\Api\Utils\OrderPlacerTrait;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
