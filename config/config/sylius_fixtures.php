@@ -71,8 +71,6 @@ return static function(SyliusFixturesConfig $fixtures): void {
         'production_mode' => false,
     ];
 
-    $twistoChannelId = '71';
-
     $defaultSuite->fixtures('payment_method', [
         'options' => [
             'custom' => [
@@ -111,10 +109,23 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 ],
                 'pbl' => [
                     'code' => 'tpay_pbl',
-                    'name' => 'Pay by Link (Tpay)',
+                    'name' => 'Pay-by-link (Tpay)',
                     'gatewayFactory' => 'tpay_pbl',
                     'gatewayName' => 'tpay_pbl',
                     'gatewayConfig' => $tpayConfig,
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
+                'pbl_channel' => [
+                    'code' => 'tpay_pbl_channel',
+                    'name' => 'Pay-by-link one channel (Tpay)',
+                    'gatewayFactory' => 'tpay_pbl',
+                    'gatewayName' => 'tpay_pbl',
+                    'gatewayConfig' => $tpayConfig + [
+                        'tpay_channel_id' => '%env(string:TPAY_PBL_CHANNEL_ID)%',
+                    ],
                     'channels' => [
                         'FASHION_WEB',
                     ],
@@ -148,20 +159,6 @@ return static function(SyliusFixturesConfig $fixtures): void {
                     'gatewayFactory' => 'tpay',
                     'gatewayName' => 'tpay',
                     'gatewayConfig' => $tpayConfig + ['type' => PaymentType::VISA_MOBILE],
-                    'channels' => [
-                        'FASHION_WEB',
-                    ],
-                    'enabled' => true,
-                ],
-                'pbl_twisto' => [
-                    'code' => 'tpay_pbl_twisto',
-                    'name' => 'Twisto (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + [
-                        'type' => PaymentType::PAY_BY_LINK,
-                        'tpay_channel_id' => $twistoChannelId,
-                    ],
                     'channels' => [
                         'FASHION_WEB',
                     ],
