@@ -1,4 +1,4 @@
-CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias:
+CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAlias:
     blik_alias_john_doe:
         __factory: {
             'Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory\BlikAliasFactory::create': [

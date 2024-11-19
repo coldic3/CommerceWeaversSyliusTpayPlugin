@@ -8,9 +8,11 @@ use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Action\CreateBlikLevelZer
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 
 return function(ContainerConfigurator $container): void {
-    $container->import('./payum/**/*.php');
-
     $services = $container->services();
+
+    $services->defaults()
+        ->public()
+    ;
 
     $services->set('commerce_weavers_sylius_tpay.blik_payment.payum.action.create_blik_level_zero_transaction', CreateBlikLevelZeroTransactionAction::class)
         ->args([

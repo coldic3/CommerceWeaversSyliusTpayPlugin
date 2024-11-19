@@ -1,4 +1,4 @@
-CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias:
+CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAlias:
     blik_alias_john_doe:
         value: 'f6fcb158-4ceb-432f-8265-923cd45727b4'
         customer: '@customer_john_doe'
