@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\AddSavedCreditCardsListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\DecryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\EncryptGatewayConfigListener;
 use CommerceWeavers\SyliusTpayPlugin\Form\EventListener\RemoveUnnecessaryPaymentDetailsFieldsListener;
@@ -74,14 +73,4 @@ return static function(ContainerConfigurator $container): void {
     ;
 
     $services->set('commerce_weavers_sylius_tpay.form.event_listener.remove_unnecessary_payment_details_fields', RemoveUnnecessaryPaymentDetailsFieldsListener::class);
-
-    $services
-        ->set('commerce_weavers_sylius_tpay.form.event_listener.add_saved_credit_cards', AddSavedCreditCardsListener::class)
-        ->deprecate('commerce-weavers/sylius-tpay-plugin', '2.0', 'The "%service_id%" service is deprecated and will be removed in the version 2.0 as it is considered daed code.')
-        ->args([
-            service('security.token_storage'),
-            service('translator'),
-            service('commerce_weavers_sylius_tpay.repository.credit_card'),
-        ])
-    ;
 };
