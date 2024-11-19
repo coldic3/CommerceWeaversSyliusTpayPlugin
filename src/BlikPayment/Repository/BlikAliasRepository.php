@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Repository;
+namespace CommerceWeavers\SyliusTpayPlugin\BlikPayment\Repository;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;

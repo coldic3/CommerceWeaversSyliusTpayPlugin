@@ -6,7 +6,7 @@ namespace CommerceWeavers\SyliusTpayPlugin\Resolver;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Factory\BlikAliasFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Repository\BlikAliasRepositoryInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;

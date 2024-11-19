@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
 
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Repository\BlikAliasRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
 use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
