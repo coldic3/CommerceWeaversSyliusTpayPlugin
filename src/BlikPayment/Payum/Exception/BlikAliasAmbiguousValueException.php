@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Exception;
+namespace CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Exception;
 
 class BlikAliasAmbiguousValueException extends \Exception
 {

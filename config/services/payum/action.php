@@ -6,7 +6,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateApplePayTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreatePayByLinkTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
@@ -49,15 +48,6 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_google_pay_transaction'])
-    ;
-
-    $services->set(CreateBlikLevelZeroTransactionAction::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_blik_level_zero_payment_payload'),
-            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
-            service('commerce_weavers_sylius_tpay.repository.blik_alias'),
-        ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_blik_level_zero_transaction'])
     ;
 
     $services->set(CreateRedirectBasedTransactionAction::class)

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\BlikPayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Action\CreateBlikLevelZeroTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Repository\BlikAliasRepositoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\BlikAliasAmbiguousValueException;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
