@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Validator\Constraint;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\PayByLinkPayment\Validator\Constraint;
 
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Validator\Constraint\ValidTpayChannel;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Validator\Constraint\ValidTpayChannelValidator;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderInterface;
-use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ValidTpayChannel;
-use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ValidTpayChannelValidator;
 use InvalidArgumentException;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;

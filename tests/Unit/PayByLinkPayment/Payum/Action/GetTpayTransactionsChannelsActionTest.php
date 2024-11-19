@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\PayByLinkPayment\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\GetTpayTransactionsChannelsAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Action\GetTpayTransactionsChannelsAction;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Request\GetTpayTransactionsChannels;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\Notify\NotifyData;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;

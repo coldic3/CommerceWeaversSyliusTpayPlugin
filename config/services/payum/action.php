@@ -8,10 +8,8 @@ use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Factory\GatewayFactory as
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateApplePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreatePayByLinkTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\GetTpayTransactionsChannelsAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\InitializeApplePayPaymentAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
@@ -97,23 +95,11 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund'])
     ;
 
-    $services->set(GetTpayTransactionsChannelsAction::class)
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_transactions_channels'])
-    ;
-
     $services->set(InitializeApplePayPaymentAction::class)
         ->args([
             service('commerce_weavers_sylius_tpay.tpay.factory.create_initialize_apple_pay_payment_payload'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.initialize_apple_pay_payment'])
-    ;
-
-    $services->set(CreatePayByLinkTransactionAction::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_pay_by_link_payment_payload'),
-            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
-        ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_pay_by_link_transaction'])
     ;
 
     $services->set(ResolveNextRouteAction::class)

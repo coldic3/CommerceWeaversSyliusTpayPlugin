@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
+namespace CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Request\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BaseApiAwareAction;
 
 class GetTpayTransactionsChannelsAction extends BaseApiAwareAction
 {

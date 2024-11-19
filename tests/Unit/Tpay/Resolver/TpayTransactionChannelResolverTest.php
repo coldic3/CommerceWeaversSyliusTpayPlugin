@@ -5,9 +5,8 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Resolver;
 
-use ArrayObject;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\GetTpayTransactionsChannelsFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GetTpayTransactionsChannelsFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Request\GetTpayTransactionsChannels;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver\TpayTransactionChannelResolver;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Payum;
@@ -17,7 +16,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use Tpay\OpenApi\Utilities\TpayException;
-use Webmozart\Assert\Assert;
 
 final class TpayTransactionChannelResolverTest extends TestCase
 {

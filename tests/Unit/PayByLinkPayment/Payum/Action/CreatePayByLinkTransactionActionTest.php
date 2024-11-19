@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\PayByLinkPayment\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreatePayByLinkTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Action\CreatePayByLinkTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreatePayByLinkPayloadFactoryInterface;

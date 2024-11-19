@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Exception\UnableToGetBankListException;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Repository\PaymentMethodRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
