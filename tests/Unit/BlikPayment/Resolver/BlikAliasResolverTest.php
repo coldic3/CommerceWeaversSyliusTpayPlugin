@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Resolver;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\BlikPayment\Resolver;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Factory\BlikAliasFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Repository\BlikAliasRepositoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolver;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Resolver\BlikAliasResolver;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
