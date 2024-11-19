@@ -38,7 +38,7 @@ final class TpayTransactionChannelResolverTest extends TestCase
     {
         $gateway = $this->prophesize(GatewayInterface::class);
         $value = $this->prophesize(GetTpayTransactionsChannels::class);
-        $this->payum->getGateway('tpay')->willReturn($gateway);
+        $this->payum->getGateway('tpay_pbl')->willReturn($gateway);
         $this->getTpayTransactionsChannelsFactory->createNewEmpty()->willReturn($value);
         $gateway->execute($value, true)->shouldBeCalled();
         $value->getResult()->willReturn([
@@ -61,7 +61,7 @@ final class TpayTransactionChannelResolverTest extends TestCase
     {
         $gateway = $this->prophesize(GatewayInterface::class);
         $value = $this->prophesize(GetTpayTransactionsChannels::class);
-        $this->payum->getGateway('tpay')->willReturn($gateway);
+        $this->payum->getGateway('tpay_pbl')->willReturn($gateway);
         $this->getTpayTransactionsChannelsFactory->createNewEmpty()->willReturn($value);
         $gateway
             ->execute($value, true)
@@ -81,7 +81,7 @@ final class TpayTransactionChannelResolverTest extends TestCase
     {
         $gateway = $this->prophesize(GatewayInterface::class);
         $value = $this->prophesize(GetTpayTransactionsChannels::class);
-        $this->payum->getGateway('tpay')->willReturn($gateway);
+        $this->payum->getGateway('tpay_pbl')->willReturn($gateway);
         $value->getResult()->willReturn(['result' => 'failure']);
         $this->getTpayTransactionsChannelsFactory->createNewEmpty()->willReturn($value);
         $gateway->execute($value, true)->shouldBeCalled();
@@ -100,7 +100,7 @@ final class TpayTransactionChannelResolverTest extends TestCase
     {
         $gateway = $this->prophesize(GatewayInterface::class);
         $value = $this->prophesize(GetTpayTransactionsChannels::class);
-        $this->payum->getGateway('tpay')->willReturn($gateway);
+        $this->payum->getGateway('tpay_pbl')->willReturn($gateway);
         $value->getResult()->willReturn(['result' => 'success']);
         $this->getTpayTransactionsChannelsFactory->createNewEmpty()->willReturn($value);
         $gateway->execute($value, true)->shouldBeCalled();
@@ -119,7 +119,7 @@ final class TpayTransactionChannelResolverTest extends TestCase
     {
         $gateway = $this->prophesize(GatewayInterface::class);
         $value = $this->prophesize(GetTpayTransactionsChannels::class);
-        $this->payum->getGateway('tpay')->willReturn($gateway);
+        $this->payum->getGateway('tpay_pbl')->willReturn($gateway);
         $value->getResult()->willReturn(['result' => 'failure']);
         $this->getTpayTransactionsChannelsFactory->createNewEmpty()->willReturn($value);
         $gateway->execute($value, true)->shouldBeCalled();
