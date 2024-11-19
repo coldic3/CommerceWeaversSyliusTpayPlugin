@@ -4,35 +4,27 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
-use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCardType;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCreditCardChoiceType;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ValidTpayChannel;
-use Sylius\Component\Core\Model\CustomerInterface;
-use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;
-use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class TpayPaymentDetailsType extends AbstractType
 {
     public function __construct(
         private readonly object $removeUnnecessaryPaymentDetailsFieldsListener,
         private readonly TokenStorageInterface $tokenStorage,
-        private readonly TranslatorInterface $translator,
-        private readonly CreditCardRepositoryInterface $creditCardRepository,
-        private readonly CartContextInterface $cartContext,
     ) {
     }
 
@@ -135,44 +127,10 @@ final class TpayPaymentDetailsType extends AbstractType
                 )
             ;
 
-            /** @var OrderInterface $order */
-            $order = $this->cartContext->getCart();
-            $channel = $order->getChannel();
-            /** @var CustomerInterface $customer */
-            $customer = $user->getCustomer();
-
-            $creditCards = $this->creditCardRepository->findByCustomerAndChannel($customer, $channel);
-
-            if (count($creditCards) === 0) {
-                return;
-            }
-
-            $choices = [];
-
-            foreach ($creditCards as $creditCard) {
-                $stringifiedCard = $this->translator->trans(
-                    'commerce_weavers_sylius_tpay.shop.credit_card.card_selection_one_liner',
-                    [
-                        '%brand%' => $creditCard->getBrand(),
-                        '%tail%' => $creditCard->getTail(),
-                        '%expires%' => $creditCard->getExpirationDate()->format('m-Y'),
-                    ],
-                    'messages',
-                );
-
-                $choices[$stringifiedCard] = $creditCard->getId();
-            }
-
             $builder
                 ->add(
                     'use_saved_credit_card',
-                    ChoiceType::class,
-                    [
-                        'label' => 'commerce_weavers_sylius_tpay.shop.order_summary.card.use_saved_credit_card.label',
-                        'placeholder' => new TranslatableMessage('commerce_weavers_sylius_tpay.shop.credit_card.use_new_card'),
-                        'required' => false,
-                        'choices' => $choices,
-                    ],
+                    TpayCreditCardChoiceType::class,
                 )
             ;
         }

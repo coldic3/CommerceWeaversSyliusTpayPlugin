@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Form\Type;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Form\Type;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
-use CommerceWeavers\SyliusTpayPlugin\Form\Type\TpayCreditCardChoiceType;
-use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCreditCardChoiceType;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepositoryInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\ChannelInterface;

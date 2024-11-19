@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action;
 
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Mapper\PayWithCardActionPayloadMapperInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Mapper\PayWithCardActionPayloadMapperInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\Generic;
 use Sylius\Component\Core\Model\PaymentInterface;

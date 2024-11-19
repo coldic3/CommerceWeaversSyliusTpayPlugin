@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 

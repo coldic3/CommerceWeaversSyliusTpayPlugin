@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Mapper;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Mapper;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Sylius\Component\Core\Model\PaymentInterface;

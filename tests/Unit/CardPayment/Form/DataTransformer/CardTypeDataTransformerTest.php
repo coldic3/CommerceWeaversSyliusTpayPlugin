@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Form\DataTransformer;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Form\DataTransformer;
 
-use CommerceWeavers\SyliusTpayPlugin\Form\DataTransformer\CardTypeDataTransformer;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\DataTransformer\CardTypeDataTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\DataTransformerInterface;
 

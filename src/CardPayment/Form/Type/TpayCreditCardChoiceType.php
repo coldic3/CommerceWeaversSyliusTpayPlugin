@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type;
 
-use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepositoryInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ShopUserInterface;

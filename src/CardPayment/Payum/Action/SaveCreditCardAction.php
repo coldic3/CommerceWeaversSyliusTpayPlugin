@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Request\Api\SaveCreditCard;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\SaveCreditCard;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Generic;

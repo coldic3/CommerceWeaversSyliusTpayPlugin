@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Mapper;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Payum\Mapper;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Mapper\PayWithCardActionPayloadMapper;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Mapper\PayWithCardActionPayloadMapper;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

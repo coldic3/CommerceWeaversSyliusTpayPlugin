@@ -26,7 +26,7 @@ return function(ContainerConfigurator $container): void {
 
     $services->set(PayWithCardAction::class)
         ->args([
-            service('commerce_weavers_sylius_tpay.payum.mapper.pay_with_card_action'),
+            service('commerce_weavers_sylius_tpay.card_payment.payum.mapper.pay_with_card_action'),
         ])
         ->tag('payum.action', ['factory' => GatewayFactory::NAME, 'alias' => 'cw.tpay_card.pay_with_card'])
     ;

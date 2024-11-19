@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\EventListener;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\EventListener;
 
 use CommerceWeavers\SyliusTpayPlugin\Routing;
 use Sylius\Bundle\UiBundle\Menu\Event\MenuBuilderEvent;

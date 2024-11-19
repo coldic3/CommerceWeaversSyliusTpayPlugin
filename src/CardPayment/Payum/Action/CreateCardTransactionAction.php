@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action;
 
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\PayWithCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;

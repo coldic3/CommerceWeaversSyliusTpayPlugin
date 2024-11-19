@@ -6,7 +6,7 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\CardPayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Action\SaveCreditCardAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\SaveCreditCard;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Request\Api\SaveCreditCard;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Factory\BasicPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Security\Notification\Verifier\ChecksumVerifierInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;

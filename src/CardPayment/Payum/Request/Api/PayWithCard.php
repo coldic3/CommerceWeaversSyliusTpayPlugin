@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api;
+namespace CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Request\Api;
 
 use Payum\Core\Request\Generic;
 
