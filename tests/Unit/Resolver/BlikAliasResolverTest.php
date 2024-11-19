@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Resolver;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
-use CommerceWeavers\SyliusTpayPlugin\Factory\BlikAliasFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Factory\BlikAliasFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepositoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Resolver\BlikAliasResolver;
 use PHPUnit\Framework\TestCase;

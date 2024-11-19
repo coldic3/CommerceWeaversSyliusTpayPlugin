@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Factory;
+namespace CommerceWeavers\SyliusTpayPlugin\BlikPayment\Factory;
 
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
