@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\PreconditionGuard\Exception;
+namespace CommerceWeavers\SyliusTpayPlugin\BlikPayment\PreconditionGuard\Exception;
 
 class BlikAliasNotRegisteredException extends \Exception
 {

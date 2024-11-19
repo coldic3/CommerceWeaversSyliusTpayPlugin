@@ -66,7 +66,7 @@ return static function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_sylius_tpay.blik_payment.resolver.blik_alias'),
             service('commerce_weavers_sylius_tpay.manager.blik_alias'),
-            service('commerce_weavers_sylius_tpay.precondition_guard.active_blik_alias'),
+            service('commerce_weavers_sylius_tpay.blik_payment.precondition_guard.active_blik_alias'),
         ])
         ->tag('messenger.message_handler')
     ;
