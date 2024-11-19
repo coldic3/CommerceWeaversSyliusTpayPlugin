@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Resolver;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 
 interface BlikAliasResolverInterface

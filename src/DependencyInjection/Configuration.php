@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\DependencyInjection;
 
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAlias;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCard;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Factory\CreditCardFactory;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepository;
-use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias;
-use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
 use CommerceWeavers\SyliusTpayPlugin\Factory\BlikAliasFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;

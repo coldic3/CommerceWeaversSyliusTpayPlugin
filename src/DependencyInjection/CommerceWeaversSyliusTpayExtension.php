@@ -76,12 +76,12 @@ final class CommerceWeaversSyliusTpayExtension extends AbstractResourceExtension
         $container->prependExtensionConfig('doctrine', [
             'orm' => [
                 'mappings' => [
-                    'CommerceWeaversSyliusTpayPlugin' => [
+                    'CommerceWeaversSyliusTpayPluginBlikPayment' => [
                         'type' => 'xml',
-                        'dir' => $this->getPath($container, '/config/doctrine/shared/'),
+                        'dir' => $this->getPath($container, '/config/doctrine/blik_payment/'),
                         'is_bundle' => false,
-                        'prefix' => 'CommerceWeavers\SyliusTpayPlugin\Entity',
-                        'alias' => 'CommerceWeaversSyliusTpayPlugin',
+                        'prefix' => 'CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity',
+                        'alias' => 'CommerceWeaversSyliusTpayPluginBlikPayment',
                     ],
                     'CommerceWeaversSyliusTpayPluginCardPayment' => [
                         'type' => 'xml',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\CommerceWeavers\SyliusTpayPlugin\Api\DataFixtures\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias;
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Entity\BlikAlias;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\CustomerInterface;
 
