@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/services/constraint-mapping-1.0.xsd">
     <class name="CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay">
-        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals">
-            <option name="paymentMethodType">blik</option>
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayNameEquals">
+            <option name="gatewayName">tpay_blik</option>
             <option name="properties">
                 <value>blikToken</value>
                 <value>blikAliasAction</value>
@@ -12,8 +12,8 @@
                 <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
             </option>
         </constraint>
-        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals">
-            <option name="paymentMethodType">card</option>
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayNameEquals">
+            <option name="gatewayName">tpay_card</option>
             <option name="properties">
                 <value>encodedCardData</value>
                 <value>savedCardId</value>

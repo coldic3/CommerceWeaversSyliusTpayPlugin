@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Factory\GatewayFactory as BlikGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateApplePayTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateBlikLevelZeroTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreatePayByLinkTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
@@ -31,6 +31,7 @@ return static function(ContainerConfigurator $container): void {
         ->args([
             service('commerce_weavers_sylius_tpay.payum.factory.create_transaction'),
         ])
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.capture'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.capture'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.capture'])
     ;
@@ -49,15 +50,6 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_google_pay_transaction'])
-    ;
-
-    $services->set(CreateBlikLevelZeroTransactionAction::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_blik_level_zero_payment_payload'),
-            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
-            service('commerce_weavers_sylius_tpay.repository.blik_alias'),
-        ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_blik_level_zero_transaction'])
     ;
 
     $services->set(CreateRedirectBasedTransactionAction::class)
@@ -82,21 +74,25 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.tpay.security.notification.verifier.checksum'),
             service('commerce_weavers_sylius_tpay.tpay.security.notification.verifier.signature'),
         ])
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.notify'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.notify'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.notify'])
     ;
 
     $services->set(GetStatusAction::class)
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.get_status'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.get_status'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_status'])
     ;
 
     $services->set(PartialRefundAction::class)
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.partial_refund'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.partial_refund'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.partial_refund'])
     ;
 
     $services->set(RefundAction::class)
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.refund'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.refund'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund'])
     ;
@@ -121,6 +117,7 @@ return static function(ContainerConfigurator $container): void {
     ;
 
     $services->set(ResolveNextRouteAction::class)
+        ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.resolve_next_route'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.resolve_next_route'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.resolve_next_route'])
     ;

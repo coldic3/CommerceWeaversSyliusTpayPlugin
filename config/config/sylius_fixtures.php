@@ -99,9 +99,9 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 'blik' => [
                     'code' => 'tpay_blik',
                     'name' => 'Blik (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::BLIK],
+                    'gatewayFactory' => 'tpay_blik',
+                    'gatewayName' => 'tpay_blik',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],

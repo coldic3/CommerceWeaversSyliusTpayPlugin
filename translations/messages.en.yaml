@@ -2,6 +2,7 @@ commerce_weavers_sylius_tpay:
     admin:
         name: 'Tpay'
         gateway_name:
+            tpay_blik: 'BLIK (Tpay)'
             tpay_card: 'Card (Tpay)'
         gateway_configuration:
             cards_api: 'RSA key'
