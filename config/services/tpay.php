@@ -8,8 +8,6 @@ use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateApplePayPaymentPayloadFa
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateApplePayPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateBlikLevelZeroPaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactory;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateCardPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateGooglePayPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactoryInterface;
@@ -57,13 +55,6 @@ return static function(ContainerConfigurator $container): void {
             service('sylius.context.channel'),
         ])
         ->alias(CreateBlikLevelZeroPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_blik_level_zero_payment_payload')
-    ;
-
-    $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_card_payment_payload', CreateCardPaymentPayloadFactory::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_redirect_based_payment_payload'),
-        ])
-        ->alias(CreateCardPaymentPayloadFactoryInterface::class, 'commerce_weavers_sylius_tpay.tpay.factory.create_card_payment_payload')
     ;
 
     $services->set('commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload', CreateGooglePayPaymentPayloadFactory::class)

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCardType;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCreditCardChoiceType;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
 use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\ValidTpayChannel;
 use Sylius\Component\Core\Model\ShopUserInterface;

@@ -1,6 +1,8 @@
 commerce_weavers_sylius_tpay:
     admin:
         name: 'Tpay'
+        gateway_name:
+            tpay_card: 'Card (Tpay)'
         gateway_configuration:
             cards_api: 'RSA key'
             client_id: 'Client ID'

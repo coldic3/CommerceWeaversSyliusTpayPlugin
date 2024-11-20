@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\DependencyInjection;
 
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCard;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Entity\CreditCardInterface;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Factory\CreditCardFactory;
+use CommerceWeavers\SyliusTpayPlugin\CardPayment\Repository\CreditCardRepository;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAlias;
 use CommerceWeavers\SyliusTpayPlugin\Entity\BlikAliasInterface;
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCard;
-use CommerceWeavers\SyliusTpayPlugin\Entity\CreditCardInterface;
 use CommerceWeavers\SyliusTpayPlugin\Factory\BlikAliasFactory;
-use CommerceWeavers\SyliusTpayPlugin\Factory\CreditCardFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\BlikAliasRepository;
-use CommerceWeavers\SyliusTpayPlugin\Repository\CreditCardRepository;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
