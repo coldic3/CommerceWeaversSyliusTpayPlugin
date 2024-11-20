@@ -12,8 +12,8 @@
                 <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
             </option>
         </constraint>
-        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayConfigTypeEquals">
-            <option name="paymentMethodType">card</option>
+        <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\OneOfPropertiesRequiredIfGatewayNameEquals">
+            <option name="gatewayName">tpay_card</option>
             <option name="properties">
                 <value>encodedCardData</value>
                 <value>savedCardId</value>
@@ -84,8 +84,8 @@
             </constraint>
         </property>
         <property name="tpayChannelId">
-            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
-                <option name="paymentMethodType">pay_by_link</option>
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayNameEquals">
+                <option name="gatewayName">tpay_pbl</option>
                 <option name="fieldRequiredErrorMessage">commerce_weavers_sylius_tpay.shop.pay.encoded_card_data.required</option>
                 <option name="groups">
                     <value>commerce_weavers_sylius_tpay:shop:order:pay</value>
