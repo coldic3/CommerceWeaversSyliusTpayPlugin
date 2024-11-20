@@ -92,39 +92,6 @@ abstract class AbstractTpayGatewayConfigurationType extends AbstractType
                     'priority' => -400,
                 ],
             )
-//            ->add(
-//                'type',
-//                ChoiceType::class,
-//                [
-//                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.label',
-//                    'choices' => [
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.redirect' => PaymentType::REDIRECT,
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.card' => PaymentType::CARD,
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.blik' => PaymentType::BLIK,
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.pay_by_link' => PaymentType::PAY_BY_LINK,
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.google_pay' => PaymentType::GOOGLE_PAY,
-//                        'commerce_weavers_sylius_tpay.admin.gateway_configuration.type.apple_pay' => PaymentType::APPLE_PAY,
-//                    ],
-//                ],
-//            )
-//            ->add(
-//                'google_merchant_id',
-//                TextType::class,
-//                [
-//                    'empty_data' => '',
-//                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.google_merchant_id',
-//                    'required' => false,
-//                ],
-//            )
-//            ->add(
-//                'apple_pay_merchant_id',
-//                TextType::class,
-//                [
-//                    'empty_data' => '',
-//                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.apple_pay_merchant_id',
-//                    'required' => false,
-//                ],
-//            )
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, $this->decryptGatewayConfigListener);
