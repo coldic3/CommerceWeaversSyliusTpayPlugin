@@ -45,11 +45,7 @@ final class OneOfPropertiesRequiredIfGatewayNameEqualsValidator extends Constrai
         /** @var PaymentMethodInterface|null $lastPaymentMethod */
         $lastPaymentMethod = $order?->getLastPayment(PaymentInterface::STATE_NEW)?->getMethod();
 
-        if (null === $lastPaymentMethod) {
-            return;
-        }
-
-        $gatewayName = $lastPaymentMethod->getGatewayConfig()?->getGatewayName();
+        $gatewayName = $lastPaymentMethod?->getGatewayConfig()?->getGatewayName();
 
         if ($gatewayName !== $constraint->gatewayName) {
             return;
