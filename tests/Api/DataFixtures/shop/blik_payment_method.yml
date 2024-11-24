@@ -50,7 +50,6 @@ Sylius\Bundle\PayumBundle\Model\GatewayConfig:
             client_id: 'encrypted_<getenv("TPAY_CLIENT_ID")>'
             client_secret: 'encrypted_<getenv("TPAY_CLIENT_SECRET")>'
             cards_api: 'encrypted_<getenv("TPAY_CARDS_API")>'
-            type: 'card'
             production_mode: false
             encrypted: true
     gateway_tpay_blik:
@@ -62,12 +61,11 @@ Sylius\Bundle\PayumBundle\Model\GatewayConfig:
             production_mode: false
             encrypted: true
     gateway_tpay_pbl:
-        gatewayName: 'tpay'
-        factoryName: 'tpay'
+        gatewayName: 'tpay_pbl'
+        factoryName: 'tpay_pbl'
         config:
             client_id: 'encrypted_<getenv("TPAY_CLIENT_ID")>'
             client_secret: 'encrypted_<getenv("TPAY_CLIENT_SECRET")>'
-            type: 'pay_by_link'
             production_mode: false
             encrypted: true
 

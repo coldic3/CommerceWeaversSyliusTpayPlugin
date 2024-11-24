@@ -169,7 +169,7 @@ return static function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.tpay.resolver.tpay_transaction_channel_resolver', TpayTransactionChannelResolver::class)
         ->args([
             service('payum'),
-            service('commerce_weavers_sylius_tpay.payum.factory.get_tpay_transactions_channels'),
+            service('commerce_weavers_sylius_tpay.pay_by_link_payment.payum.factory.get_tpay_transactions_channels'),
             service('logger')->nullOnInvalid(),
         ])
         ->tag('monolog.logger', ['channel' => 'sylius_tpay'])

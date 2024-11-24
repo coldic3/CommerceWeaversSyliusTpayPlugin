@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\ContextProvider;
+namespace CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\ContextProvider;
 
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;

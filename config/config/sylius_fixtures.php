@@ -110,9 +110,9 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 'pbl' => [
                     'code' => 'tpay_pbl',
                     'name' => 'Pay by Link (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::PAY_BY_LINK],
+                    'gatewayFactory' => 'tpay_pbl',
+                    'gatewayName' => 'tpay_pbl',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],

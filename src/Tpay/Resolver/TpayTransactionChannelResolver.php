@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Resolver;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\GetTpayTransactionsChannelsFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GetTpayTransactionsChannelsFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Request\GetTpayTransactionsChannels;
 use Payum\Core\Model\ArrayObject;
 use Payum\Core\Payum;
 use Psr\Log\LoggerInterface;
@@ -30,7 +31,7 @@ final class TpayTransactionChannelResolver implements TpayTransactionChannelReso
 
     public function resolve(): array
     {
-        $gateway = $this->payum->getGateway('tpay');
+        $gateway = $this->payum->getGateway(GatewayFactory::NAME);
 
         $value = $this->getTpayTransactionsChannelsFactory?->createNewEmpty()
             ?? new GetTpayTransactionsChannels(new ArrayObject());

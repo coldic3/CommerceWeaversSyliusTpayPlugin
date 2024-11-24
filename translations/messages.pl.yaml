@@ -4,6 +4,7 @@ commerce_weavers_sylius_tpay:
         gateway_name:
             tpay_blik: 'BLIK (Tpay)'
             tpay_card: 'Karta (Tpay)'
+            tpay_pbl: 'Pay-by-Link (Tpay)'
         gateway_configuration:
             cards_api: 'Klucz RSA'
             client_id: 'Client ID'

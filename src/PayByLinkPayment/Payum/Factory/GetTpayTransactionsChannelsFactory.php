@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Factory;
+namespace CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\GetTpayTransactionsChannels;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Request\GetTpayTransactionsChannels;
 use Payum\Core\Model\ArrayObject;
 
 final class GetTpayTransactionsChannelsFactory implements GetTpayTransactionsChannelsFactoryInterface

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\ContextProvider;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\PayByLinkPayment\ContextProvider;
 
-use CommerceWeavers\SyliusTpayPlugin\ContextProvider\BankListContextProvider;
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\ContextProvider\BankListContextProvider;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

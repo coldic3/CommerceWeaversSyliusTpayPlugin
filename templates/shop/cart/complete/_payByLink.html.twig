@@ -1,7 +1,6 @@
 {% set payment = order.lastCartPayment() %}
 
-{% if payment is not null and
-    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::PAY_BY_LINK')
+{% if payment is not null and payment.method.gatewayConfig.gatewayName == 'tpay_pbl'
 %}
     <div class="bank-container">
         {% for bank in banks %}
