@@ -51,9 +51,6 @@ return static function(ContainerConfigurator $container): void {
     ;
 
     $services->set('commerce_weavers_sylius_tpay.api.factory.next_command.pay_by_redirect', PayByRedirectFactory::class)
-        ->args([
-            service('payum.dynamic_gateways.cypher'),
-        ])
         ->tag('commerce_weavers_sylius_tpay.api.factory.next_command')
     ;
 

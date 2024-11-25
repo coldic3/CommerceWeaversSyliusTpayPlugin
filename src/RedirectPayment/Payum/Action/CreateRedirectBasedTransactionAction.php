@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
+namespace CommerceWeavers\SyliusTpayPlugin\RedirectPayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use CommerceWeavers\SyliusTpayPlugin\RedirectPayment\Payum\Factory\GatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Reply\HttpRedirect;
 use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class CreateRedirectBasedTransactionAction extends BasePaymentAwareAction
 {
@@ -61,8 +63,10 @@ final class CreateRedirectBasedTransactionAction extends BasePaymentAwareAction
             return false;
         }
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
+        /** @var PaymentMethodInterface|null $paymentMethod */
+        $paymentMethod = $model->getMethod();
+        $gatewayName = $paymentMethod?->getGatewayConfig()?->getGatewayName();
 
-        return $paymentDetails->getType() === PaymentType::REDIRECT;
+        return $gatewayName === GatewayFactory::NAME;
     }
 }
