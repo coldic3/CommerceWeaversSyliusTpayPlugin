@@ -6,8 +6,8 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentCannotBeFoundException;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use Payum\Core\GatewayInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;

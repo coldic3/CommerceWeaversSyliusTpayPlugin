@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Action\CreateApplePayTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Action\InitializeApplePayPaymentAction;
 use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\GatewayFactory as ApplePayGatewayFactory;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateApplePayTransactionAction;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\InitializeApplePayPaymentAction;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();

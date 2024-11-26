@@ -50,7 +50,7 @@ return static function(ContainerConfigurator $container): void {
         ->args([
             service('sylius.repository.order'),
             service('sylius.repository.payment'),
-            service('commerce_weavers_sylius_tpay.gateway'),
+            service('commerce_weavers_sylius_tpay.apple_pay_gateway'),
             service('commerce_weavers_sylius_tpay.payum.factory.initialize_apple_pay_payment'),
         ])
         ->tag('messenger.message_handler')

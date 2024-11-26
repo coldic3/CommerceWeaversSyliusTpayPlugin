@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Factory;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\ApplePayPayment\Payum\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactory;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactory;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Core\Model\PaymentInterface;

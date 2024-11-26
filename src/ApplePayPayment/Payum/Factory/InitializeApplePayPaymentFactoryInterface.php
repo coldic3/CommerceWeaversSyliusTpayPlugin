@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Factory;
+namespace CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use Sylius\Component\Core\Model\PaymentInterface;
 
 interface InitializeApplePayPaymentFactoryInterface

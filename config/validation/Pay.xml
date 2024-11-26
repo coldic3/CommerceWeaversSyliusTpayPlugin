@@ -24,8 +24,8 @@
             </option>
         </constraint>
         <property name="applePayToken">
-            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
-                <option name="paymentMethodType">apple_pay</option>
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayNameEquals">
+                <option name="gatewayName">tpay_apple_pay</option>
                 <option name="fieldRequiredErrorMessage">commerce_weavers_sylius_tpay.shop.pay.apple_pay_token.required</option>
                 <option name="groups">
                     <value>commerce_weavers_sylius_tpay:shop:order:pay</value>

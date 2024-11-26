@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
+namespace CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Action;
 
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateInitializeApplePayPaymentPayloadFactoryInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Request\Generic;

@@ -8,8 +8,8 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundExc
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySession;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySessionHandler;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use Payum\Core\GatewayInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
