@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\ContextProvider;
 
+use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory as PayByLinkGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProviderInterface;
+use Payum\Core\Model\GatewayConfigInterface;
+use Payum\Core\Security\CryptedInterface;
+use Payum\Core\Security\CypherInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -19,6 +23,7 @@ final class BankListContextProvider implements ContextProviderInterface
 
     public function __construct(
         private readonly ValidTpayChannelListProviderInterface $validTpayChannelListProvider,
+        private readonly CypherInterface $cypher,
     ) {
     }
 
@@ -28,21 +33,24 @@ final class BankListContextProvider implements ContextProviderInterface
         $templateContext['banks'] = [];
 
         $paymentMethod = $this->resolvePaymentMethod($templateContext);
-        $gatewayConfig = $paymentMethod?->getGatewayConfig()?->getConfig() ?? [];
+        $gatewayConfig = $paymentMethod?->getGatewayConfig();
 
         if (
             null === $paymentMethod ||
-            'pay_by_link' !== ($gatewayConfig['type'] ?? null)
+            null === $gatewayConfig ||
+            PayByLinkGatewayFactory::NAME !== $gatewayConfig->getFactoryName()
         ) {
             return $templateContext;
         }
+
+        $decryptedGatewayConfig = $this->getEncryptedGatewayConfig($gatewayConfig);
 
         /**
          * @phpstan-ignore-next-line
          *
          * @var string|null $tpayChannelId
          */
-        $tpayChannelId = $gatewayConfig['tpay_channel_id'] ?? null;
+        $tpayChannelId = $decryptedGatewayConfig['tpay_channel_id'] ?? null;
 
         $templateContext['defaultTpayChannelId'] = $tpayChannelId;
         $templateContext['banks'] = null === $tpayChannelId ? $this->validTpayChannelListProvider->provide() : [];
@@ -81,5 +89,14 @@ final class BankListContextProvider implements ContextProviderInterface
         $paymentMethod = $payment->getMethod();
 
         return $paymentMethod;
+    }
+
+    private function getEncryptedGatewayConfig(GatewayConfigInterface $gatewayConfig): array
+    {
+        if ($gatewayConfig instanceof CryptedInterface) {
+            $gatewayConfig->decrypt($this->cypher);
+        }
+
+        return $gatewayConfig->getConfig();
     }
 }
