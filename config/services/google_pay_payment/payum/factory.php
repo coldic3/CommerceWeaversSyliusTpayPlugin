@@ -10,7 +10,7 @@ use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder;
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
 
-    $services->set('commerce_weavers_sylius_tpay.apple_pay_payment.payum.factory.gateway', GatewayFactoryBuilder::class)
+    $services->set('commerce_weavers_sylius_tpay.google_pay_payment.payum.factory.gateway', GatewayFactoryBuilder::class)
         ->args([
             GatewayFactory::class,
         ])

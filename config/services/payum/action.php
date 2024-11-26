@@ -9,7 +9,6 @@ use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Factory\GatewayFactory as
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Payum\Factory\GatewayFactory as GooglePayGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory as PayByLinkGatewayFactory;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
@@ -37,14 +36,6 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.capture'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.capture'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.capture'])
-    ;
-
-    $services->set(CreateGooglePayTransactionAction::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload'),
-            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
-        ])
-        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.create_google_pay_transaction'])
     ;
 
     $services->set(CreateVisaMobileTransactionAction::class)

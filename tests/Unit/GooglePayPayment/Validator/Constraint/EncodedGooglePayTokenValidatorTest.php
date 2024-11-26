@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Validator\Constraint;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\GooglePayPayment\Validator\Constraint;
 
-use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
-use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayTokenValidator;
+use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Validator\Constraint\EncodedGooglePayToken;
+use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Validator\Constraint\EncodedGooglePayTokenValidator;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
