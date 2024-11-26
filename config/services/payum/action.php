@@ -7,6 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\GatewayFactory as ApplePayGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Factory\GatewayFactory as BlikGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
+use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Payum\Factory\GatewayFactory as GooglePayGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory as PayByLinkGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
@@ -32,6 +33,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.capture'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.capture'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.capture'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.capture'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.capture'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.capture'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.capture'])
@@ -42,7 +44,7 @@ return static function(ContainerConfigurator $container): void {
             service('commerce_weavers_sylius_tpay.tpay.factory.create_google_pay_payment_payload'),
             service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
         ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_google_pay_transaction'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.create_google_pay_transaction'])
     ;
 
     $services->set(CreateVisaMobileTransactionAction::class)
@@ -62,6 +64,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.notify'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.notify'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.notify'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.notify'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.notify'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.notify'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.notify'])
@@ -71,6 +74,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.get_status'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.get_status'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.get_status'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.get_status'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.get_status'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.get_status'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.get_status'])
@@ -80,6 +84,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.partial_refund'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.partial_refund'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.partial_refund'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.partial_refund'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.partial_refund'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.partial_refund'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.partial_refund'])
@@ -89,6 +94,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.refund'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.refund'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.refund'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.refund'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.refund'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.refund'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.refund'])
@@ -98,6 +104,7 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => ApplePayGatewayFactory::NAME, 'alias' => 'cw.tpay_apple_pay.resolve_next_route'])
         ->tag('payum.action', ['factory' => BlikGatewayFactory::NAME, 'alias' => 'cw.tpay_blik.resolve_next_route'])
         ->tag('payum.action', ['factory' => CardGatewayFactory::NAME, 'alias' => 'cw.tpay_card.resolve_next_route'])
+        ->tag('payum.action', ['factory' => GooglePayGatewayFactory::NAME, 'alias' => 'cw.tpay_google_pay.resolve_next_route'])
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.resolve_next_route'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.resolve_next_route'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.resolve_next_route'])

@@ -121,9 +121,9 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 'google_pay' => [
                     'code' => 'tpay_google_pay',
                     'name' => 'Google Pay (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::GOOGLE_PAY],
+                    'gatewayFactory' => 'tpay_google_pay',
+                    'gatewayName' => 'tpay_google_pay',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],
