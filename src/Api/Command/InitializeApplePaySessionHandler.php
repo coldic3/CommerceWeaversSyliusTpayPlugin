@@ -6,9 +6,11 @@ namespace CommerceWeavers\SyliusTpayPlugin\Api\Command;
 
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\OrderCannotBeFoundException;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\Exception\PaymentCannotBeFoundException;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\GatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
 use Payum\Core\GatewayInterface;
+use Payum\Core\Payum;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
@@ -22,7 +24,7 @@ final class InitializeApplePaySessionHandler
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly PaymentRepositoryInterface $paymentRepository,
-        private readonly GatewayInterface $gateway,
+        private readonly Payum $payum,
         private readonly InitializeApplePayPaymentFactoryInterface $initializeApplePayPaymentFactory,
     ) {
     }
@@ -32,7 +34,7 @@ final class InitializeApplePaySessionHandler
         $order = $this->findOrderOr404($command->orderToken);
         $payment = $this->findPaymentOr404($order, $command->paymentId);
 
-        $this->gateway->execute(
+        $this->getGateway()->execute(
             $this->initializeApplePayPaymentFactory->createNewWithModelAndOutput(
                 $payment,
                 $command->domainName,
@@ -73,5 +75,10 @@ final class InitializeApplePaySessionHandler
         }
 
         return $payment;
+    }
+
+    private function getGateway(): GatewayInterface
+    {
+        return $this->payum->getGateway(GatewayFactory::NAME);
     }
 }

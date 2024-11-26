@@ -2,6 +2,7 @@
 
 {# >>> SyliusTpayPlugin customization #}
 {% if payment is null %}
+    {% set gateway_name = null %}
     {% set payment_type = null %}
 {% else %}
     {% set gateway_name = payment.method.gatewayConfig.gatewayName %}

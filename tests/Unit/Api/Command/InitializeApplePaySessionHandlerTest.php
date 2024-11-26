@@ -11,11 +11,14 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\InitializeApplePaySessionHandle
 use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\InitializeApplePayPaymentFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use Payum\Core\GatewayInterface;
+use Payum\Core\Model\GatewayConfigInterface;
+use Payum\Core\Payum;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Sylius\Component\Core\Repository\PaymentRepositoryInterface;
 
@@ -27,7 +30,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
 
     private PaymentRepositoryInterface|ObjectProphecy $paymentRepository;
 
-    private GatewayInterface|ObjectProphecy $gateway;
+    private Payum|ObjectProphecy $payum;
 
     private InitializeApplePayPaymentFactoryInterface|ObjectProphecy $initializeApplePayPaymentFactory;
 
@@ -35,7 +38,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
     {
         $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
         $this->paymentRepository = $this->prophesize(PaymentRepositoryInterface::class);
-        $this->gateway = $this->prophesize(GatewayInterface::class);
+        $this->payum = $this->prophesize(Payum::class);
         $this->initializeApplePayPaymentFactory = $this->prophesize(InitializeApplePayPaymentFactoryInterface::class);
     }
 
@@ -68,7 +71,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
 
         $this->orderRepository->findOneByTokenValue('t0k3n')->willReturn($order);
 
-        $payment = $this->prophesize(PaymentInterface::class);
+        $payment = $this->createPayment();
         $payment->getDetails()->willReturn(['tpay' => ['apple_pay_session' => 'session']]);
 
         $this->paymentRepository->findOneBy(['id' => 1, 'order' => $order])->willReturn($payment);
@@ -80,11 +83,26 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
             'https://cw.nonexisting/validation',
         )->willReturn($request = $this->prophesize(InitializeApplePayPayment::class));
 
-        $this->gateway->execute($request)->shouldBeCalled();
+        $this->payum->getGateway('tpay_apple_pay')->willReturn($gateway = $this->prophesize(GatewayInterface::class));
+        $gateway->execute($request)->shouldBeCalled();
 
         $result = $this->createTestSubject()($this->createCommand());
 
         $this->assertSame('session', $result->session);
+    }
+
+    private function createPayment(): PaymentInterface|ObjectProphecy
+    {
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay_apple_pay');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
+        $payment = $this->prophesize(PaymentInterface::class);
+        $payment->getMethod()->willReturn($paymentMethod);
+
+        return $payment;
     }
 
     private function createCommand(): InitializeApplePaySession
@@ -103,7 +121,7 @@ final class InitializeApplePaySessionHandlerTest extends TestCase
         return new InitializeApplePaySessionHandler(
             $this->orderRepository->reveal(),
             $this->paymentRepository->reveal(),
-            $this->gateway->reveal(),
+            $this->payum->reveal(),
             $this->initializeApplePayPaymentFactory->reveal(),
         );
     }
