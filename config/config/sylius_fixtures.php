@@ -75,11 +75,11 @@ return static function(SyliusFixturesConfig $fixtures): void {
         'options' => [
             'custom' => [
                 'tpay' => [
-                    'code' => 'tpay',
-                    'name' => 'Tpay',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::REDIRECT],
+                    'code' => 'tpay_redirect',
+                    'name' => 'Tpay (Redirect)',
+                    'gatewayFactory' => 'tpay_redirect',
+                    'gatewayName' => 'tpay_redirect',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\RedirectPayment\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
+use CommerceWeavers\SyliusTpayPlugin\RedirectPayment\Payum\Action\CreateRedirectBasedTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateRedirectBasedPaymentPayloadFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\TpayApi;
 use Payum\Core\Model\GatewayConfigInterface;
@@ -48,8 +48,14 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
 
     public function test_it_supports_create_transaction_requests_with_a_valid_payment_model(): void
     {
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay_redirect');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn([]);
+        $payment->getMethod()->willReturn($paymentMethod);
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
@@ -84,11 +90,16 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
         $this->assertFalse($isSupported);
     }
 
-    /** @dataProvider notSupportedPaymentDetailsDataProvider */
-    public function test_it_does_not_support_requests_with_not_eligible_payment_model(array $paymentDetails): void
+    public function test_it_does_not_support_requests_with_not_eligible_payment_model(): void
     {
+        $gatewayConfig = $this->prophesize(GatewayConfigInterface::class);
+        $gatewayConfig->getGatewayName()->willReturn('tpay_card');
+
+        $paymentMethod = $this->prophesize(PaymentMethodInterface::class);
+        $paymentMethod->getGatewayConfig()->willReturn($gatewayConfig);
+
         $payment = $this->prophesize(PaymentInterface::class);
-        $payment->getDetails()->willReturn($paymentDetails);
+        $payment->getMethod()->willReturn($paymentMethod);
 
         $request = $this->prophesize(CreateTransaction::class);
         $request->getModel()->willReturn($payment);
@@ -260,17 +271,6 @@ final class CreateRedirectBasedTransactionActionTest extends TestCase
         $request->getToken()->willReturn(null);
 
         $this->createTestSubject()->execute($request->reveal());
-    }
-
-    private function notSupportedPaymentDetailsDataProvider(): array
-    {
-        return [
-            [['tpay' => ['card' => 'some_value']]],
-            [['tpay' => ['blik_token' => 'some_value']]],
-            [['tpay' => ['tpay_channel_id' => 'some_value']]],
-            [['tpay' => ['google_pay_token' => 'some_value']]],
-            [['tpay' => ['apple_pay_token' => 'some_value']]],
-        ];
     }
 
     private function createTestSubject(): CreateRedirectBasedTransactionAction

@@ -8,19 +8,12 @@ use CommerceWeavers\SyliusTpayPlugin\Api\Command\Pay;
 use CommerceWeavers\SyliusTpayPlugin\Api\Command\PayByRedirect;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\Exception\UnsupportedNextCommandFactory;
 use CommerceWeavers\SyliusTpayPlugin\Api\Factory\NextCommandFactoryInterface;
-use Payum\Core\Model\GatewayConfigInterface;
-use Payum\Core\Security\CryptedInterface;
-use Payum\Core\Security\CypherInterface;
+use CommerceWeavers\SyliusTpayPlugin\RedirectPayment\Payum\Factory\GatewayFactory;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 
 final class PayByRedirectFactory implements NextCommandFactoryInterface
 {
-    public function __construct(
-        private readonly CypherInterface $cypher,
-    ) {
-    }
-
     public function create(Pay $command, PaymentInterface $payment): PayByRedirect
     {
         if (!$this->supports($command, $payment)) {
@@ -39,26 +32,10 @@ final class PayByRedirectFactory implements NextCommandFactoryInterface
             return false;
         }
 
-        $gatewayConfig = $this->getGatewayConfig($payment);
-
-        if (null === $gatewayConfig) {
-            return false;
-        }
-
-        if ($gatewayConfig instanceof CryptedInterface) {
-            $gatewayConfig->decrypt($this->cypher);
-        }
-
-        $config = $gatewayConfig->getConfig();
-
-        return isset($config['type']) && $config['type'] === 'redirect';
-    }
-
-    private function getGatewayConfig(PaymentInterface $payment): ?GatewayConfigInterface
-    {
         /** @var PaymentMethodInterface|null $paymentMethod */
         $paymentMethod = $payment->getMethod();
+        $gatewayName = $paymentMethod?->getGatewayConfig()?->getGatewayName();
 
-        return $paymentMethod?->getGatewayConfig();
+        return $gatewayName === GatewayFactory::NAME;
     }
 }
