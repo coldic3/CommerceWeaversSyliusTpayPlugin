@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Payum\Action\Api;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\GooglePayPayment\Payum\Action;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateGooglePayTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Payum\Action\CreateGooglePayTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateGooglePayPaymentPayloadFactoryInterface;

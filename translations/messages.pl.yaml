@@ -5,6 +5,7 @@ commerce_weavers_sylius_tpay:
             tpay_apple_pay: 'Apple Pay (Tpay)'
             tpay_blik: 'BLIK (Tpay)'
             tpay_card: 'Karta (Tpay)'
+            tpay_google_pay: 'Google Pay (Tpay)'
             tpay_pbl: 'Pay-by-Link (Tpay)'
             tpay_redirect: 'Przekierowanie do Tpay'
         gateway_configuration:

@@ -6,8 +6,8 @@ namespace CommerceWeavers\SyliusTpayPlugin\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCardType;
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Form\Type\TpayCreditCardChoiceType;
+use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Validator\Constraint\EncodedGooglePayToken;
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Validator\Constraint\ValidTpayChannel;
-use CommerceWeavers\SyliusTpayPlugin\Validator\Constraint\EncodedGooglePayToken;
 use Sylius\Component\Core\Model\ShopUserInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

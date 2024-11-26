@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Form\Type;
+namespace CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Form\Type;
 
 use CommerceWeavers\SyliusTpayPlugin\Form\Type\AbstractTpayGatewayConfigurationType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,11 +16,11 @@ final class GatewayConfigurationType extends AbstractTpayGatewayConfigurationTyp
 
         $builder
             ->add(
-                'apple_pay_merchant_id',
+                'google_merchant_id',
                 TextType::class,
                 [
                     'empty_data' => '',
-                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.apple_pay_merchant_id',
+                    'label' => 'commerce_weavers_sylius_tpay.admin.gateway_configuration.google_merchant_id',
                     'required' => true,
                     'priority' => -250,
                 ],
