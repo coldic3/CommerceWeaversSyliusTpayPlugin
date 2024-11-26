@@ -51,5 +51,6 @@ adminConfig.name = 'admin';
 Encore.reset();
 
 const cwTpayShop = CommerceWeaversSyliusTpay.getWebpackShopConfig(path.resolve(__dirname));
+const cwTpayAdmin = CommerceWeaversSyliusTpay.getWebpackAdminConfig(path.resolve(__dirname));
 
-module.exports = [shopConfig, adminConfig, cwTpayShop];
+module.exports = [shopConfig, adminConfig, cwTpayShop, cwTpayAdmin];

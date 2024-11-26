@@ -109,10 +109,23 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 ],
                 'pbl' => [
                     'code' => 'tpay_pbl',
-                    'name' => 'Pay by Link (Tpay)',
+                    'name' => 'Pay-by-link (Tpay)',
                     'gatewayFactory' => 'tpay_pbl',
                     'gatewayName' => 'tpay_pbl',
                     'gatewayConfig' => $tpayConfig,
+                    'channels' => [
+                        'FASHION_WEB',
+                    ],
+                    'enabled' => true,
+                ],
+                'pbl_channel' => [
+                    'code' => 'tpay_pbl_channel',
+                    'name' => 'Pay-by-link one channel (Tpay)',
+                    'gatewayFactory' => 'tpay_pbl',
+                    'gatewayName' => 'tpay_pbl',
+                    'gatewayConfig' => $tpayConfig + [
+                        'tpay_channel_id' => '%env(string:TPAY_PBL_CHANNEL_ID)%',
+                    ],
                     'channels' => [
                         'FASHION_WEB',
                     ],

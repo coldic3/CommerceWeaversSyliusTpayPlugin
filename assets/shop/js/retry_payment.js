@@ -12,6 +12,15 @@ function enablePaymentDetails(element) {
     .forEach(function(element) {
       element.disabled = false;
     });
+
+  // many PBL payment methods support
+  const channelIdDataElement = element.querySelector('[data-channel-id-name]');
+  if (channelIdDataElement !== null) {
+    const channelIdInputName = channelIdDataElement.getAttribute('data-channel-id-name');
+    const channelIdInput = document.querySelector(`[name="${channelIdInputName}"]`);
+    channelIdInput.disabled = false;
+    channelIdInput.value = channelIdDataElement.getAttribute('data-channel-id-value');
+  }
 }
 
 function resolvePaymentDetailsFromPaymentMethodRadioButton(radioButton) {

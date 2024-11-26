@@ -7,6 +7,14 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->extension('sylius_ui', [
         'events' => [
+            'cw.tpay.admin.payment_method.form' => [
+                'blocks' => [
+                    'test_connection' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/admin/payment_method/test_connection.html.twig',
+                        'priority' => 10,
+                    ],
+                ],
+            ],
             'cw.tpay.shop.checkout.complete.navigation' => [
                 'blocks' => [
                     'apple_pay' => [
@@ -79,6 +87,13 @@ return static function (ContainerConfigurator $containerConfigurator): void {
                 'blocks' => [
                     'commerce_weavers_sylius_tpay_scripts' => [
                         'template' => '@CommerceWeaversSyliusTpayPlugin/shop/account/credit_card/index/_subcontent.html.twig',
+                    ],
+                ],
+            ],
+            'sylius.admin.layout.javascripts' => [
+                'blocks' => [
+                    'commerce_weavers_sylius_tpay_scripts' => [
+                        'template' => '@CommerceWeaversSyliusTpayPlugin/admin/scripts.html.twig',
                     ],
                 ],
             ],

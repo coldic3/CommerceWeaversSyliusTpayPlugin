@@ -7,5 +7,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Symfony\Config\WebpackEncoreConfig;
 
 return function(WebpackEncoreConfig $webpackEncore): void {
+    $webpackEncore->builds('commerce_weavers_sylius_tpay_admin', '%kernel.project_dir%/public/build/commerce-weavers/tpay/admin');
     $webpackEncore->builds('commerce_weavers_sylius_tpay_shop', '%kernel.project_dir%/public/build/commerce-weavers/tpay/shop');
 };

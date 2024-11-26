@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Checkout;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Shop\Checkout;
 
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Account\LoginShopUserTrait;
@@ -16,8 +16,6 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
     use LoginShopUserTrait;
 
     private const FORM_ID = 'sylius_checkout_complete';
-
-    private const CARD_NUMBER = '4012 0010 3714 1112';
 
     protected function setUp(): void
     {
@@ -37,15 +35,6 @@ final class TpayPaymentCheckoutTest extends E2ETestCase
         $this->placeOrder();
 
         $this->assertPageTitleContains('Thank you!');
-    }
-
-    public function test_it_completes_the_checkout_using_credit_card(): void
-    {
-        $this->processWithPaymentMethod('tpay_card');
-        $this->fillCardData(self::FORM_ID, self::CARD_NUMBER, '123', '01', '2029');
-        $this->placeOrder();
-
-        $this->assertPageTitleContains('Waiting for payment | Web Channel');
     }
 
     public function test_it_completes_the_checkout_using_blik(): void

@@ -1,0 +1,5 @@
+include:
+    - ../common/channel.yaml
+    - ../common/country.yaml
+    - ../common/payment_method.yaml
+    - ../common/admin.yaml

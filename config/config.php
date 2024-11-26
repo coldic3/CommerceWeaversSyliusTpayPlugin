@@ -19,6 +19,7 @@ return static function(ContainerConfigurator $container): void {
         ->set('env(TPAY_APPLE_PAY_MERCHANT_ID)', '')
         ->set('env(TPAY_MERCHANT_ID)', '')
         ->set('env(TPAY_NOTIFICATION_SECURITY_CODE)', '')
+        ->set('env(TPAY_PBL_CHANNEL_ID)', '')
         ->set('commerce_weavers_sylius_tpay.certificate.cache_ttl_in_seconds', 300)
         ->set('commerce_weavers_sylius_tpay.tpay_transaction_channels.cache_ttl_in_seconds', 300)
         ->set('commerce_weavers_sylius_tpay.waiting_for_payment.refresh_interval', 5)

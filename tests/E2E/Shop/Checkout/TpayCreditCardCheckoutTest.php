@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace E2E\Checkout;
+namespace Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Shop\Checkout;
 
-use Facebook\WebDriver\Exception\NoSuchElementException;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\E2ETestCase;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Account\LoginShopUserTrait;
 use Tests\CommerceWeavers\SyliusTpayPlugin\E2E\Helper\Order\CartTrait;
