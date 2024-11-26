@@ -21,7 +21,6 @@ return function(ContainerConfigurator $container): void {
     $services->set('commerce_weavers_sylius_tpay.refunding.dispatcher.refund', RefundDispatcher::class)
         ->public()
         ->args([
-            service('commerce_weavers_sylius_tpay.gateway'),
             service('commerce_weavers_sylius_tpay.refunding.checker.refund_plugin_availability'),
         ])
         ->alias(RefundDispatcherInterface::class, 'commerce_weavers_sylius_tpay.refunding.dispatcher.refund')

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Controller;
+namespace CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Controller;
 
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Factory\GatewayFactory;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Payum\Request\InitializeApplePayPayment;
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\InitializeApplePayPayment;
 use Payum\Core\GatewayInterface;
 use Payum\Core\Payum;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -53,6 +54,6 @@ final class InitApplePayPaymentAction
 
     private function getGateway(): GatewayInterface
     {
-        return $this->payum->getGateway('tpay');
+        return $this->payum->getGateway(GatewayFactory::NAME);
     }
 }

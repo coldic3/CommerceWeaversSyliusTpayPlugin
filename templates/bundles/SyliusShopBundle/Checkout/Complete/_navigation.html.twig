@@ -2,12 +2,14 @@
 
 {# >>> SyliusTpayPlugin customization #}
 {% if payment is null %}
+    {% set gateway_name = null %}
     {% set payment_type = null %}
 {% else %}
+    {% set gateway_name = payment.method.gatewayConfig.gatewayName %}
     {% set payment_type = cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') %}
 {% endif %}
 
-{% if payment_type in ['apple_pay', 'google_pay'] %}
+{% if payment_type in ['google_pay'] or gateway_name in ['tpay_apple_pay'] %}
     {{ sylius_template_event('cw.tpay.shop.checkout.complete.navigation', { form, order, payment }) }}
 {% else %}
     <button type="submit" class="ui huge primary fluid icon labeled button" {{ sylius_test_html_attribute('confirmation-button') }}>
@@ -15,4 +17,3 @@
     </button>
 {% endif %}
 {# SyliusTpayPlugin customization <<< #}
-

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\Routing\Loader\Configurator;
 
-use CommerceWeavers\SyliusTpayPlugin\Controller\InitApplePayPaymentAction;
+use CommerceWeavers\SyliusTpayPlugin\ApplePayPayment\Controller\InitApplePayPaymentAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\PaymentNotificationAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\TpayNotificationAction;
 use CommerceWeavers\SyliusTpayPlugin\Routing;

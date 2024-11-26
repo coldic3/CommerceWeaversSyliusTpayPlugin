@@ -8,9 +8,8 @@ use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayPaymentFailedPageAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayThankYouPageAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\DisplayWaitingForPaymentPage;
 use CommerceWeavers\SyliusTpayPlugin\Controller\PaymentNotificationAction;
-use CommerceWeavers\SyliusTpayPlugin\Controller\InitApplePayPaymentAction;
-use CommerceWeavers\SyliusTpayPlugin\Controller\TpayNotificationAction;
 use CommerceWeavers\SyliusTpayPlugin\Controller\RetryPaymentAction;
+use CommerceWeavers\SyliusTpayPlugin\Controller\TpayNotificationAction;
 
 return function(ContainerConfigurator $container): void {
     $services = $container->services();
@@ -38,13 +37,6 @@ return function(ContainerConfigurator $container): void {
             service('sylius.factory.payum_resolve_next_route'),
             service('twig'),
             param('commerce_weavers_sylius_tpay.waiting_for_payment.refresh_interval'),
-        ])
-        ->tag('controller.service_arguments')
-    ;
-
-    $services->set(InitApplePayPaymentAction::class)
-        ->args([
-            service('payum'),
         ])
         ->tag('controller.service_arguments')
     ;

@@ -132,9 +132,9 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 'apple_pay' => [
                     'code' => 'tpay_apple_pay',
                     'name' => 'Apple Pay (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::APPLE_PAY],
+                    'gatewayFactory' => 'tpay_apple_pay',
+                    'gatewayName' => 'tpay_apple_pay',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],
