@@ -45,6 +45,7 @@ return function(ContainerConfigurator $container): void {
     $services->set(InitApplePayPaymentAction::class)
         ->args([
             service('payum'),
+            service('sylius.context.cart'),
         ])
         ->tag('controller.service_arguments')
     ;
