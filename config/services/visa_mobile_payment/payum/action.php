@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
+use CommerceWeavers\SyliusTpayPlugin\VisaMobilePayment\Payum\Action\CreateVisaMobileTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\VisaMobilePayment\Payum\Factory\GatewayFactory;
 
 return function(ContainerConfigurator $container): void {
