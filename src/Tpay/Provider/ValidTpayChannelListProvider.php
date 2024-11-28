@@ -38,6 +38,10 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
             'tpay',
         );
 
+        if ([] === $paymentMethods) {
+            return [];
+        }
+
         Assert::notEmpty($paymentMethods, 'There is no payment method of Tpay type available');
 
         /** @var PaymentMethodInterface[] $payByLinkPaymentMethods */

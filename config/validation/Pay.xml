@@ -105,8 +105,8 @@
             </constraint>
         </property>
         <property name="visaMobilePhoneNumber">
-            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayConfigTypeEquals">
-                <option name="paymentMethodType">visa_mobile</option>
+            <constraint name="CommerceWeavers\SyliusTpayPlugin\Api\Validator\Constraint\NotBlankIfGatewayNameEquals">
+                <option name="gatewayName">visa_mobile</option>
                 <option name="fieldRequiredErrorMessage">commerce_weavers_sylius_tpay.shop.pay.visa_mobile.required</option>
                 <option name="groups">
                     <value>commerce_weavers_sylius_tpay:shop:order:pay</value>

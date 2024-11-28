@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Symfony\Config\SyliusFixturesConfig;
 
 return static function(SyliusFixturesConfig $fixtures): void {
@@ -156,9 +155,9 @@ return static function(SyliusFixturesConfig $fixtures): void {
                 'visa_mobile' => [
                     'code' => 'tpay_visa_mobile',
                     'name' => 'Visa mobile (Tpay)',
-                    'gatewayFactory' => 'tpay',
-                    'gatewayName' => 'tpay',
-                    'gatewayConfig' => $tpayConfig + ['type' => PaymentType::VISA_MOBILE],
+                    'gatewayFactory' => 'tpay_visa_mobile',
+                    'gatewayName' => 'tpay_visa_mobile',
+                    'gatewayConfig' => $tpayConfig,
                     'channels' => [
                         'FASHION_WEB',
                     ],
