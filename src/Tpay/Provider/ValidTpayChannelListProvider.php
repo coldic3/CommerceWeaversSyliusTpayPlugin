@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace CommerceWeavers\SyliusTpayPlugin\Tpay\Provider;
 
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Exception\UnableToGetBankListException;
-use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\Repository\PaymentMethodRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\GatewayName;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\PayGroup;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
 use Payum\Core\Security\CryptedInterface;
-use Payum\Core\Security\CypherInterface;
 use Sylius\Bundle\PayumBundle\Model\GatewayConfigInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -26,7 +24,6 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
         private readonly AvailableTpayChannelListProviderInterface $availableTpayApiBankListProvider,
         private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
         private readonly ChannelContextInterface $channelContext,
-        private readonly CypherInterface $cypher,
     ) {
     }
 
@@ -35,7 +32,7 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
         /** @var PaymentMethodInterface[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepository->findByChannelAndGatewayConfigNameWithGatewayConfig(
             $this->channelContext->getChannel(),
-            'tpay',
+            GatewayName::all(),
         );
 
         Assert::notEmpty($paymentMethods, 'There is no payment method of Tpay type available');
@@ -43,7 +40,7 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
         /** @var PaymentMethodInterface[] $payByLinkPaymentMethods */
         $payByLinkPaymentMethods = $this->paymentMethodRepository->findByChannelAndGatewayConfigNameWithGatewayConfig(
             $this->channelContext->getChannel(),
-            GatewayFactory::NAME,
+            [GatewayName::PAY_BY_LINK],
         );
 
         if ([] === $payByLinkPaymentMethods) {
@@ -62,23 +59,18 @@ final class ValidTpayChannelListProvider implements ValidTpayChannelListProvider
                 continue;
             }
 
-            $tpayGatewayConfig->decrypt($this->cypher);
-            $config = $tpayGatewayConfig->getConfig();
+            $gatewayName = $tpayGatewayConfig->getGatewayName();
 
-            if (!array_key_exists('type', $config)) {
-                continue;
-            }
-
-            match ($config['type']) {
-                PaymentType::VISA_MOBILE => array_push(
+            match ($gatewayName) {
+                GatewayName::VISA_MOBILE => array_push(
                     $paymentMethodsToRemoveByGroupId,
                     PayGroup::VISA_MOBILE,
                     PayGroup::VISA_MOBILE_ON_SITE,
                 ),
-                PaymentType::APPLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::APPLE_PAY,
-                PaymentType::GOOGLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::GOOGLE_PAY,
-                PaymentType::BLIK => $paymentMethodsToRemoveByGroupId[] = PayGroup::BLIK,
-                PaymentType::CARD => $paymentMethodsToRemoveByGroupId[] = PayGroup::CARD,
+                GatewayName::APPLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::APPLE_PAY,
+                GatewayName::GOOGLE_PAY => $paymentMethodsToRemoveByGroupId[] = PayGroup::GOOGLE_PAY,
+                GatewayName::BLIK => $paymentMethodsToRemoveByGroupId[] = PayGroup::BLIK,
+                GatewayName::CARD => $paymentMethodsToRemoveByGroupId[] = PayGroup::CARD,
                 default => null,
             };
         }

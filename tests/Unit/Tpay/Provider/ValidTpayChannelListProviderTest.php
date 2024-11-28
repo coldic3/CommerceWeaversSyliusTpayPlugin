@@ -6,9 +6,9 @@ namespace Tests\CommerceWeavers\SyliusTpayPlugin\Unit\Tpay\Provider;
 
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Exception\UnableToGetBankListException;
 use CommerceWeavers\SyliusTpayPlugin\Repository\PaymentMethodRepositoryInterface;
+use CommerceWeavers\SyliusTpayPlugin\Tpay\GatewayName;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\AvailableTpayChannelListProviderInterface;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Provider\ValidTpayChannelListProvider;
-use Payum\Core\Security\CypherInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -86,14 +86,11 @@ final class ValidTpayChannelListProviderTest extends TestCase
 
     private ChannelContextInterface|ObjectProphecy $channelContext;
 
-    private CypherInterface|ObjectProphecy $cypher;
-
     protected function setUp(): void
     {
         $this->availableTpayApiBankListProvider = $this->prophesize(AvailableTpayChannelListProviderInterface::class);
         $this->paymentMethodRepository = $this->prophesize(PaymentMethodRepositoryInterface::class);
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
-        $this->cypher = $this->prophesize(CypherInterface::class);
     }
 
     public function test_it_throws_exception_if_there_is_no_tpay_based_payment(): void
@@ -108,7 +105,7 @@ final class ValidTpayChannelListProviderTest extends TestCase
 
         $this->paymentMethodRepository->findByChannelAndGatewayConfigNameWithGatewayConfig(
             $channel,
-            'tpay'
+            GatewayName::all(),
         )->willReturn([]);
 
         $this->createTestSubject()->provide();
@@ -125,13 +122,13 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->channelContext->getChannel()->willReturn($channel->reveal());
 
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, GatewayName::all())
             ->willReturn([
                 $notTpayBasedPaymentMethod
             ])
         ;
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay_pbl')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, [GatewayName::PAY_BY_LINK])
             ->willReturn([])
         ;
 
@@ -142,13 +139,8 @@ final class ValidTpayChannelListProviderTest extends TestCase
     {
         $tpayBasedPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
         $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
-        $tpayPblGatewayConfigConfig = [
-            'type' => 'pay_by_link',
-        ];
+        $tpayPblGatewayConfig->getGatewayName()->willReturn(GatewayName::PAY_BY_LINK);
         $tpayBasedPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfig);
-
-        $tpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
-        $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
 
         $this->availableTpayApiBankListProvider->provide()->willReturn(self::BANK_LIST);
 
@@ -156,13 +148,13 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->channelContext->getChannel()->willReturn($channel->reveal());
 
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, GatewayName::all())
             ->willReturn([
                 $tpayBasedPaymentMethod->reveal(),
             ])
         ;
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay_pbl')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, [GatewayName::PAY_BY_LINK])
             ->willReturn([
                 $this->prophesize(PaymentMethodInterface::class)->reveal(),
             ])
@@ -176,22 +168,14 @@ final class ValidTpayChannelListProviderTest extends TestCase
     public function test_it_returns_valid_payments_according_to_available_tpay_payment_methods(): void
     {
         $tpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
-        $tpayPblGatewayConfigConfig = [
-            'type' => 'pay_by_link',
-        ];
-        $tpayPblPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfig);
-        $tpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
-        $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
+        $tpayPblPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class));
+
+        $tpayPblGatewayConfig->getGatewayName()->willReturn(GatewayName::PAY_BY_LINK);
 
         $anotherTpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
-        $anotherTpayPblGatewayConfigConfig = [
-            'type' => 'visa_mobile',
-        ];
-        $anotherTpayPblPaymentMethod->getGatewayConfig()->willReturn($anotherTpayPblGatewayConfig);
-        $anotherTpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
-        $anotherTpayPblGatewayConfig->getConfig()->willReturn($anotherTpayPblGatewayConfigConfig);
+        $anotherTpayPblPaymentMethod->getGatewayConfig()->willReturn($anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class));
+
+        $anotherTpayPblGatewayConfig->getGatewayName()->willReturn(GatewayName::VISA_MOBILE);
 
         $this->availableTpayApiBankListProvider->provide()->willReturn(self::BANK_LIST);
 
@@ -199,14 +183,14 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->channelContext->getChannel()->willReturn($channel->reveal());
 
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, GatewayName::all())
             ->willReturn([
                 $tpayPblPaymentMethod->reveal(),
                 $anotherTpayPblPaymentMethod->reveal(),
             ])
         ;
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay_pbl')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, [GatewayName::PAY_BY_LINK])
             ->willReturn([
                 $this->prophesize(PaymentMethodInterface::class)->reveal(),
             ])
@@ -224,22 +208,14 @@ final class ValidTpayChannelListProviderTest extends TestCase
     public function test_it_returns_valid_payments_even_if_gateway_config_lacks_type(): void
     {
         $tpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
-        $tpayPblGatewayConfigConfig = [
-            'type' => 'pay_by_link',
-        ];
-        $tpayPblPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfig);
-        $tpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
-        $tpayPblGatewayConfig->getConfig()->willReturn($tpayPblGatewayConfigConfig);
+        $tpayPblPaymentMethod->getGatewayConfig()->willReturn($tpayPblGatewayConfig = $this->prophesize(GatewayConfig::class));
+
+        $tpayPblGatewayConfig->getGatewayName()->willReturn(GatewayName::PAY_BY_LINK);
 
         $anotherTpayPblPaymentMethod = $this->prophesize(PaymentMethodInterface::class);
-        $anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class);
-        $anotherTpayPblGatewayConfigConfig = [
-            'i_have_no_type' => 'i_should_still_work',
-        ];
-        $anotherTpayPblPaymentMethod->getGatewayConfig()->willReturn($anotherTpayPblGatewayConfig);
-        $anotherTpayPblGatewayConfig->decrypt($this->cypher)->shouldBeCalled();
-        $anotherTpayPblGatewayConfig->getConfig()->willReturn($anotherTpayPblGatewayConfigConfig);
+        $anotherTpayPblPaymentMethod->getGatewayConfig()->willReturn($anotherTpayPblGatewayConfig = $this->prophesize(GatewayConfig::class));
+
+        $anotherTpayPblGatewayConfig->getGatewayName()->willReturn('i_should_still_work');
 
         $this->availableTpayApiBankListProvider->provide()->willReturn(self::BANK_LIST);
 
@@ -247,14 +223,14 @@ final class ValidTpayChannelListProviderTest extends TestCase
         $this->channelContext->getChannel()->willReturn($channel->reveal());
 
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, GatewayName::all())
             ->willReturn([
                 $tpayPblPaymentMethod->reveal(),
                 $anotherTpayPblPaymentMethod->reveal(),
             ])
         ;
         $this->paymentMethodRepository
-            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, 'tpay_pbl')
+            ->findByChannelAndGatewayConfigNameWithGatewayConfig($channel, [GatewayName::PAY_BY_LINK])
             ->willReturn([
                 $this->prophesize(PaymentMethodInterface::class)->reveal(),
             ])
@@ -271,7 +247,6 @@ final class ValidTpayChannelListProviderTest extends TestCase
             $this->availableTpayApiBankListProvider->reveal(),
             $this->paymentMethodRepository->reveal(),
             $this->channelContext->reveal(),
-            $this->cypher->reveal(),
         );
     }
 }

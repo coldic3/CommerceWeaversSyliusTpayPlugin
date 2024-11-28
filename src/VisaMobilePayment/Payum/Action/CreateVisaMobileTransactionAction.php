@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api;
+namespace CommerceWeavers\SyliusTpayPlugin\VisaMobilePayment\Payum\Action;
 
 use CommerceWeavers\SyliusTpayPlugin\Model\PaymentDetails;
+use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\BasePaymentAwareAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\Token\NotifyTokenFactoryInterface;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Request\Api\CreateTransaction;
 use CommerceWeavers\SyliusTpayPlugin\Tpay\Factory\CreateVisaMobilePaymentPayloadFactoryInterface;
-use CommerceWeavers\SyliusTpayPlugin\Tpay\PaymentType;
+use CommerceWeavers\SyliusTpayPlugin\VisaMobilePayment\Payum\Factory\GatewayFactory;
 use Payum\Core\Request\Generic;
 use Payum\Core\Security\GenericTokenFactoryAwareTrait;
 use Sylius\Component\Core\Model\PaymentInterface;
@@ -52,8 +53,6 @@ final class CreateVisaMobileTransactionAction extends BasePaymentAwareAction
             return false;
         }
 
-        $paymentDetails = PaymentDetails::fromArray($model->getDetails());
-
-        return $paymentDetails->getType() === PaymentType::VISA_MOBILE;
+        return $this->getGatewayNameFrom($model) === GatewayFactory::NAME;
     }
 }

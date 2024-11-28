@@ -9,7 +9,6 @@ use CommerceWeavers\SyliusTpayPlugin\BlikPayment\Payum\Factory\GatewayFactory as
 use CommerceWeavers\SyliusTpayPlugin\CardPayment\Payum\Factory\GatewayFactory as CardGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\GooglePayPayment\Payum\Factory\GatewayFactory as GooglePayGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\PayByLinkPayment\Payum\Factory\GatewayFactory as PayByLinkGatewayFactory;
-use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\CreateVisaMobileTransactionAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\Api\NotifyAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\CaptureAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\GetStatusAction;
@@ -18,11 +17,13 @@ use CommerceWeavers\SyliusTpayPlugin\Payum\Action\RefundAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Action\ResolveNextRouteAction;
 use CommerceWeavers\SyliusTpayPlugin\Payum\Factory\TpayGatewayFactory;
 use CommerceWeavers\SyliusTpayPlugin\RedirectPayment\Payum\Factory\GatewayFactory as RedirectGatewayFactory;
+use CommerceWeavers\SyliusTpayPlugin\VisaMobilePayment\Payum\Factory\GatewayFactory as VisaMobileGatewatFactory;
 
 return static function(ContainerConfigurator $container): void {
     $services = $container->services();
     $services->defaults()
         ->public()
+        ->tag('payum.action', ['factory' => VisaMobileGatewatFactory::NAME])
     ;
 
     $services->set(CaptureAction::class)
@@ -36,14 +37,6 @@ return static function(ContainerConfigurator $container): void {
         ->tag('payum.action', ['factory' => PayByLinkGatewayFactory::NAME, 'alias' => 'cw.tpay_pbl.capture'])
         ->tag('payum.action', ['factory' => RedirectGatewayFactory::NAME, 'alias' => 'cw.tpay_redirect.capture'])
         ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.capture'])
-    ;
-
-    $services->set(CreateVisaMobileTransactionAction::class)
-        ->args([
-            service('commerce_weavers_sylius_tpay.tpay.factory.create_visa_mobile_payment_payload'),
-            service('commerce_weavers_sylius_tpay.payum.factory.token.notify'),
-        ])
-        ->tag('payum.action', ['factory' => TpayGatewayFactory::NAME, 'alias' => 'cw.tpay.create_visa_mobile_transaction'])
     ;
 
     $services->set(NotifyAction::class)

@@ -1,8 +1,6 @@
 {% set payment = order.lastCartPayment() %}
 
-{% if payment is not null and
-    cw_tpay_get_gateway_config_value(payment.method.gatewayConfig, 'type') == constant('CommerceWeavers\\SyliusTpayPlugin\\Tpay\\PaymentType::VISA_MOBILE')
-%}
+{% if payment is not null and payment.method.gatewayConfig.gatewayName == 'tpay_visa_mobile' %}
     <div class="ui stackable grid">
         <div class="ui column eight wide">
             <div class="ui small icon message">
