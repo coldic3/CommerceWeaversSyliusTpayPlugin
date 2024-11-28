@@ -17,6 +17,7 @@ commerce_weavers_sylius_tpay:
             apple_pay_merchant_id: 'Apple Merchant ID'
             tpay_channel_id: 'Tpay Channel ID'
             tpay_channel_id_help: 'Click the "Test connection" button to retrieve the list of available channels.'
+            tpay_display_all_channels: 'Display all channels'
             production_mode: 'Production mode'
             merchant_id: 'Merchant ID'
             notification_security_code: 'Security code (Notification)'

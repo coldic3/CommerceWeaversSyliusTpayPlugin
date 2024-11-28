@@ -59,11 +59,19 @@ function convertTpayChannelIdInputIntoSelect(channels) {
     select.name = tpayChannelIdFormType.name;
     select.id = tpayChannelIdFormType.id;
     select.className = tpayChannelIdFormType.className;
+    select.dataset.displayAllLabel = tpayChannelIdFormType.dataset.displayAllLabel;
     tpayChannelIdFormType.replaceWith(select);
     tpayChannelIdFormType = select;
   }
 
   tpayChannelIdFormType.innerHTML = '';
+
+  const displayAllOption = document.createElement('option');
+  displayAllOption.value = '';
+  console.log(tpayChannelIdFormType.dataset);
+  displayAllOption.text = tpayChannelIdFormType.dataset.displayAllLabel;
+
+  tpayChannelIdFormType.appendChild(displayAllOption);
 
   for (const [id, name] of Object.entries(channels)) {
     const option = document.createElement('option');
