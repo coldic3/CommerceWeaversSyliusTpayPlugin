@@ -14,7 +14,7 @@ class GatewayName
 
     public const GOOGLE_PAY = 'tpay_google_pay';
 
-    public const PAY_BY_LINK = 'tpay_pay_by_link';
+    public const PAY_BY_LINK = 'tpay_pbl';
 
     public const REDIRECT = 'tpay_redirect';
 
